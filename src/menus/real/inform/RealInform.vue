@@ -37,13 +37,13 @@
                   </a>
                   <a-menu slot="overlay">
                     <a-menu-item key="0">
-                      <a href="javascript:;" @click="btnw_over">全部通知</a>
+                      <a href="javascript:;" @click="btnw_over(1)">全部通知</a>
                     </a-menu-item>
                     <a-menu-item key="1">
-                      <a href="javascript:;" @click="btnw_house">房屋通知</a>
+                      <a href="javascript:;" @click="btnw_over(2)">房屋通知</a>
                     </a-menu-item>
                     <a-menu-item key="3"
-                      ><a href="javascript:;" @click="btnw_shop">商铺通知</a>
+                      ><a href="javascript:;" @click="btnw_over(3)">商铺通知</a>
                     </a-menu-item>
                   </a-menu>
                 </a-dropdown></a-button
@@ -51,7 +51,7 @@
               <a-button
                 style="
                   background-color: rgb(121, 199, 250);
-                  margin-left: 20px;
+                  margin-left: 2px;
                   border: none;
                   border-radius: 4px;
                 "
@@ -66,13 +66,13 @@
                   </a>
                   <a-menu slot="overlay">
                     <a-menu-item key="0">
-                      <a href="javascript:;" @click="btnd_over">全部通知</a>
+                      <a href="javascript:;" @click="btnd_over(1)">全部通知</a>
                     </a-menu-item>
                     <a-menu-item key="1">
-                      <a href="javascript:;" @click="btnd_house">房屋通知</a>
+                      <a href="javascript:;" @click="btnd_over(2)">房屋通知</a>
                     </a-menu-item>
                     <a-menu-item key="3"
-                      ><a href="javascript:;" @click="btnd_shop">商铺通知</a>
+                      ><a href="javascript:;" @click="btnd_over(3)">商铺通知</a>
                     </a-menu-item>
                   </a-menu>
                 </a-dropdown>
@@ -90,10 +90,7 @@
             >
               <a slot="name" slot-scope="text">{{ text }}</a>
               <span slot="area">
-                <a-select
-                  default-value="lucy"
-                  style="width: 95px"
-                >
+                <a-select default-value="lucy" style="width: 95px">
                   <a-select-option value="lucy"> 微信通知 </a-select-option>
                   <a-select-option value="jack"> 短息通知 </a-select-option>
                 </a-select>
@@ -137,7 +134,9 @@
                   >发送</a
                 >
                 <a-divider type="vertical" />
-                <a-icon type="edit" theme="twoTone" /><a href="javascript:;"
+                <a-icon type="edit" theme="twoTone" /><a
+                  href="javascript:;"
+                  @click="editit(1, 2)"
                   >编辑</a
                 >
                 <a-divider type="vertical" />
@@ -227,29 +226,35 @@ export default {
     };
   },
   methods: {
-    btnw_over() {
-      this.$router.push("/home/Rinformchat");
+    btnw_over(type) {
+      this.$router.push({
+        path: "/property/informdetail",
+        query: {
+          type: type,
+        },
+      });
     },
-    btnw_house() {
-      this.$router.push("/home/Rinformchath");
+    btnd_over(type) {
+      this.$router.push({
+        path: "/property/messdetail",
+        query: {
+          type: type,
+        },
+      });
     },
-    btnw_shop() {
-      this.$router.push("/home/Rinformchats");
-    },
-    btnd_over() {
-      this.$router.push("/home/Rinformnote");
-    },
-    btnd_house() {
-      this.$router.push("/home/Rinformnoteh");
-    },
-    btnd_shop() {
-      this.$router.push("/home/Rinformnotes");
+    editit(type, type1) {
+      // type  为1 时是微信通知
+      if (type == 1) {
+        this.btnw_over(type1);
+      } else {
+        this.btnd_over(type1);
+      }
     },
     btn_send() {
-      this.$router.push("/home/Rinformsend");
+      this.$router.push("/property/senddetail");
     },
     btn_read() {
-      this.$router.push("/home/Rinformread");
+      this.$router.push("/property/readdetail");
     },
     onDelete(key) {
       console.log(key);
@@ -283,7 +288,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   background-color: #fff;
   border-radius: 10px;
   .wrapA {

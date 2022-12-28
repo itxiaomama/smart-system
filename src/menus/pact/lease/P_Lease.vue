@@ -14,32 +14,23 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
+              :pagination="pagination"
             >
               <a slot="roomname" slot-scope="text">{{ text }}</a>
-              <template slot="action" slot-scope="">
-                <a href="javascript:;"
+              <template slot="action" slot-scope="text,record">
+                <div v-if="record.status == 0">
+                <a href="javascript:;" @click="refundit(record)"
                   ><a-icon type="schedule" theme="twoTone" />确认退租</a
                 >
                 <a-divider type="vertical" />
-                <a href="javascript:;"
-                  ><router-link to="/home/Pleasepush"
-                    ><a-icon type="edit" theme="twoTone" />编辑</router-link
-                  ></a
-                >
+                <a href="javascript:;" @click="edit(record)"><a-icon type="edit" theme="twoTone" />编辑</a>
                 <a-divider type="vertical" />
                 <a href="javascript:;"
+                @click="delit(record)"
                   ><a-icon type="delete" theme="twoTone" />删除</a
                 >
-                <a-divider type="vertical" />
-                <a href="javascript:;"
-                  ><router-link to="/home/Pleasedetail"
-                    ><a-icon
-                      type="file-text"
-                      theme="twoTone"
-                    />详情</router-link
-                  ></a
-                >
+                </div>
               </template>
             </a-table>
           </div>
@@ -58,18 +49,8 @@ export default {
       dataSource: [],
       columns: [
         {
-          title: "下单时间",
+          title: "退租时间",
           align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.belong;
-            let bTimeString = b.belong;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
           dataIndex: "refund_date",
           scopedSlots: { customRender: "belong" },
         },
@@ -104,15 +85,77 @@ export default {
         },
       ],
       visible: false,
+      pagination: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = pageSize;
+          this.leaseList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = size;
+          this.leaseList();
+        },
+      }, // 页面显示数据分页内容
     };
   },
   methods: {
     leaseList() {
-      axios.get("/api/ics/contractRefund").then((res) => {
+      axios.get("/api/ics/contractRefund?per_page=9999").then((res) => {
         if (res.status_code == 200) {
           this.dataSource = res.data.data;
         }
       });
+    },
+    refundit(val){
+      let that = this ;
+      axios.patch('/api/ics/contractRefund/status',{
+        id:val.id,
+        version: val.version,
+        status:1
+      }).then((res) =>{
+          this.$message.success("操作成功");
+          that.leaseList();
+      })
+    },
+    delit(val){
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/ics/contractRefund", {
+              params: {
+                id: val.id,
+                version: val.version,
+              },
+            })
+            .then((res) => {
+              // 成功重新更新列表
+              that.$message.success("删除成功");
+              that.leaseList();
+            });
+        },
+        onCancel() {},
+      });
+    },
+    edit(val){
+      this.$router.push({
+        path:'/contract/withoutany',
+        query:{
+          id:val.id,
+          type:2
+        }
+      })
     },
   },
   created() {
@@ -130,7 +173,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

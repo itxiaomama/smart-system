@@ -12,101 +12,9 @@
           </div>
           <!-- 新增 -->
           <div class="bottom">
-            <a-button type="primary" @click="showModal">新增</a-button>
-            <a-modal v-model="visible" title="添加用户">
-              <div class="buildname" style="margin: 20px 6px; display: flex">
-                <span style="white-space: nowrap; line-height: 30px"
-                  >上级权限：</span
-                >
-                <a-input placeholder="起一个名字" style="width: 19.4vw" />
-              </div>
-              <div
-                class="inputG"
-                style="display: flex; margin: 20px 20px 20px 6px"
-              >
-                <span class="spanA" style="line-height: 30px">菜单类型：</span>
-                <a-input-group style="width: 15vw" compact>
-                  <a-cascader
-                    style="width: 19.4vw"
-                    :options="property"
-                    placeholder="请选择"
-                  />
-                </a-input-group>
-              </div>
-              <div class="buildname" style="margin: 20px 6px; display: flex">
-                <span style="white-space: nowrap; line-height: 30px"
-                  >权限名称：</span
-                >
-                <a-input placeholder="起一个名字" style="width: 19.4vw" />
-              </div>
-              <div class="buildname" style="margin: 20px -8px; display: flex">
-                <span style="white-space: nowrap; line-height: 30px"
-                  >路由唯一键：</span
-                >
-                <a-input placeholder="路由唯一键" style="width: 19.4vw" />
-              </div>
-              <div
-                class="build"
-                style="margin: 20px 20px 20px 15px; display: flex"
-              >
-                <span
-                  style="
-                    white-space: nowrap;
-                    line-height: 30px;
-                    margin-right: 5px;
-                  "
-                  >组件：<a-icon type="info-circle"
-                /></span>
-                <a-input placeholder="组件" style="width: 19.4vw" />
-              </div>
-              <div class="buildname" style="margin: 20px -8px; display: flex">
-                <span style="white-space: nowrap; line-height: 30px"
-                  >重定向地址：</span
-                >
-                <a-input placeholder="重定向地址" style="width: 19.4vw" />
-              </div>
-              <div style="display: flex; margin: 20px 20px 20px -8px">
-                <span>隐藏子菜单：</span>
-                <a-switch default-checked @change="onChange" />
-              </div>
-              <div style="display: flex; margin: 20px 20px 20px -22px">
-                <span>隐藏头部信息：</span>
-                <a-switch default-checked @change="onChange" />
-              </div>
-              <div class="buildname" style="margin: 20px -8px; display: flex">
-                <span style="white-space: nowrap; line-height: 30px"
-                  >路由唯一键：</span
-                >
-                <a-input placeholder="路由唯一键" style="width: 19.4vw" />
-              </div>
-              <div
-                class="inputG"
-                style="display: flex; margin: 20px 20px 20px 34px"
-              >
-                <span class="spanA" style="line-height: 30px">状态：</span>
-                <a-input-group style="width: 15vw" compact>
-                  <a-cascader
-                    style="width: 19.4vw"
-                    :options="property"
-                    placeholder="请选择"
-                  />
-                </a-input-group>
-              </div>
-              <div
-                style="
-                  padding: 10px 16px;
-                  text-align: right;
-                  background: transparent;
-                  border-top: 1px solid #e8e8e8;
-                  border-radius: 0 0 4px 4px;
-                "
-              >
-                <a-button @click="showCancel" style="margin-right: 20px"
-                  >取消</a-button
-                >
-                <a-button type="primary" @click="showAdd">确定</a-button>
-              </div>
-            </a-modal>
+            <a-button type="primary" @click="showModal(null, 1, '新增菜单')"
+              >新增</a-button
+            >
           </div>
         </div>
 
@@ -114,35 +22,64 @@
           <a-table
             bordered
             :columns="columns"
+            rowKey="id"
             :data-source="data"
             :row-selection="rowSelection"
-            :expanded-row-keys.sync="expandedRowKeys"
           >
-            <a slot="name" slot-scope="text">{{ text }}</a>
-            <span slot="actions">
+            <span slot="menu_type" slot-scope="text">
+              {{ text | menuTypeFilter }}
+            </span>
+
+            <span slot="actions" slot-scope="text, record">
               <!-- 编辑 -->
-              <a href="javascript:;">编辑</a>
+              <a href="javascript:;" @click="showModal(record, 2, '编辑菜单')"
+                >编辑</a
+              >
               <a-divider type="vertical" />
               <!-- 子新增 -->
-              <a href="javascript:;">新增</a>
+              <a
+                href="javascript:;"
+                @click="showModal(record.id, 1, '新增菜单')"
+                >新增</a
+              >
               <a-divider type="vertical" />
               <!--  -->
-              <a href="javascript:;">删除</a>
+              <a href="javascript:;" @click="delit(record)">删除</a>
             </span>
           </a-table>
         </div>
       </div>
     </div>
+    <menudia ref="menudia" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import menudia from "./menudia.vue";
 export default {
   name: "SystemMenu",
+  filters: {
+    menuTypeFilter(type) {
+      const menuMap = {
+        M: "目录",
+        F: "按钮",
+        C: "菜单",
+      };
+      return menuMap[type];
+    },
+  },
+  components: {
+    menudia,
+  },
   data() {
     return {
-      visible: false,
+      title: "",
+      type: null,
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      other: "",
+      visible1: false,
       data: [],
       columns: [
         {
@@ -160,23 +97,20 @@ export default {
         },
         {
           title: "排序",
-          dataIndex: "",
+          dataIndex: "order_num",
         },
         {
           title: "按钮类型",
           dataIndex: "menu_type",
-        },
-        {
-          title: "链接",
-          dataIndex: "",
+          scopedSlots: { customRender: "menu_type" },
         },
         {
           title: "重定向",
-          dataIndex: "",
+          dataIndex: "redirect_to",
         },
         {
           title: "权限标识",
-          dataIndex: "icon",
+          dataIndex: "perms",
         },
         {
           title: "状态",
@@ -197,10 +131,39 @@ export default {
     // 获取角色列表
     PatrolPoint() {
       axios.get("/api/system/menu?per_page=9999").then((res) => {
-        console.log(res);
         if (res.status_code == 200) {
           this.data = res.data;
         }
+      });
+    },
+    showModal(form, type, title) {
+      if (type == 1) {
+        this.$refs.menudia.add(form, type, title);
+      } else {
+        this.$refs.menudia.edit(form, type, title);
+      }
+    },
+    // 删除成功
+    delit(item) {
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/system/menu", {
+              params: {
+                id: item.id,
+                version: item.version,
+              },
+            })
+            .then(() => {
+              that.$message.success("删除成功");
+              // 删除成功重置用户列表
+              that.PatrolPoint();
+            });
+        },
+        onCancel() {},
       });
     },
   },
@@ -217,7 +180,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   max-height: 80vh;
   overflow-y: auto;
   background-color: #fff;

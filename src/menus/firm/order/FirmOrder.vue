@@ -17,7 +17,7 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
             >
               <a slot="name" slot-scope="text">{{ text }}</a>
             </a-table>
@@ -86,7 +86,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

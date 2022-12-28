@@ -21,7 +21,7 @@
             </div>
             <div class="bottom">
               <a-button type="primary">
-                <router-link to="/home/Jcluepush">新增</router-link>
+                <router-link to="/merchants/clubdetail">新增</router-link>
               </a-button>
             </div>
           </div>
@@ -33,7 +33,8 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
+              :pagination="pagination"
             >
               <a slot="belong" slot-scope="text">{{ text }}</a>
               <span slot="action" slot-scope="text, record">
@@ -42,8 +43,7 @@
                 >
                 <a-divider type="vertical" />
                 <a @click="deleteClue(record.id, record.version)">
-                  <a-icon type="delete" theme="twoTone" />删除{{ record.id
-                  }}{{ record.version }}</a
+                  <a-icon type="delete" theme="twoTone" />删除</a
                 >
               </span>
             </a-table>
@@ -72,7 +72,7 @@ export default {
         },
         {
           title: "联系人",
-          dataIndex: "",
+          dataIndex: "contacts",
         },
         {
           title: "联系电话",
@@ -85,30 +85,16 @@ export default {
         {
           title: "创建时间",
           align: "center",
-          sorter: (a, b) => {
-            let aTimeString = a.collect;
-            let bTimeString = b.collect;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
           dataIndex: "created_at",
+          defaultSortOrder: 'descend', // 默认上到下为由大到小的顺序
+          sorter: (a, b) => { return a.time> b.time? 1 : -1 },
         },
         {
           title: "更新时间",
           align: "center",
-          sorter: (a, b) => {
-            let aTimeString = a.newtime;
-            let bTimeString = b.newtime;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
           dataIndex: "updated_at",
+          defaultSortOrder: 'descend', // 默认上到下为由大到小的顺序
+          sorter: (a, b) => { return a.time> b.time? 1 : -1 },
         },
         {
           title: "创建人",
@@ -130,6 +116,26 @@ export default {
       ],
       inputVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
+      pagination:{
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = pageSize;
+          this.clueList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = size;
+          this.clueList();
+        },
+      }
     };
   },
   created() {
@@ -181,7 +187,7 @@ export default {
     // 详情
     clueDetail(id) {
       this.$router.push({
-        path: "/home/Jcluedetail",
+        path: "/merchants/clubdetail1",
         query: { id: id },
       });
     },
@@ -198,7 +204,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

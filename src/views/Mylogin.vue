@@ -37,13 +37,13 @@
             </a-form-item>
             <a-form-item>
               <a-checkbox> 记住密码 </a-checkbox>
-              <a
+              <!-- <a
                 class="login-form-forgot"
                 href="javascript:;"
                 @click="btn_loginA"
               >
                 注册账户
-              </a>
+              </a> -->
               <a-button
                 id="btn"
                 type="primary"
@@ -74,15 +74,31 @@ export default {
       const that = this;
       axios.post("/api/system/auth", this.from).then(function (res) {
         if (res.message !== "success") return;
-        that.$message.error(res.message);
+        that.$message.success(res.message);
         if (res.message == "success") {
-          that.$message.success("登录成功");
-          window.sessionStorage.setItem("token", res.data.access_token);
-          that.$router.push({ path: "home/Bcarden" });
+          // that.$message.success("登录成功");
+          const token = res.data.access_token;
+          that.$store.commit("set_token", token);
+          that.getInfo();
+          that.getMenu();
+          // window.sessionStorage.setItem("token", res.data.access_token);
+          that.$router.push({ path: "/" });
         }
       });
     },
-    btn_loginA() {},
+    // btn_loginA() {},
+    getInfo() {
+      axios.get("/api/system/auth/me").then((res) => {
+        this.$store.commit("set_userInfo", res.data);
+      });
+    },
+    getMenu() {
+      axios.get("/api/system/menu/my").then((res) => {
+        console.log(res);
+        this.$store.commit("set_routelist", res.data);
+        // this.$store.commit("set_userInfo", res.data);
+      });
+    },
   },
 };
 </script>

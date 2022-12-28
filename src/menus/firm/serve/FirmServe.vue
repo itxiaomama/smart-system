@@ -14,143 +14,9 @@
           </div>
           <div class="bottom">
             <!-- 新增 -->
-            <a-button type="primary" @click="AddList">新增</a-button>
-            <!-- 新增modal弹框 -->
-            <a-modal v-model="visibleAdd" title="新增banner菜单" width="40%">
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>服务名称：</span>
-                <a-input
-                  placeholder="请输入服务名称"
-                  style="width: 30vw"
-                  v-model="FromAdd.service_name"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>服务简介：</span>
-                <a-input
-                  placeholder="请输入服务简介"
-                  style="width: 30vw"
-                  v-model="FromAdd.service_desc"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 84px">
-                <span>供应商：</span>
-                <a-select
-                  placeholder="请选择"
-                  style="width: 30vw"
-                  v-model="FromAdd.supplier_id"
-                  option-label-prop="label"
-                >
-                  <a-select-option
-                    v-for="item in SupplierOptions"
-                    :key="item.id"
-                    :label="item.supplier_name"
-                    :value="item.id"
-                  >
-                    <span role="img" :aria-label="item.supplier_name">
-                      {{ item.supplier_name }}
-                    </span>
-                  </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>菜单选择：</span>
-                <a-select
-                  placeholder="请选择"
-                  style="width: 30vw"
-                  v-model="FromAdd.menu_id"
-                  option-label-prop="label"
-                >
-                  <a-select-option
-                    v-for="item in MenuOptions"
-                    :key="item.id"
-                    :label="item.menu_name"
-                    :value="item.id"
-                  >
-                    <span role="img" :aria-label="item.menu_name">
-                      {{ item.menu_name }}
-                    </span>
-                  </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 98px">
-                <span>价格：</span>
-                <a-input
-                  placeholder="请输入价格"
-                  style="width: 30vw"
-                  v-model="FromAdd.price"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>价格单位：</span>
-                <a-input
-                  placeholder="请输入价格单位"
-                  style="width: 30vw"
-                  v-model="FromAdd.price_unit"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>咨询电话：</span>
-                <a-input
-                  placeholder="请输入咨询电话"
-                  style="width: 30vw"
-                  v-model="FromAdd.contract"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 0">
-                <span>咨询电话服务时间段：</span>
-                <!-- v-model="FromAdd.contract_time_start" -->
-                <!-- v-model="FromAdd.contract_time_end" -->
-                <a-time-picker
-                  format="HH:mm"
-                  placeholder="请选择服务时间"
-                  style="width: 14.5vw"
-                  @change="pickerChange"
-                />
-                <span>~</span>
-                <a-time-picker
-                  format="HH:mm"
-                  placeholder="请选择服务时间"
-                  style="width: 15vw"
-                  @change="pickerChange"
-                />
-                <div style="margin: 10px 140px">
-                  <a-checkbox v-model="FromAdd.is_work_day">
-                    仅工作日
-                  </a-checkbox>
-                </div>
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>上传详情：</span>
-                <a-input
-                  placeholder="请输入上传详情"
-                  style="width: 30vw"
-                  v-model="FromAdd.service_content"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 0 0 70px">
-                <span>服务协议：</span>
-                <a-checkbox v-model="FromAdd.agreement_status"> </a-checkbox>
-              </div>
-              <div
-                style="
-                  padding: 10px 16px;
-                  text-align: right;
-                  background: transparent;
-                  border-top: 1px solid #e8e8e8;
-                  border-radius: 0 0 4px 4px;
-                "
-              >
-                <a href="javascript:;"
-                  ><a-button style="margin-right: 20px" @click="AddListUp"
-                    >取消</a-button
-                  ></a
-                >
-                <a href="javascript:;" @click="AddListSure">
-                  <a-button type="primary">确定</a-button></a
-                >
-              </div>
-            </a-modal>
+            <a-button type="primary" @click="AddList({}, 1, '新增服务')"
+              >新增</a-button
+            >
           </div>
         </div>
         <div class="content" style="margin-top: 20px">
@@ -160,10 +26,9 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
               :pagination="paginationServe"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
               <!-- 状态开关 -->
               <span slot="area" slot-scope="text, record">
                 <a-switch
@@ -197,151 +62,9 @@
               </span>
               <template slot="action" slot-scope="text, record">
                 <!-- 编辑 -->
-                <a @click="EditList(record)"
+                <a @click="AddList(record, 2, '编辑服务')"
                   ><a-icon type="edit" theme="twoTone" />编辑
                 </a>
-
-                <!-- 编辑modal弹框 -->
-                <a-modal
-                  v-model="visibleEdit"
-                  title="编辑banner菜单"
-                  width="40%"
-                >
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>服务名称：</span>
-                    <a-input
-                      placeholder="请输入服务名称"
-                      style="width: 30vw"
-                      v-model="FromEdit.service_name"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>服务简介：</span>
-                    <a-input
-                      placeholder="请输入服务简介"
-                      style="width: 30vw"
-                      v-model="FromEdit.service_desc"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 84px">
-                    <span>供应商：</span>
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 30vw"
-                      v-model="FromEdit.supplier_id"
-                      option-label-prop="label"
-                    >
-                      <a-select-option
-                        v-for="item in SupplierOptions"
-                        :key="item.id"
-                        :label="item.supplier_name"
-                        :value="item.id"
-                      >
-                        <span role="img" :aria-label="item.supplier_name">
-                          {{ item.supplier_name }}
-                        </span>
-                      </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>菜单选择：</span>
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 30vw"
-                      v-model="FromEdit.menu_id"
-                      option-label-prop="label"
-                    >
-                      <a-select-option
-                        v-for="item in MenuOptions"
-                        :key="item.id"
-                        :label="item.menu_name"
-                        :value="item.id"
-                      >
-                        <span role="img" :aria-label="item.menu_name">
-                          {{ item.menu_name }}
-                        </span>
-                      </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 98px">
-                    <span>价格：</span>
-                    <a-input
-                      placeholder="请输入价格"
-                      style="width: 30vw"
-                      v-model="FromEdit.price"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>价格单位：</span>
-                    <a-input
-                      placeholder="请输入价格单位"
-                      style="width: 30vw"
-                      v-model="FromEdit.price_unit"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>咨询电话：</span>
-                    <a-input
-                      placeholder="请输入咨询电话"
-                      style="width: 30vw"
-                      v-model="FromEdit.contract"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 0">
-                    <span>咨询电话服务时间段：</span>
-                    <!-- v-model="FromAdd.contract_time_start" -->
-                    <!-- v-model="FromAdd.contract_time_end" -->
-                    <a-time-picker
-                      format="HH:mm"
-                      placeholder="请选择服务时间"
-                      style="width: 14.5vw"
-                      @change="pickerChange"
-                    />
-                    <span>~</span>
-                    <a-time-picker
-                      format="HH:mm"
-                      placeholder="请选择服务时间"
-                      style="width: 15vw"
-                      @change="pickerChange"
-                    />
-                    <div style="margin: 10px 140px">
-                      <a-checkbox v-model="FromEdit.is_work_day">
-                        仅工作日
-                      </a-checkbox>
-                    </div>
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>上传详情：</span>
-                    <a-input
-                      placeholder="请输入上传详情"
-                      style="width: 30vw"
-                      v-model="FromEdit.service_content"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 70px">
-                    <span>服务协议：</span>
-                    <a-checkbox v-model="FromEdit.agreement_status">
-                    </a-checkbox>
-                  </div>
-                  <div
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a href="javascript:;"
-                      ><a-button style="margin-right: 20px" @click="EditListUp"
-                        >取消</a-button
-                      ></a
-                    >
-                    <a href="javascript:;" @click="EditListSure">
-                      <a-button type="primary">确定</a-button></a
-                    >
-                  </div>
-                </a-modal>
                 <a-divider type="vertical" />
                 <!-- 删除 -->
                 <a
@@ -356,16 +79,140 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal v-model="visibleAdd" @ok="handleSubmit"  @cancel="closeit" class="bigmodal" :title="title" width="40%">
+      <a-form
+        :form="form"
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 16 }"
+      >
+        <a-form-item label="服务名称：">
+          <a-input
+            v-decorator="[
+              'service_name',
+              {
+                rules: [{ required: true, message: '请输入服务名称!' }],
+              },
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="服务简介：">
+          <a-input type="textarea" v-decorator="['service_desc']" />
+        </a-form-item>
+
+        <a-form-item label="供应商：">
+          <a-select
+            placeholder="请选择"
+            v-decorator="[
+              'supplier_id',
+              {
+                rules: [{ required: true, message: '请选择供应商!' }],
+              },
+            ]"
+          >
+            <a-select-option
+              v-for="item in SupplierOptions"
+              :key="item.id"
+              :label="item.supplier_name"
+              :value="item.id"
+            >
+              <span role="img" :aria-label="item.supplier_name">
+                {{ item.supplier_name }}
+              </span>
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="菜单管理：">
+          <a-tree-select
+            class="kselect"
+            v-decorator="[
+              'menu_id',
+              {
+                rules: [{ required: true, message: '请选择菜单!' }],
+              },
+            ]"
+            allow-clear
+            :treeData="MenuOptions"
+            tree-default-expand-all
+            placeholder="请选择"
+          ></a-tree-select>
+        </a-form-item>
+
+        <a-form-item label="价格(元)：">
+          <a-input
+            type="number"
+            v-decorator="[
+              'price',
+              {
+                rules: [{ required: true, message: '请输入价格!' }],
+              },
+            ]"
+          />
+        </a-form-item>
+        <a-form-item label="价格单位：">
+          <a-input v-decorator="['price_unit']" />
+        </a-form-item>
+        <a-form-item label="咨询电话(可选)：">
+          <a-input v-decorator="['contract']" />
+        </a-form-item>
+
+        <a-form-item label="咨询电话服务时间段：">
+          <div style="display:flex;">
+            <a-form-item>
+          <a-time-picker v-decorator="['contract_time_start']" format="HH:mm" />
+          </a-form-item>
+          <span>~</span>
+          <a-form-item>
+            <a-time-picker v-decorator="['contract_time_end']"  format="HH:mm" />
+          </a-form-item>
+          </div>
+          <div>
+            <a-form-item>
+              <a-checkbox-group v-model="checked">
+                <a-checkbox value="1">仅工作日</a-checkbox>
+              </a-checkbox-group>
+            </a-form-item>
+          </div>
+        </a-form-item>
+        <a-form-item label="上传详情：">
+          <keditor v-model="service_content" @change="change" />
+        </a-form-item>
+        <a-form-item label="服务协议(可选)：">
+          <a-checkbox-group v-model="checked1">
+            <a-checkbox value="1">协议状态</a-checkbox>
+          </a-checkbox-group>
+        </a-form-item>
+        <a-form-item label="协议名称：">
+          <a-input v-decorator="['agreement_name']" />
+        </a-form-item>
+        <a-form-item label="协议内容：">
+          <a-input type="textarea" v-decorator="['agreement_content']" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
 <script>
-import { Alert } from "ant-design-vue";
 import axios from "axios";
+import moment from "moment";
+import keditor from "@/components/common/wangeditor.vue";
 export default {
-  name: "My_F_Serve",
+  components: {
+    keditor,
+  },
   data() {
     return {
+      service_content:'',
+      checked:[],
+      checked1:[],
+      MenuOptions: [],
+      form: this.$form.createForm(this, { name: "coordinated" }),
+      title: null,
+      type: null,
       dataSource: [], //列表数据源
       columns: [
         {
@@ -463,24 +310,62 @@ export default {
     this.SupplierList();
     // 获取菜单数据
     this.menuList();
-    // 修改时间格式
-    this.yearTime();
   },
   methods: {
-    // 修改时间赋值
-    pickerChange(momentTime, yearTime) {
-      this.FromAdd.contract_time_start = yearTime;
-      this.FromAdd.contract_time_end = yearTime;
-      this.FromEdit.contract_time_start = yearTime;
-      this.FromEdit.contract_time_end = yearTime;
+    change(val){
+      this.service_content = val ;
     },
-    // 修改时间格式
-    yearTime(proTime) {
-      let time = new Date(proTime);
-      let Hours = time.getHours(); //小时
-      let Minutes = time.getMinutes(); //分钟
-      return `${Hours}:${Minutes}`;
+    handleSubmit(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        console.log(moment(values.contract_time_start).format('HH:mm'))
+        if (!err) {
+          let  data = {
+            service_name:values.service_name,
+            service_desc:values.service_desc,
+            supplier_id:values.supplier_id,
+            menu_id:values.menu_id,
+            price:values.price,
+            price_unit:values.price_unit,
+            contract:values.contract,
+            contract_time_start:moment(values.contract_time_start).format('HH:mm'),
+            contract_time_end:moment(values.contract_time_end).format('HH:mm'),
+            is_work_day:this.checked.length >0?1:0,
+            service_content:this.service_content,
+            agreement_status:this.checked1.length > 0 ?1:0,
+            agreement_name:values.agreement_name,
+            agreement_content:values.agreement_content,
+          }
+          console.log(data);
+          if(this.type == 1){
+            axios.post("/api/ics/serviceManage", data).then((res) => {
+            if (res.message === "success") {
+              this.closeit();
+              this.$message.success("操作成功");
+              this.manageList();
+            }
+            });
+          }else{
+            data.id = this.FromAdd.id ;
+            data.version = this.FromAdd.version ;
+            axios.patch("/api/ics/serviceManage", data).then((res) => {
+              if (res.message === "success") {
+                this.closeit();
+                this.$message.success("操作成功");
+                this.manageList();
+              }
+            });
+          }
+        }
+      });
     },
+    closeit(){
+      this.checked = [];
+      this.checked1 = [];
+      this.service_content = '';
+      this.visibleAdd = false;
+    },
+
     // 获取列表数据
     manageList() {
       axios.get("/api/ics/serviceManage?per_page=9999").then((res) => {
@@ -505,17 +390,63 @@ export default {
         this.SupplierOptions = res.data.data;
       });
     },
+    getTreedata(data) {
+      var arr = [];
+      for (var i = 0; i < data.length; i++) {
+        var tempobj = {
+          title: data[i].menu_name,
+          value: data[i].id,
+          key: data[i].id,
+        };
+        if ("children" in data[i]) {
+          tempobj.children = this.getTreedata(data[i].children);
+        }
+        arr.push(tempobj);
+      }
+      return arr;
+    },
     // 获取菜单数据
     menuList() {
       axios.get("/api/ics/serviceMenu").then((res) => {
-        this.MenuOptions = res.data;
+        let arr = this.getTreedata(res.data);
+        this.MenuOptions.push(...arr);
       });
     },
     // todo 新增
     // 新增弹框显示
-    AddList() {
+    AddList(form, type, title) {
+      this.type = type;
+      this.title = title;
+      this.FromAdd = { ...form };
+      if(type == 2){
+        this.$nextTick(() => {
+          let arr = [] , arr1 =[];
+          arr.push(JSON.stringify(form.is_work_day));
+          arr1.push(JSON.stringify(form.agreement_status));
+          this.checked = arr ;
+          this.checked1 = arr1 ;
+          this.service_content = form.service_content;
+          this.form.setFieldsValue({
+            service_name: form.service_name,
+            service_desc: form.service_desc,
+            supplier_id: form.supplier_id,
+            menu_id: form.menu_id,
+            price: form.price,
+            price_unit: form.price_unit,
+            contract: form.contract,
+            contract_time_start: moment(form.contract_time_start,'HH:mm'),
+            contract_time_end: moment(form.contract_time_end,'HH:mm'),
+            agreement_name: form.agreement_name,
+            agreement_content: form.agreement_content,
+          });
+        });
+      }else{
+        this.checked = [];
+        this.checked1 = [] ;
+        this.service_content = '';
+        this.form.resetFields();
+      }
       this.visibleAdd = true;
-      this.FromAdd = { service_name: "" };
     },
     // 新增确认
     AddListSure() {
@@ -587,7 +518,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .buildname {

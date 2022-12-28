@@ -1,18 +1,22 @@
 import axios from "axios"
-import { Message } from 'element-ui'
+import { message } from 'ant-design-vue'
+import store from '@/store'
+import router from "@/router";
+import storage from '../utils/storage'
 
 // 添加一个请求拦截器，回调函数会在发出请求时执行
 // config:请求配置
 axios.interceptors.request.use(config => {
     // Do something before request is sent
-
     // console.log(config)
-    let token = window.sessionStorage.getItem("token") ? window.sessionStorage.getItem("token") : "";
-    // config.headers.token = token;
-    config.headers.Authorization = 'Bearer' + token;
+    if (store.state.token) {
+        config.headers.Authorization = 'Bearer' + ' ' + store.state.token;
+    }
+    // let token = window.sessionStorage.getItem("token") ? window.sessionStorage.getItem("token") : "";
+    // // config.headers.token = token;
+    // config.headers.Authorization = 'Bearer' + ' ' + token;
     return config;
 }, error => {
-    console.log('error>>>>>>>>', error)
     // Do something with request error
     return Promise.reject(error);
 });
@@ -27,14 +31,23 @@ axios.interceptors.response.use(response => {
 
     switch (error.response.status) {
         case 401:
-            Message.error("登录状态过期，请重新登录")
-            setTimeout(() => {
-                window.location.href = '/login'
-                // const that = this;
-                // that.$router.push({ path: "/login" });
-            }, 2000)
+            store.commit('del_token');
+            // storage.removeAll();
+            message.error("登录状态过期，请重新登录")
+            router.replace({
+                path: '/login'
+            })
             break;
-        case 400:
+        // case 400:
+        //     store.commit('del_token');
+        //     // storage.removeAll();
+        //     message.error("请先登录")
+        //     router.replace({
+        //         path: '/login'
+        //     })
+        //     break;
+        case 422:
+            message.error(error.response.data.message);
             break;
         default:
             break;
@@ -77,7 +90,21 @@ function patch(url, params = {}) {
 
     return new Promise((resolve, reject) => {
         axios({
-            method: 'post',
+            method: 'patch',
+            url,
+            params
+        }).then((data) => {
+            resolve(data)
+        }).catch(err => {
+            reject(err);
+        })
+    })
+}
+function deleteApi(url, params = {}) {
+
+    return new Promise((resolve, reject) => {
+        axios({
+            method: 'delete',
             url,
             params
         }).then((data) => {
@@ -88,5 +115,5 @@ function patch(url, params = {}) {
     })
 }
 
-export { get, post, patch }
+export { get, post, patch, deleteApi }
 

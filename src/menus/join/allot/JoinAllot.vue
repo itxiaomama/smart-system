@@ -15,60 +15,45 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
+              :pagination="pagination"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
-              <span slot="newtime" slot-scope="newtime">
-                <a-tag
-                  v-for="tag in newtime"
-                  :key="tag"
-                  :color="tag.length < 3 ? 'cyan' : 'orange'"
-                >
-                  {{ tag.toUpperCase() }}
-                </a-tag>
-              </span>
-              <span slot="action">
-                <a
-                  ><router-link to="/home/Jallotdetail">
-                    <a-icon type="file-text" theme="twoTone" />详情</router-link
-                  ></a
-                >
+              <span slot="action" slot-scope="text, record">
+                <a @click="todetail(record)"><a-icon type="file-text" theme="twoTone" />详情</a>
                 <a-divider type="vertical" />
-                <a @click="showModal">
+                <a @click="showModal(record)">
                   <a-icon type="tag" theme="twoTone" />分派</a
                 >
-                <a-modal v-model="visible" title="分派">
-                  <div
-                    class="buildname"
-                    style="display: flex; margin-bottom: 40px"
-                  >
-                    <span style="white-space: nowrap; line-height: 32px"
-                      >对接人员：</span
-                    >
-                    <a-input></a-input>
-                  </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button @click="handleOk" style="margin-right: 20px"
-                      >取消</a-button
-                    >
-                    <a-button type="primary" @click="showAdd">确定</a-button>
-                  </div>
-                </a-modal>
               </span>
             </a-table>
           </div>
         </div>
       </div>
     </div>
+
+    <a-modal v-model="visible" title="分派">
+        <div
+          class="buildname"
+          style="display: flex; margin-bottom: 40px"
+        >
+          <span style="white-space: nowrap; line-height: 32px"
+            >对接人员：</span
+          >
+           <a-select style="width: 230px" v-model="userid">
+              <a-select-option v-for="item in uselist" :key="item.id" :value="item.id">
+                {{item.user_name}}
+              </a-select-option>
+            </a-select>
+        </div>
+        <template slot="footer">
+        <div>
+          <a-button @click="handleOk" style="margin-right: 20px"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="showAdd">确定</a-button>
+        </div>
+      </template>
+  </a-modal>
   </div>
 </template>
 
@@ -78,53 +63,40 @@ export default {
   name: "JoinAllot",
   data() {
     return {
+      userid:null,
+      record:{},
       dataSource: [],
+      uselist:[],
       columns: [
         {
           title: "客户名称",
-          dataIndex: "belong",
-          scopedSlots: { customRender: "belong" },
+          dataIndex: "customer_name",
+          scopedSlots: { customRender: "customer_name" },
         },
         {
           title: "主题",
-          dataIndex: "roomname",
-          scopedSlots: { customRender: "roomname" },
+          dataIndex: "clue_name",
+          scopedSlots: { customRender: "clue_name" },
         },
         {
           title: "联系电话",
-          dataIndex: "belongbuild",
-          scopedSlots: { customRender: "belongbuild" },
+          dataIndex: "phone",
+          scopedSlots: { customRender: "phone" },
         },
         {
           title: "线索来源",
-          dataIndex: "floor",
-          scopedSlots: { customRender: "floor" },
-        },
-        {
-          title: "创建时间",
-          align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.area;
-            let bTimeString = b.area;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
-          dataIndex: "area",
-          scopedSlots: { customRender: "area" },
+          dataIndex: "source_name",
+          scopedSlots: { customRender: "source_name" },
         },
         {
           title: "对接人",
-          dataIndex: "collect",
-          scopedSlots: { customRender: "collect" },
+          dataIndex: "contacts",
+          scopedSlots: { customRender: "contacts" },
         },
         {
           title: "创建人",
-          dataIndex: "newtime",
-          scopedSlots: { customRender: "newtime" },
+          dataIndex: "create_by",
+          scopedSlots: { customRender: "create_by" },
         },
         {
           title: "操作",
@@ -133,25 +105,75 @@ export default {
         },
       ],
       visible: false,
+      pagination: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = pageSize;
+          this.AllotList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = size;
+          this.AllotList();
+        },
+      }, // 页面显示数据分页内容
     };
   },
   methods: {
     //获取线索分派列表
     AllotList() {
       axios.get("/api/ics/clue/assignment?per_page=9999").then((res) => {
-        if (res.status_code == 200) {
+        // if (res.status_code == 200) {
           this.dataSource = res.data.data;
-        }
+        // }
       });
     },
-    showModal() {
+    todetail(record){
+      this.$router.push({
+        path:'/merchants/clubdetail1',
+        query:{
+          id:record.id
+        }
+      })
+    },
+    showModal(record) {
+      this.record = record;
+      this.getuserlist();
       this.visible = true;
     },
     handleOk() {
+      this.userid = null;
       this.visible = false;
     },
     showAdd() {
-      this.visible = false;
+      console.log(this.userid)
+      if(this.userid == null){
+        this.$message.error('请选择对接人！')
+        return false ;
+      }
+      let data = {
+        id:this.record.id,
+        version: this.record.version,
+        user_id:this.userid
+      }
+      axios.patch('/api/ics/clue/assignment',data).then((res) =>{
+        this.AllotList();
+        this.visible = false;
+      })
+    
+    },
+    getuserlist(){
+      axios.get("/api/system/user?per_page=9999").then((res) => {
+          this.uselist = res.data.data;
+      });
     },
   },
   created() {
@@ -175,7 +197,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

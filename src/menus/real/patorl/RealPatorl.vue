@@ -16,142 +16,11 @@
                     v-model="SearchPointVal"
                   />
                   <!-- 新增 -->
-                  <a-button type="primary" @click="AddShowPoint">新增</a-button>
-                  <!-- 巡更点新增modal弹框 -->
-                  <a-modal
-                    v-model="VisiblePoint"
-                    title="添加巡更点"
-                    width="40%"
+                  <a-button
+                    type="primary"
+                    @click="AddShowPoint({}, 1, '新建巡更点')"
+                    >新增</a-button
                   >
-                    <div class="buildname" style="margin: 20px 4px">
-                      <span>巡更点名称：</span>
-                      <a-input
-                        placeholder="请输入巡更点名称"
-                        style="width: 30vw"
-                        v-model="fromPoint.point_name"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 46px">
-                      <span>楼宇：</span>
-                      <a-select
-                        default-value="请选择"
-                        style="width: 30vw"
-                        v-model="fromPoint.building_id"
-                        option-label-prop="label"
-                        @change="GetFloor()"
-                      >
-                        <a-select-option
-                          v-for="item in BuildOptions"
-                          :key="item.id"
-                          :label="item.name"
-                          :value="item.id"
-                        >
-                          <span role="img" :aria-label="item.name">
-                            {{ item.name }}
-                          </span>
-                        </a-select-option>
-                      </a-select>
-                    </div>
-                    <div class="buildname" style="margin: 20px 46px">
-                      <span>楼层：</span>
-                      <a-select
-                        default-value="请选择"
-                        style="width: 30vw"
-                        v-model="fromPoint.building_detail_id"
-                        option-label-prop="label"
-                      >
-                        <a-select-option
-                          v-for="item in FloorOptions"
-                          :key="item.id"
-                          :label="item.name"
-                          :value="item.id"
-                        >
-                          <span role="img" :aria-label="item.name">
-                            {{ item.name }}
-                          </span>
-                        </a-select-option>
-                      </a-select>
-                    </div>
-                    <div class="buildname" style="margin: 20px 46px">
-                      <span>经度：</span>
-                      <a-input
-                        placeholder="请输入经度"
-                        style="width: 30vw"
-                        v-model="fromPoint.longitude"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 46px">
-                      <span>纬度：</span>
-                      <a-input
-                        placeholder="请输入纬度"
-                        style="width: 30vw"
-                        v-model="fromPoint.latitude"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 18px">
-                      <span>定位距离：</span>
-                      <a-input
-                        placeholder="请输入定位距离"
-                        style="width: 30vw"
-                        v-model="fromPoint.distance"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 18px">
-                      <span>位置描述：</span>
-                      <a-input
-                        placeholder="请输入位置描述"
-                        style="width: 30vw"
-                        v-model="fromPoint.dis_describe"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 18px">
-                      <span>位置编号：</span>
-                      <a-input
-                        placeholder="请输入位置编号"
-                        style="width: 30vw"
-                        v-model="fromPoint.dis_number"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 45px">
-                      <span>备注：</span>
-                      <a-input
-                        placeholder="请输入备注"
-                        style="width: 30vw"
-                        v-model="fromPoint.remark"
-                      />
-                    </div>
-                    <div class="site" style="margin: 20px 45px">
-                      <span>状态：</span>
-                      <div>
-                        <a-select
-                          style="width: 30vw"
-                          v-model="fromPoint.status"
-                        >
-                          <a-select-option value="1"> 正常 </a-select-option>
-                          <a-select-option value="0"> 停用 </a-select-option>
-                        </a-select>
-                      </div>
-                    </div>
-                    <div
-                      class="btnant"
-                      style="
-                        padding: 10px 16px;
-                        text-align: right;
-                        background: transparent;
-                        border-top: 1px solid #e8e8e8;
-                        border-radius: 0 0 4px 4px;
-                      "
-                    >
-                      <a-button
-                        @click="AddPointCancel"
-                        style="margin-right: 20px"
-                        >取消</a-button
-                      >
-                      <a-button type="primary" @click="AddPoint()"
-                        >确定
-                      </a-button>
-                    </div>
-                  </a-modal>
                 </div>
                 <span slot="tab">
                   <a-icon type="line-chart" />
@@ -167,185 +36,26 @@
                     rowKey="id"
                     :pagination="PaginationOptPatrolPoint"
                   >
-                    <a slot="point_name" slot-scope="text">{{ text }}</a>
                     <!-- 状态开关 -->
                     <span slot="status" slot-scope="text, record">
                       <a-switch
-                        v-if="record.status == 1"
                         default-checked
                         checked-children="启用"
                         un-checked-children="停用"
-                        @change="
-                          switchChange(
-                            $event,
-                            record.id,
-                            record.version,
-                            'status'
-                          )
-                        "
-                      />
-                      <a-switch
-                        v-if="record.status == 0"
-                        default-unchecked
-                        checked-children="启用"
-                        un-checked-children="停用"
-                        @change="
-                          switchChange(
-                            $event,
-                            record.id,
-                            record.version,
-                            'status'
-                          )
-                        "
+                        :checked="record.status == 0 ? false : true"
+                        @change="switchChange(record)"
                       />
                     </span>
                     <span slot="actions" slot-scope="text, record">
                       <!-- 编辑 -->
-                      <a href="javascript:;" @click="EditPoint(record)"
-                        ><a-icon type="edit" theme="twoTone" />编辑</a
-                      >
-                      <!-- 巡更点编辑modal弹框 -->
-                      <a-modal
-                        v-model="VisiblePointEdit"
-                        title="编辑巡更点"
-                        width="40%"
-                      >
-                        <div class="buildname" style="margin: 20px 4px">
-                          <span>巡更点名称：</span>
-                          <a-input
-                            placeholder="请输入巡更点名称"
-                            style="width: 30vw"
-                            v-model="from.point_name"
-                          />
-                        </div>
-                        <div class="buildname" style="margin: 20px 46px">
-                          <span prop="building_id">楼宇：</span>
-                          <a-select
-                            default-value="请选择"
-                            style="width: 30vw"
-                            v-model="from.building_id"
-                            option-label-prop="label"
-                          >
-                            <a-select-option
-                              v-for="item in BuildOptions"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id"
-                            >
-                              <span role="img" :aria-label="item.name">
-                                {{ item.name }}
-                              </span>
-                            </a-select-option>
-                          </a-select>
-                        </div>
-                        <div class="buildname" style="margin: 20px 46px">
-                          <span>楼层：</span>
-                          <a-select
-                            default-value="请选择"
-                            style="width: 30vw"
-                            v-model="from.building_detail_id"
-                            option-label-prop="label"
-                          >
-                            <a-select-option
-                              v-for="item in FloorOptions"
-                              :key="item.id"
-                              :label="item.name"
-                              :value="item.id"
-                            >
-                              <span role="img" :aria-label="item.name">
-                                {{ item.name }}
-                              </span>
-                            </a-select-option>
-                          </a-select>
-                        </div>
-                        <div class="buildname" style="margin: 20px 46px">
-                          <span>经度：</span>
-                          <a-input
-                            placeholder="请输入经度"
-                            style="width: 30vw"
-                            v-model="from.longitude"
-                          />
-                        </div>
-                        <div class="buildname" style="margin: 20px 46px">
-                          <span>纬度：</span>
-                          <a-input
-                            placeholder="请输入纬度"
-                            style="width: 30vw"
-                            v-model="from.latitude"
-                          />
-                        </div>
-                        <div class="buildname" style="margin: 20px 18px">
-                          <span>定位距离：</span>
-                          <a-input
-                            placeholder="请输入定位距离"
-                            style="width: 30vw"
-                            v-model="from.distance"
-                          />
-                        </div>
-                        <div class="buildname" style="margin: 20px 18px">
-                          <span>位置描述：</span>
-                          <a-input
-                            placeholder="请输入位置编号"
-                            style="width: 30vw"
-                            v-model="from.dis_describe"
-                          />
-                        </div>
-                        <div class="buildname" style="margin: 20px 18px">
-                          <span>位置编号：</span>
-                          <a-input
-                            placeholder="请输入联系电话"
-                            style="width: 30vw"
-                            v-model="from.dis_number"
-                          />
-                        </div>
-                        <div class="buildname" style="margin: 20px 45px">
-                          <span>备注：</span>
-                          <a-input
-                            placeholder="请输入联系电话"
-                            style="width: 30vw"
-                            v-model="from.remark"
-                          />
-                        </div>
-                        <div class="site" style="margin: 20px 45px">
-                          <span>状态：</span>
-                          <div>
-                            <a-select style="width: 30vw" v-model="from.status">
-                              <a-select-option value="1">
-                                启用
-                              </a-select-option>
-                              <a-select-option value="0">
-                                停用
-                              </a-select-option>
-                            </a-select>
-                          </div>
-                        </div>
-                        <div
-                          class="btnant"
-                          style="
-                            padding: 10px 16px;
-                            text-align: right;
-                            background: transparent;
-                            border-top: 1px solid #e8e8e8;
-                            border-radius: 0 0 4px 4px;
-                          "
-                        >
-                          <a-button
-                            @click="EditPointCancel"
-                            style="margin-right: 20px"
-                            >取消</a-button
-                          >
-                          <a-button
-                            type="primary"
-                            @click="EditPointSure(record)"
-                            >确定
-                          </a-button>
-                        </div>
-                      </a-modal>
-                      <a-divider type="vertical" />
-                      <!-- 删除 -->
                       <a
                         href="javascript:;"
-                        @click="DeletePoint(record.id, record.version)"
+                        @click="AddShowPoint(record, 2, '编辑巡更点')"
+                        ><a-icon type="edit" theme="twoTone" />编辑</a
+                      >
+                      <a-divider type="vertical" />
+                      <!-- 删除 -->
+                      <a href="javascript:;" @click="DeletePoint(record)"
                         ><a-icon type="delete" theme="twoTone" />删除</a
                       >
                     </span>
@@ -363,449 +73,49 @@
                     v-model="inputPatrolVal"
                   />
                   <!-- 巡逻项目新增  -->
-                  <a-button type="primary" @click="Patrol_Add">新增</a-button>
-                  <!-- 巡逻项目新增modal弹框  -->
-                  <a-modal
-                    v-model="PatrolVisibleAdd"
-                    title="新增巡逻项目"
-                    width="35%"
+                  <a-button
+                    type="primary"
+                    @click="patroltypeadd({}, 1, '新增巡逻类型')"
+                    >新增</a-button
                   >
-                    <div class="buildname" style="margin-bottom: 20px">
-                      <span>巡逻项目：</span
-                      ><a-input
-                        placeholder="巡逻项目"
-                        style="width: 28vw"
-                        allow-clear
-                        v-model="fromPatrol.name"
-                      ></a-input>
-                    </div>
-                    <div class="site" style="margin: 20px 28px">
-                      <span>状态：</span>
-                      <div>
-                        <a-select
-                          style="width: 28vw"
-                          v-model="fromPatrol.status"
-                        >
-                          <a-select-option value="1"> 正常 </a-select-option>
-                          <a-select-option value="0"> 停用 </a-select-option>
-                        </a-select>
-                      </div>
-                    </div>
-                    <div
-                      class="btnant"
-                      style="
-                        padding: 10px 16px;
-                        text-align: right;
-                        background: transparent;
-                        border-top: 1px solid #e8e8e8;
-                        border-radius: 0 0 4px 4px;
-                      "
-                    >
-                      <a-button style="margin-right: 20px" @click="AddPatrolUp"
-                        >取消</a-button
-                      >
-                      <a-button type="primary" @click="AddPatrolList"
-                        >确定</a-button
-                      >
-                    </div>
-                  </a-modal>
                 </div>
                 <span slot="tab">
                   <a-icon type="tool" />
-                  日常巡逻
+                  巡防类型
                 </span>
                 <template>
-                  <el-table bordered :data="dataB">
-                    <!-- 巡逻项目多选 -->
-                    <el-table-column type="selection" width="55">
-                    </el-table-column>
-                    <!-- 巡逻项目页面 -->
-                    <el-table-column label="" prop="" type="expand">
-                      <template slot-scope="props">
-                        <el-table
-                          border
-                          :data="props.row.patrol"
-                          :pagination="PaginationOptPatrol"
-                          @selection-change="handleSelectionChange"
-                        >
-                          <el-table-column type="selection" width="55">
-                          </el-table-column>
-                          <el-table-column
-                            label="巡更内容"
-                            prop="name"
-                          ></el-table-column>
-                          <el-table-column
-                            label="处置方法"
-                            prop="way"
-                          ></el-table-column>
-                          <el-table-column
-                            label="备注"
-                            prop="remark"
-                          ></el-table-column>
-                          <el-table-column label="状态" prop="status">
-                            <!-- 巡更内容状态开关 -->
-                            <template slot-scope="scope">
-                              <el-switch
-                                v-model="scope.row.status"
-                                :active-value="1"
-                                :inactive-value="0"
-                                active-color="#13ce66"
-                                inactive-color="#ff4949"
-                              >
-                              </el-switch>
-                            </template>
-                          </el-table-column>
-                          <el-table-column label="操作" width="200">
-                            <template slot-scope="scope">
-                              <!-- 巡更内容编辑 -->
-                              <a
-                                href="javascript:;"
-                                @click="EditPatrolType(scope)"
-                                ><a-icon type="edit" theme="twoTone" />编辑</a
-                              >
-                              <!-- 巡更内容编辑modal弹框 -->
-                              <a-modal
-                                v-model="PatrolEdit"
-                                title="新增巡更内容"
-                                width="35%"
-                              >
-                                <div
-                                  class="site"
-                                  style="margin-bottom: 20px; margin-left: 0px"
-                                >
-                                  <span>巡更内容：</span>
-                                  <div>
-                                    <a-select
-                                      style="width: 28vw"
-                                      v-model="fromEdit.patrol_type_id"
-                                    >
-                                      <a-select-option value="1">
-                                        异常情况
-                                      </a-select-option>
-                                      <a-select-option value="2">
-                                        设施设备
-                                      </a-select-option>
-                                      <a-select-option value="3">
-                                        装修管理
-                                      </a-select-option>
-                                      <a-select-option value="4">
-                                        消防设施器材
-                                      </a-select-option>
-                                      <a-select-option value="5">
-                                        公共秩序
-                                      </a-select-option>
-                                      <a-select-option value="6">
-                                        特殊情况
-                                      </a-select-option>
-                                    </a-select>
-                                  </div>
-                                </div>
-                                <div
-                                  class="buildname"
-                                  style="margin-bottom: 20px"
-                                >
-                                  <span>巡更内容：</span
-                                  ><a-input
-                                    placeholder="巡更内容"
-                                    style="width: 28vw"
-                                    allow-clear
-                                    v-model="fromEdit.name"
-                                  ></a-input>
-                                </div>
-                                <div
-                                  class="buildname"
-                                  style="margin-bottom: 20px"
-                                >
-                                  <span>处置方法：</span
-                                  ><a-input
-                                    placeholder="处置方法"
-                                    style="width: 28vw"
-                                    allow-clear
-                                    v-model="fromEdit.way"
-                                  ></a-input>
-                                </div>
-                                <div
-                                  class="buildname"
-                                  style="margin-bottom: 20px; margin-left: 28px"
-                                >
-                                  <span>备注：</span
-                                  ><a-input
-                                    placeholder="备注"
-                                    style="width: 28vw"
-                                    allow-clear
-                                    v-model="fromEdit.remark"
-                                  ></a-input>
-                                </div>
-                                <div class="site" style="margin: 20px 28px">
-                                  <span>状态：</span>
-                                  <div>
-                                    <a-select
-                                      style="width: 28vw"
-                                      v-model="fromEdit.status"
-                                    >
-                                      <a-select-option value="1">
-                                        正常
-                                      </a-select-option>
-                                      <a-select-option value="0">
-                                        停用
-                                      </a-select-option>
-                                    </a-select>
-                                  </div>
-                                </div>
-                                <div
-                                  class="btnant"
-                                  style="
-                                    padding: 10px 16px;
-                                    text-align: right;
-                                    background: transparent;
-                                    border-top: 1px solid #e8e8e8;
-                                    border-radius: 0 0 4px 4px;
-                                  "
-                                >
-                                  <a-button
-                                    style="margin-right: 20px"
-                                    @click="PatroTypelUp"
-                                    >取消</a-button
-                                  >
-                                  <a-button
-                                    type="primary"
-                                    @click="
-                                      PatrolTypeList(
-                                        scope.row.id,
-                                        scope.row.version
-                                      )
-                                    "
-                                    >确定</a-button
-                                  >
-                                </div>
-                              </a-modal>
-                              <a-divider type="vertical" />
-                              <!-- 巡更内容删除 -->
-                              <a
-                                href="javascript:;"
-                                @click="
-                                  PatrolDelete(scope.row.id, scope.row.version)
-                                "
-                                ><a-icon type="delete" theme="twoTone" />删除
-                              </a>
-                            </template></el-table-column
-                          >
-                        </el-table>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="巡逻项目" prop="name" width="1100">
-                    </el-table-column>
-                    <!-- 巡逻项目状态开关 -->
-                    <el-table-column label="状态" prop="status" width="200">
-                      <template slot-scope="scope">
-                        <el-switch
-                          v-model="scope.row.status"
-                          :active-value="1"
-                          :inactive-value="0"
-                          active-color="#13ce66"
-                          inactive-color="#ff4949"
-                          @change="
-                            switchPatrolChange(
-                              $event,
-                              scope.row.id,
-                              scope.row.version,
-                              'status'
-                            )
-                          "
-                        >
-                        </el-switch>
-                      </template>
-                    </el-table-column>
-                    <!-- 巡逻项目操作 -->
-                    <el-table-column label="操作">
-                      <template slot-scope="scope">
-                        <!-- 巡逻项目编辑 -->
-                        <a href="javascript:;" @click="EditPatrol(scope)"
-                          ><a-icon type="edit" theme="twoTone" />编辑</a
-                        >
-                        <!-- 巡逻项目编辑modal弹框 -->
-                        <a-modal
-                          v-model="PatrolVisibleEdit"
-                          title="编辑巡逻项目"
-                          width="35%"
-                        >
-                          <div class="buildname" style="margin-bottom: 20px">
-                            <span>巡逻项目：</span
-                            ><a-input
-                              placeholder="巡逻项目"
-                              style="width: 28vw"
-                              allow-clear
-                              v-model="fromPatrolEdit.name"
-                            ></a-input>
-                          </div>
-                          <div class="site" style="margin: 20px 28px">
-                            <span>状态：</span>
-                            <div>
-                              <a-select
-                                style="width: 28vw"
-                                v-model="fromPatrolEdit.status"
-                              >
-                                <a-select-option value="1">
-                                  正常
-                                </a-select-option>
-                                <a-select-option value="0">
-                                  停用
-                                </a-select-option>
-                              </a-select>
-                            </div>
-                          </div>
-                          <div
-                            class="btnant"
-                            style="
-                              padding: 10px 16px;
-                              text-align: right;
-                              background: transparent;
-                              border-top: 1px solid #e8e8e8;
-                              border-radius: 0 0 4px 4px;
-                            "
-                          >
-                            <a-button
-                              style="margin-right: 20px"
-                              @click="EditPatrolUp"
-                              >取消</a-button
-                            >
-                            <a-button
-                              type="primary"
-                              @click="
-                                EditPatrolList(scope.row.id, scope.row.version)
-                              "
-                              >确定</a-button
-                            >
-                          </div>
-                        </a-modal>
-                        <a-divider type="vertical" />
-                        <!-- 巡逻项目删除 -->
-                        <a
-                          href="javascript:;"
-                          @click="DeletePatrol(scope.row.id, scope.row.version)"
-                          ><a-icon type="delete" theme="twoTone" />删除</a
-                        >
-                        <a-divider type="vertical" />
-                        <!-- 巡更内容新增 -->
-                        <a href="javascript:;" @click="AddPatrol"
-                          ><a-icon type="file-add" theme="twoTone" />新增</a
-                        >
-                        <!-- 巡更内容新增modal弹框 -->
-                        <a-modal
-                          v-model="PatrolAdd"
-                          title="新增巡更内容"
-                          width="35%"
-                        >
-                          <div
-                            class="site"
-                            style="margin-bottom: 20px; margin-left: 0px"
-                          >
-                            <span>巡更内容：</span>
-                            <div>
-                              <a-select
-                                style="width: 28vw"
-                                v-model="fromPatrolAdd.patrol_type_id"
-                              >
-                                <a-select-option value="1">
-                                  异常情况
-                                </a-select-option>
-                                <a-select-option value="2">
-                                  设施设备
-                                </a-select-option>
-                                <a-select-option value="3">
-                                  装修管理
-                                </a-select-option>
-                                <a-select-option value="4">
-                                  消防设施器材
-                                </a-select-option>
-                                <a-select-option value="5">
-                                  公共秩序
-                                </a-select-option>
-                                <a-select-option value="6">
-                                  特殊情况
-                                </a-select-option>
-                              </a-select>
-                            </div>
-                          </div>
-                          <div class="buildname" style="margin-bottom: 20px">
-                            <span>巡更内容：</span
-                            ><a-input
-                              placeholder="巡更内容"
-                              style="width: 28vw"
-                              allow-clear
-                              v-model="fromPatrolAdd.name"
-                            ></a-input>
-                          </div>
-                          <div class="buildname" style="margin-bottom: 20px">
-                            <span>处置方法：</span
-                            ><a-input
-                              placeholder="处置方法"
-                              style="width: 28vw"
-                              allow-clear
-                              v-model="fromPatrolAdd.way"
-                            ></a-input>
-                          </div>
-                          <div
-                            class="buildname"
-                            style="margin-bottom: 20px; margin-left: 28px"
-                          >
-                            <span>备注：</span
-                            ><a-input
-                              placeholder="备注"
-                              style="width: 28vw"
-                              allow-clear
-                              v-model="fromPatrolAdd.remark"
-                            ></a-input>
-                          </div>
-                          <div class="site" style="margin: 20px 28px">
-                            <span>状态：</span>
-                            <div>
-                              <a-select
-                                style="width: 28vw"
-                                v-model="fromPatrolAdd.status"
-                              >
-                                <a-select-option value="1">
-                                  正常
-                                </a-select-option>
-                                <a-select-option value="0">
-                                  停用
-                                </a-select-option>
-                              </a-select>
-                            </div>
-                          </div>
-                          <div
-                            class="btnant"
-                            style="
-                              padding: 10px 16px;
-                              text-align: right;
-                              background: transparent;
-                              border-top: 1px solid #e8e8e8;
-                              border-radius: 0 0 4px 4px;
-                            "
-                          >
-                            <a-button
-                              style="margin-right: 20px"
-                              @click="PatroAddlUp"
-                              >取消</a-button
-                            >
-                            <a-button type="primary" @click="PatrolAddList"
-                              >确定</a-button
-                            >
-                          </div>
-                        </a-modal>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                  <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="pageSizes"
-                    :page-size="PageSize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="totalCount"
+                  <a-table
+                    bordered
+                    :columns="columnsB"
+                    :data-source="ptlist"
+                    rowKey="id"
+                    :pagination="PaginationOptTask"
                   >
-                  </el-pagination>
+                    <span slot="status" slot-scope="text, record">
+                      <a-switch
+                        default-checked
+                        checked-children="启用"
+                        un-checked-children="停用"
+                        :checked="record.status == 0 ? false : true"
+                        @change="switchtype(record)"
+                      />
+                    </span>
+                    <span slot="actions" slot-scope="text, record">
+                      <!-- 编辑 -->
+                      <a
+                        href="javascript:;"
+                        @click="patroltypeadd(record, 2, '编辑巡逻类型')"
+                        ><a-icon type="edit" theme="twoTone" />编辑</a
+                      >
+                      <a-divider type="vertical" />
+                      <!-- 删除 -->
+                      <a href="javascript:;" @click="deltype(record)"
+                        ><a-icon type="delete" theme="twoTone" />删除</a
+                      >
+                    </span>
+                    
+                  </a-table>
+                  
                 </template>
               </a-tab-pane>
               <!-- 设备巡检 -->
@@ -815,14 +125,49 @@
                     placeholder="快速搜索"
                     style="width: 200px; margin-right: 40px"
                   />
-                  <a-button type="primary">新增</a-button>
+                  <a-button
+                    type="primary"
+                    @click="dailyTask({}, 1, '新增日常任务')"
+                    >新增</a-button
+                  >
                 </div>
                 <span slot="tab">
                   <a-icon type="tool" />
-                  设备巡检
+                  日常巡防
                 </span>
                 <div style="margin-top: 20px">
-                  <template></template>
+                  <template>
+                    <a-table
+                      :columns="columnsC"
+                      :data-source="dataB"
+                      rowKey="id"
+                      class="components-table-demo-nested"
+                    >
+                    <span slot="status" slot-scope="text">{{statustype[text]}} </span>
+                      <a-table
+                        slot="expandedRowRender"
+                        slot-scope="record"
+                        rowKey="id"
+                        :columns="innerColumns"
+                        :data-source="record.patrol"
+                        :pagination="false"
+                      >
+                        <span slot="status" slot-scope="text">{{statustype[text]}} </span>
+                        <span
+                          slot="operation"
+                          slot-scope="text, record"
+                          class="table-operation"
+                        >
+                          <a @click="dailyTask(record, 2, '编辑日常任务')"
+                            > <a-icon type="edit" theme="twoTone" />编辑</a>
+                            <a-divider type="vertical" />
+                          <a @click="delpatrol(record)"><a-icon type="delete" theme="twoTone" />删除</a>
+                          <a-divider type="vertical" />
+                          <a @click="dailyTask(record.patrol_type_id, 3, '新增日常任务')"><a-icon type="plus" />新增</a>
+                        </span>
+                      </a-table>
+                    </a-table>
+                  </template>
                 </div>
               </a-tab-pane>
               <!-- 待巡逻 -->
@@ -845,7 +190,7 @@
                     :row-selection="rowSelection"
                     :columns="columnsD"
                     :data-source="dataD"
-                    :rowKey="(record, id) => id"
+                    rowKey="id"
                     :pagination="PaginationOptTask"
                   >
                     <a slot="name" slot-scope="text">{{ text }}</a>
@@ -869,7 +214,7 @@
                     :row-selection="rowSelection"
                     :columns="columnsE"
                     :data-source="dataE"
-                    :rowKey="(record, id) => id"
+                    rowKey="id"
                   >
                     <a slot="name" slot-scope="text">{{ text }}</a>
                     <span slot="actions">
@@ -885,15 +230,189 @@
         </div>
       </div>
     </div>
+
+    <!-- 巡更点新增modal弹框 -->
+    <a-modal v-model="VisiblePoint" :title="title" width="40%">
+      <a-form-model
+        ref="ruleForm"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-form-model-item label="巡更点名称：" prop="point_name">
+          <a-input v-model="form.point_name" />
+        </a-form-model-item>
+
+        <a-form-model-item label="所属楼宇：" prop="building_id">
+          <a-select v-model="form.building_id" @change="getbuildid">
+            <a-select-option
+              v-for="item in BuildOptions"
+              :value="item.id"
+              :key="item.id"
+              >{{ item.building_name }}</a-select-option
+            >
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item label="所属楼层：" prop="building_detail_id">
+          <a-select v-model="form.building_detail_id" :disabled="isbuild">
+            <a-select-option
+              v-for="item in FloorOptions"
+              :key="item.id"
+              :label="item.floor_name"
+              :value="item.id"
+            >
+              <span role="img" :aria-label="item.floor_name">
+                {{ item.floor_name }}
+              </span>
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item label="经度：" prop="longitude">
+          <a-input v-model="form.longitude" />
+        </a-form-model-item>
+
+        <a-form-model-item label="纬度：" prop="latitude">
+          <a-input v-model="form.latitude" />
+        </a-form-model-item>
+
+        <a-form-model-item label="定位距离：" prop="distance">
+          <a-input v-model="form.distance" />
+        </a-form-model-item>
+
+        <a-form-model-item label="位置描述：" prop="dis_describe">
+          <a-input v-model="form.dis_describe" />
+        </a-form-model-item>
+
+        <a-form-model-item label="位置编号：" prop="dis_number">
+          <a-input v-model="form.dis_number" />
+        </a-form-model-item>
+
+        <a-form-model-item label="备注：" prop="remark">
+          <a-input v-model="form.remark" />
+        </a-form-model-item>
+
+        <a-form-model-item label="状态：">
+          <a-select v-model="form.status" placeholder="请选择">
+            <a-select-option value="1"> 正常 </a-select-option>
+            <a-select-option value="0"> 停用 </a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-form-model>
+      <template slot="footer">
+        <div class="btnant">
+          <a-button @click="AddPointCancel" style="margin-right: 20px"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="AddPoint()">确定 </a-button>
+        </div>
+      </template>
+    </a-modal>
+
+    <!-- 巡逻项目新增modal弹框  -->
+    <a-modal v-model="PatrolVisibleAdd" :title="title" width="35%">
+      <a-form-model
+        ref="ruleForm1"
+        :model="form1"
+        :rules="rules1"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-form-model-item label="巡更类型：" prop="patrol_type_id">
+          <a-select v-model="form1.patrol_type_id">
+            <a-select-option
+              v-for="item in ptlist"
+              :value="item.id"
+              :key="item.id"
+              >{{ item.name }}</a-select-option
+            >
+          </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item label="巡更内容：" prop="name">
+          <a-input v-model="form1.name" />
+        </a-form-model-item>
+
+        <a-form-model-item label="处置方法：">
+          <a-input v-model="form1.way" />
+        </a-form-model-item>
+
+        <a-form-model-item label="备注：" prop="remark">
+          <a-input v-model="form1.remark" />
+        </a-form-model-item>
+
+        <a-form-model-item label="状态：">
+          <a-select v-model="form1.status" placeholder="请选择">
+            <a-select-option value="1"> 正常 </a-select-option>
+            <a-select-option value="0"> 停用 </a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-form-model>
+
+      <template slot="footer">
+        <div class="btnant">
+          <a-button style="margin-right: 20px" @click="AddPatrolUp"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="AddPatrolList">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
+
+    <!-- 巡更类型 -->
+
+    <a-modal v-model="ptvisible" :title="title2" width="35%">
+      <a-form-model
+        ref="ruleForm2"
+        :model="form2"
+        :rules="rules2"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-form-model-item label="巡更类型：" prop="name">
+          <a-input v-model="form2.name" />
+        </a-form-model-item>
+        <a-form-model-item label="状态：">
+          <a-select v-model="form2.status" placeholder="请选择">
+            <a-select-option value="1"> 正常 </a-select-option>
+            <a-select-option value="0"> 停用 </a-select-option>
+          </a-select>
+        </a-form-model-item>
+      </a-form-model>
+
+      <template slot="footer">
+        <div class="btnant">
+          <a-button style="margin-right: 20px" @click="resettype"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="submittype">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
+const columns = [
+  { title: "巡逻项目", dataIndex: "name", key: "name" },
+  { title: "状态", dataIndex: "status", key: "createdAt" },
+];
+
+
 import axios from "axios";
 export default {
   name: "RealPatorl",
   data() {
     return {
+      statustype:{
+        0: '停用',
+        1:'正常'
+      },
+      isbuild: true,
+      type: null,
+      title: "",
       //? 路线巡更-----------------------------------------------------------------------
       columnsA: [
         {
@@ -986,8 +505,16 @@ export default {
       inputPatrolVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
       dataB: [], //巡逻项目数据源
+      columnsB:[
+         { title: "巡逻项目", dataIndex: "name", key: "name" },
+        { title: "状态", dataIndex: "status",scopedSlots: { customRender: "status" }, },
+        {
+          title: "操作",
+          dataIndex: "action",
+          scopedSlots: { customRender: "actions" },
+        },
+      ],
       innerData: [], //巡逻内容数据源
-      highArray: [],
       // 表格分页信息
       // 默认显示第几页
       currentPage: 1,
@@ -997,26 +524,26 @@ export default {
       pageSizes: [10],
       // 默认每页显示的条数（可修改）
       PageSize: 1,
-      // PaginationOptPatrol: {
-      //   defaultCurrent: 1, // 默认当前页数
-      //   defaultPageSize: 10, // 默认当前页显示数据的大小
-      //   total: 0, // 总数
-      //   showSizeChanger: true,
-      //   showQuickJumper: true,
-      //   pageSizeOptions: ["5", "10", "15", "20"],
-      //   showTotal: (total) => `共 ${total} 条`, // 显示总数
-      //   onShowSizeChange: (current, pageSize) => {
-      //     this.PaginationOptPatrol.defaultCurrent = 1;
-      //     this.PaginationOptPatrol.defaultPageSize = pageSize;
-      //     this.PatrolList(); //显示列表的接口名称
-      //   },
-      //   // 改变每页数量时更新显示
-      //   onChange: (current, size) => {
-      //     this.PaginationOptPatrol.defaultCurrent = current;
-      //     this.PaginationOptPatrol.defaultPageSize = size;
-      //     this.PatrolList();
-      //   },
-      // }, // 日常巡逻列表分页
+      PaginationOptPatrol: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10", "15", "20"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.PaginationOptPatrol.defaultCurrent = 1;
+          this.PaginationOptPatrol.defaultPageSize = pageSize;
+          this.PatrolList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.PaginationOptPatrol.defaultCurrent = current;
+          this.PaginationOptPatrol.defaultPageSize = size;
+          this.PatrolList();
+        },
+      }, // 日常巡逻列表分页
       PatrolVisibleAdd: false, // 巡逻项目 新增 弹窗默认状态
       PatrolVisibleEdit: false, // 巡逻项目 编辑 弹窗默认状态
       PatrolAdd: false, // 巡更内容 新增 弹窗默认状态
@@ -1027,31 +554,13 @@ export default {
       fromEdit: {}, // 存放巡更内容 编辑 数据
       //? 设备巡检-----------------------------------------------------------------------
       columnsC: [
-        {
-          title: "ID",
-          dataIndex: "belong",
-          scopedSlots: { customRender: "belongs" },
-        },
-        {
-          title: "项目名称",
-          dataIndex: "roomname",
-          scopedSlots: { customRender: "roomnames" },
-        },
-        {
-          title: "所属主体",
-          dataIndex: "belongbuild",
-          scopedSlots: { customRender: "belongbuild" },
-        },
-        {
-          title: "状态",
-          dataIndex: "floor",
-          scopedSlots: { customRender: "floors" },
-        },
-        {
-          title: "操作",
-          dataIndex: "action",
-          scopedSlots: { customRender: "actions" },
-        },
+       { title: "巡逻项目", dataIndex: "name", key: "name" },
+        { title: "状态", dataIndex: "status", scopedSlots: { customRender: "status" } },
+        // {
+        //   title: "操作",
+        //   dataIndex: "action",
+        //   scopedSlots: { customRender: "actions" },
+        // },
       ], // 设备巡检table表格表头数据
       dataC: [], //设备巡检数据源
       //? 待巡逻-----------------------------------------------------------------------
@@ -1156,6 +665,68 @@ export default {
         },
       ], // 已巡逻table表格表头数据
       dataE: [], //待巡逻数据源
+      labelCol: { span: 6 },
+      wrapperCol: { span: 16 },
+      other: "",
+      form: {
+        point_name: null,
+        building_id: "",
+        building_detail_id: "",
+        longitude: null,
+        latitude: null,
+        distance: null,
+        dis_describe: null,
+        dis_number: null,
+        remark: null,
+        status: "",
+      },
+      rules: {
+        point_name: [
+          { required: true, message: "请输入巡更点名称", trigger: "blur" },
+        ],
+        longitude: [{ required: true, message: "请输入经度", trigger: "blur" }],
+        latitude: [{ required: true, message: "请输入纬度", trigger: "blur" }],
+        building_id: [
+          { required: true, message: "请选择所属楼宇", trigger: "change" },
+        ],
+        building_detail_id: [
+          { required: true, message: "请选择所属楼层", trigger: "change" },
+        ],
+        status: [{ required: true, message: "请选择状态", trigger: "change" }],
+      },
+      form1: {},
+      rules1: {
+        point_name: [
+          { required: true, message: "请输入巡更点名称", trigger: "blur" },
+        ],
+        longitude: [{ required: true, message: "请输入经度", trigger: "blur" }],
+        latitude: [{ required: true, message: "请输入纬度", trigger: "blur" }],
+        building_id: [
+          { required: true, message: "请选择所属楼宇", trigger: "change" },
+        ],
+        building_detail_id: [
+          { required: true, message: "请选择所属楼层", trigger: "change" },
+        ],
+        status: [{ required: true, message: "请选择状态", trigger: "change" }],
+      },
+      innerColumns: [
+          { title: "巡更内容", dataIndex: "name", key: "name" },
+          { title: "处置方法", dataIndex: "way", key: "way" },
+          {title: "状态",dataIndex: "status",scopedSlots: { customRender: 'status',}},
+          {title: "操作",dataIndex: "operation",key: "operation",scopedSlots: { customRender: "operation" },},
+      ],
+      ptlist: [],
+      type1: null,
+      title1: "",
+      ptvisible: false,
+      title2:'',
+      type2:null,
+       form2: {},
+      rules2: {
+          name: [
+          { required: true, message: "请输入巡更类型", trigger: "blur" },
+        ],
+      }
     };
   },
   watch: {
@@ -1183,15 +754,21 @@ export default {
         this.ShowEditD(false);
       }
     },
+    "form.building_id": {
+      handler(val) {
+        if (val) {
+          this.isbuild = false;
+          this.GetFloor(val);
+        }
+      },
+    },
   },
   created() {
     this.PatrolPoint(); //路线巡更列表
     this.PatrolList(); //日常巡逻列表
     this.TaskList(); //待巡逻列表
-    this.GetFloor(); //路线巡更新增之楼层选项
-  },
-  mounted() {
     this.GetBuilding(); //路线巡更新增之楼宇选项
+    this.patroltypelist();
   },
   methods: {
     //? 路线巡更·····································································
@@ -1204,146 +781,119 @@ export default {
       });
     },
     // 列表页状态开关
-    async switchChange(checked, id, version, name) {
-      let obj = { id };
-      obj[name] = checked ? 1 : 0;
+    async switchChange(val) {
       axios
-        .patch("/api/prop/patrolPoint/status", obj, {
-          params: { version: version },
+        .patch("/api/prop/patrolPoint/status", {
+          id: val.id,
+          version: val.version,
+          status: val.status == 0 ? 1 : 0,
         })
         .then((res) => {
           if (res.status_code == 200) {
-            console.log(res);
+            this.PatrolPoint();
           }
         });
     },
     //todo 新增
     // 新增modal弹框显示
-    AddShowPoint() {
+    AddShowPoint(form, type, title) {
+      this.title = title;
+      this.type = type;
+      this.form = { ...form };
+      if (type == 2) {
+        this.form.status = JSON.stringify(form.status);
+      }
       this.VisiblePoint = true;
     },
     // 新增确定
     AddPoint() {
-      axios.post("/api/prop/patrolPoint", this.fromPoint).then((res) => {
-        if (res.message === "success") {
-          this.fromPoint.point_name = "";
-          this.fromPoint.building_id = "";
-          this.fromPoint.building_detail_id = "";
-          this.fromPoint.longitude = "";
-          this.fromPoint.latitude = "";
-          this.fromPoint.distance = "";
-          this.fromPoint.dis_describe = "";
-          this.fromPoint.dis_number = "";
-          this.fromPoint.remark = "";
-          this.fromPoint.status = "";
-          this.VisiblePoint = false;
-          this.$message.success("新增巡更点成功");
-          this.PatrolPoint();
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          let data = {
+            point_name: this.form.point_name,
+            building_id: this.form.building_id,
+            building_detail_id: this.form.building_detail_id,
+            longitude: this.form.longitude,
+            latitude: this.form.latitude,
+            distance: this.form.distance,
+            dis_describe: this.form.dis_describe,
+            dis_number: this.form.dis_number,
+            remark: this.form.remark,
+            status: this.form.status,
+          };
+          if (this.type == 1) {
+            axios.post("/api/prop/patrolPoint", data).then((res) => {
+              if (res.message === "success") {
+                this.AddPointCancel();
+                this.$message.success("新增巡更点成功");
+                this.PatrolPoint();
+              }
+            });
+          } else {
+            data.id = this.form.id;
+            data.version = this.form.version;
+            axios.patch("/api/prop/patrolPoint", data).then((res) => {
+              if (res.message === "success") {
+                this.AddPointCancel();
+                this.$message.success("新增巡更点成功");
+                this.PatrolPoint();
+              }
+            });
+          }
+        } else {
+          console.log("error submit!!");
+          return false;
         }
       });
     },
     // 取消新增
     AddPointCancel() {
+      this.$refs.ruleForm.resetFields();
       this.VisiblePoint = false;
-      this.fromPoint.point_name = "";
-      this.fromPoint.building_id = "";
-      this.fromPoint.building_detail_id = "";
-      this.fromPoint.longitude = "";
-      this.fromPoint.latitude = "";
-      this.fromPoint.distance = "";
-      this.fromPoint.dis_describe = "";
-      this.fromPoint.dis_number = "";
-      this.fromPoint.remark = "";
-      this.fromPoint.status = "";
+    },
+    getbuildid(val) {
+      this.form.building_id = val;
     },
     // 楼宇选择框内容
     GetBuilding() {
-      axios.get("/api/prop/repair/address?level=1").then((res) => {
-        if (res.message === "success") {
-          this.BuildOptions = res.data;
-        }
+      axios.get("/api/ics/building").then((res) => {
+        // if (res.message === "success") {
+        this.BuildOptions = res.data.data;
+        // }
       });
     },
     // 楼层选择框内容
-    GetFloor() {
-      axios
-        .get("/api/prop/repair/address?level=2", {
-          params: { building_id: 1 },
-        })
-        .then((res) => {
-          if (res.message === "success") {
-            this.FloorOptions = res.data;
-            // building_id: this.fromPoint.building_id;
-          }
-        });
+    GetFloor(id) {
+      axios.get("/api/ics/buildingDetail?building_id=" + id).then((res) => {
+        if (res.message === "success") {
+          this.FloorOptions = res.data.data;
+          // building_id: this.fromPoint.building_id;
+        }
+      });
     },
     //todo 删除
     // 删除巡更点
-    DeletePoint(id, version) {
-      axios
-        .delete("/api/prop/patrolPoint", {
-          params: {
-            id: id,
-            version: version,
-          },
-        })
-        .then((res) => {
-          if (res.message === "success") {
-          }
-          this.$message.success("删除巡更点成功");
-          // 成功重新更新列表
-          this.PatrolPoint();
-        });
-    },
-    //todo 编辑
-    // 编辑modal弹框显示
-    EditPoint(record) {
-      this.VisiblePointEdit = true;
-      this.from = {
-        point_name: record.point_name,
-        building_id: record.building_id,
-        building_detail_id: record.building_detail_id,
-        longitude: record.longitude,
-        latitude: record.latitude,
-        distance: record.distance,
-        dis_describe: record.dis_describe,
-        dis_number: record.dis_number,
-        remark: record.remark,
-        status: record.status.toString(),
-      };
-      // this.from.point_name = point_name.toString();
-      // this.from.building_id = record.building_id.toString();
-      // this.from.building_detail_id = record.building_detail_id.toString();
-      // this.from.longitude = { ...record }.longitude;
-      // this.from.latitude = { ...record }.latitude;
-      // this.from.distance = { ...record }.distance;
-      // this.from.dis_describe = { ...record }.dis_describe;
-      // this.from.dis_number = { ...record }.dis_number;
-      // this.from.remark = { ...record }.remark;
-      // this.from.status = { ...record }.status;
-      // this.from.status = record.status.toString();
-      // this.from.building_id = record.building_id;
-      // this.from.building_detail_id = record.building_detail_id;
-      // this.from = { ...record };
-    },
-    // 巡更点编辑确认
-    EditPointSure(record) {
-      axios
-        .patch("/api/prop/patrolPoint", this.from, {
-          params: {
-            id: record.id,
-            version: record.version,
-          },
-        })
-        .then(() => {
-          this.VisiblePointEdit = false;
-          this.$message.success("编辑巡更点成功");
-          this.PatrolPoint();
-        });
-    },
-    // 取消编辑
-    EditPointCancel() {
-      this.VisiblePointEdit = false;
+    DeletePoint(val) {
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/prop/patrolPoint", {
+              params: {
+                id: val.id,
+                version: val.version,
+              },
+            })
+            .then((res) => {
+              that.$message.success("删除巡更点成功");
+              // 成功重新更新列表
+              that.PatrolPoint();
+            });
+        },
+        onCancel() {},
+      });
     },
     //todo 搜索
     // 快速搜索
@@ -1367,24 +917,11 @@ export default {
       axios.get("/api/prop/patrol?per_page=9999").then((res) => {
         if (res.status_code == 200) {
           this.dataB = res.data.data;
+          console.log(this.dataB);
           // 将数据的长度赋值给totalCount
           this.totalCount = res.data.data.length;
         }
       });
-    },
-    // 巡逻项目态开关
-    async switchPatrolChange(checked, id, version, name) {
-      let obj = { id };
-      obj[name] = checked ? 1 : 0;
-      axios
-        .patch("/api/prop/patrolType/status", obj, {
-          params: { version: version },
-        })
-        .then((res) => {
-          if (res.status_code == 200) {
-            console.log(res);
-          }
-        });
     },
     handleSizeChange(val) {
       // 改变每页显示的条数
@@ -1404,21 +941,44 @@ export default {
     },
     // 新增确定
     AddPatrolList() {
-      axios.post("/api/prop/patrolType", this.fromPatrol).then((res) => {
-        if (res.message === "success") {
-          this.fromPatrol.name = "";
-          this.fromPatrol.status = "";
-          this.PatrolVisibleAdd = false;
-          this.$message.success("新增巡更点成功");
-          this.PatrolList();
+      this.$refs.ruleForm1.validate((valid) => {
+        if (valid) {
+          let data = {
+            patrol_type_id: this.form1.patrol_type_id,
+            name: this.form1.name,
+            way: this.form1.way,
+            remark: this.form1.remark,
+            status: this.form1.status,
+          };
+          if (this.type1 == 1 || this.type1 == 3) {
+            axios.post("/api/prop/patrol", data).then((res) => {
+              if (res.message === "success") {
+                this.AddPatrolUp();
+                this.$message.success("新增巡更点成功");
+                this.PatrolList();
+              }
+            });
+          } else {
+            data.id = this.form1.id;
+            data.version = this.form1.version;
+            axios.patch("/api/prop/patrol", data).then((res) => {
+              if (res.message === "success") {
+                this.AddPatrolUp();
+                this.$message.success("新增巡更点成功");
+                this.PatrolList();
+              }
+            });
+          }
+        } else {
+          console.log("error submit!!");
+          return false;
         }
       });
     },
     // 取消新增
     AddPatrolUp() {
+      this.$refs.ruleForm1.resetFields();
       this.PatrolVisibleAdd = false;
-      this.fromPatrol.name = "";
-      this.fromPatrol.status = "";
     },
     //todo 巡逻项目删除
     // 删除巡逻项目
@@ -1482,6 +1042,7 @@ export default {
           .get("/api/prop/patrol", { params: { name: paramName } })
           .then((res) => {
             this.dataB = res.data.data;
+            console.log(this.dataB);
             this.total = res.data.data.length;
           });
       } else {
@@ -1495,7 +1056,7 @@ export default {
     },
     // 新增确定
     PatrolAddList() {
-      axios.post("/api/prop/patrol?", this.fromPatrolAdd).then((res) => {
+      axios.post("/api/prop/patrol", this.fromPatrolAdd).then((res) => {
         if (res.message === "success") {
           this.fromPatrolAdd.patrol_type_id = "";
           this.fromPatrolAdd.name = "";
@@ -1596,6 +1157,126 @@ export default {
         this.tenantList(); // 更新表
       }
     },
+    // 日常任务新增
+    dailyTask(form, type, title) {
+      console.log(form)
+      this.type1 = type;
+      this.title1 = title;
+      if(type === 3){
+        this.form1.patrol_type_id = form ;
+      }else{
+        this.form1 = { ...form };
+        this.form1.status = JSON.stringify(form.status);
+      }
+      this.PatrolVisibleAdd = true;
+    },
+    // 巡更类型列表
+    patroltypelist() {
+      axios.get("/api/prop/patrolType").then((res) => {
+        console.log(res);
+        this.ptlist = res.data;
+      });
+    },
+    // 删除日常任务
+    delpatrol(val) {
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/prop/patrol", {
+              params: {
+                id: val.id,
+                version: val.version,
+              },
+            })
+            .then((res) => {
+              that.$message.success("删除巡更点成功");
+              // 成功重新更新列表
+              that.PatrolList();
+            });
+        },
+        onCancel() {},
+      });
+    },
+    // 巡更类型
+    patroltypeadd(form ,type ,title){
+      this.form2 = {...form};
+      if(type == 2){
+        this.form2.status = JSON.stringify(form.status);
+      }
+      this.type2 = type ;
+      this.title2 = title ;
+      this.ptvisible = true;
+    },
+    submittype(){
+      this.$refs.ruleForm2.validate(valid => {
+        console.log(valid)
+        if (valid) {
+          let data = {
+            name: this.form2.name,
+            status: this.form2.status
+          }
+          if(this.type2 == 1){
+            axios.post('/api/prop/patrolType',data).then((res) =>{
+              this.patroltypelist();
+            this.resettype();
+          });
+          }else{
+            data.id = this.form2.id;
+            data.version = this.form2.version ;
+            axios.patch('/api/prop/patrolType',data).then((res) =>{
+              this.patroltypelist();
+            this.resettype();
+          });
+          }
+          
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    resettype(){
+       this.$refs.ruleForm2.resetFields();
+      this.ptvisible = false ;
+    },
+    deltype(val){
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/prop/patrolType", {
+              params: {
+                id: val.id,
+                version: val.version,
+              },
+            })
+            .then((res) => {
+              that.$message.success("删除成功");
+              // 成功重新更新列表
+              that.patroltypelist();
+            });
+        },
+        onCancel() {},
+      });
+    },
+    switchtype(val){
+        axios
+        .patch("/api/prop/patrolType/status", {
+          id: val.id,
+          version: val.version,
+          status: val.status == 0 ? 1 : 0,
+        })
+        .then((res) => {
+          if (res.status_code == 200) {
+            this.patroltypelist();
+          }
+        });
+    }
   },
   computed: {
     rowSelection() {
@@ -1625,7 +1306,6 @@ export default {
 }
 .wrap {
   border-radius: 15px;
-  width: 87.3vw;
   background-color: #fff;
 
   .wrapA {

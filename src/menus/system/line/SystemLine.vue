@@ -173,7 +173,8 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
+  border-radius: 10px;
+  padding-right: 20px;
   background-color: #fff;
   .wrapA {
     width: 100%;

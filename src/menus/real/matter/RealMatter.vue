@@ -19,109 +19,85 @@
               :columns="columns"
               :data-source="dataSource"
               :pagination="paginationOpt"
-              :rowKey="(record, id) => id"
+              rowKey="id"
             >
-              <template slot="area" slot-scope="text, record">
-                {{ map[record.status] }}
-              </template>
-              <a slot="company_name" slot-scope="text">{{ text }}</a>
-              <a slot="repair_sn" slot-scope="text">{{ text }}</a>
-              <span slot="action">
+              <span slot="action" slot-scope="text, record">
                 <!-- 指派 -->
-                <a href="javascript:;" @click="show_assign">
+                <a href="javascript:;" @click="show_assign(record)">
                   <a-icon type="tag" theme="twoTone" />指派</a
                 >
-                <!-- 指派modal弹框 -->
-                <a-modal v-model="visibleSent" title="指派维修员" width="35%">
-                  <div class="buildname" style="margin: 40px 0 0 14px">
-                    <span>维修员：</span
-                    ><a-select
-                      default-value="请选择"
-                      style="width: 26vw"
-                      option-label-prop="label"
-                    >
-                      <a-select-option
-                        v-for="item in repairOptions"
-                        :key="item.id"
-                        :label="item.user_name"
-                        :value="item.id"
-                        v-model="formRepair.user_name"
-                      >
-                        <span role="img" :aria-label="item.user_name">
-                          {{ item.user_name }}
-                        </span>
-                      </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin-top: 40px">
-                    <span>维修时间：</span>
-                    <a-date-picker
-                      v-model="formRepair.worker_start_time"
-                      :disabled-date="disabledStartDate"
-                      show-time
-                      format="YYYY-MM-DD HH:mm:ss"
-                      placeholder="Start"
-                      @openChange="handleStartOpenChange"
-                    />
-                    <a-date-picker
-                      v-model="formRepair.worker_end_time"
-                      :disabled-date="disabledEndDate"
-                      show-time
-                      format="YYYY-MM-DD HH:mm:ss"
-                      placeholder="End"
-                      :open="endOpen"
-                      @openChange="handleEndOpenChange"
-                    />
-                  </div>
-                  <div class="remake" style="margin: 40px 0 20px 0">
-                    <span>维修材料：</span>
-                    <a-input
-                      placeholder="维修材料"
-                      style="width: 26vw"
-                      v-model="formRepair.material"
-                    />
-                  </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 20px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button style="margin-right: 20px" @click="btn_showup"
-                      >取消</a-button
-                    >
-                    <a-button type="primary" @click="btn_showsure"
-                      >确定</a-button
-                    >
-                  </div>
-                </a-modal>
                 <a-divider type="vertical" />
                 <!-- 详情 -->
-                <a href="javascript:;" @click="show_detail">
+                <a href="javascript:;" @click="showdetail(record)">
                   <a-icon type="file-text" theme="twoTone" />详情</a
                 >
                 <!-- 完成 -->
                 <a-divider type="vertical" />
-                <a><a-icon type="box-plot" theme="twoTone" />完成</a>
+                <a @click="finishit(record)"><a-icon type="box-plot" theme="twoTone" />完成</a>
               </span>
             </a-table>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 指派modal弹框 -->
+    <a-modal v-model="visibleSent" title="指派维修员" width="35%" @ok="submit" @cancel="resetit">
+      <a-form-model
+        ref="ruleForm"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-form-model-item  label="维修员：" prop="worker_id">
+          <a-select v-model="form.worker_id" placeholder="请选择">
+          <a-select-option v-for="item in repairOptions" :key="item.id" :value="item.id">
+            {{item.user_name}}
+          </a-select-option>
+      </a-select>
+        </a-form-model-item>
+
+        <a-form-model-item  label="维修时间：">
+          <a-range-picker
+          :ranges="{
+            Today: [moment(), moment()],
+            'This Month': [moment(), moment().endOf('month')],
+          }"
+          show-time
+          v-model="form.worktiem"
+          format="YYYY-MM-DD HH:mm:ss"
+          @change="onChange1"
+        />
+        </a-form-model-item>
+
+        <a-form-model-item  label="维修材料：" >
+          <a-input v-model="form.material" />
+        </a-form-model-item>
+
+        <a-form-model-item  label="维修金额：" >
+          <a-input type="number" v-model="form.cost" />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import moment from "moment";
 export default {
   name: "RealMatter",
   data() {
     return {
+       labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      form: {
+        worker_id:null
+      },
+      rules: {
+        worker_id: [{ required: true, message: '请选择', trigger: 'change' }],
+      },
       map: {
         1: "待分配",
         2: "待处理",
@@ -129,6 +105,7 @@ export default {
         4: "已评价",
         5: "已完成",
       },
+      record:{},
       inputVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
       dataSource: [], //列表数据源
@@ -218,38 +195,60 @@ export default {
     },
   },
   methods: {
-    disabledStartDate(startValue) {
-      const endValue = this.endValue;
-      if (!startValue || !endValue) {
-        return false;
-      }
-      return startValue.valueOf() > endValue.valueOf();
+    moment,
+    resetit(){
+       this.$refs.ruleForm.resetFields();
+       this.visibleSent = false;
     },
-    disabledEndDate(endValue) {
-      const startValue = this.startValue;
-      if (!endValue || !startValue) {
-        return false;
-      }
-      return startValue.valueOf() >= endValue.valueOf();
+    submit(){
+        this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          axios.patch('/api/prop/repair/operate',{
+            status:2,
+            repair_id: this.record.id,
+            worker_id:this.form.worker_id,
+            material: this.form.material,
+            cost: this.form.cost,
+            worker_start_time: this.form.worker_start_time,
+            worker_end_time: this.form.worker_end_time,
+            version:  this.record.version
+          }).then((res) =>{
+            console.log(res)
+            this.resetit();
+            this.matterlist();
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
-    handleStartOpenChange(open) {
-      if (!open) {
-        this.endOpen = true;
-      }
+    onChange1(dates, dateStrings) {
+      this.form.worker_start_time = dateStrings[0];
+      this.form.worker_end_time = dateStrings[1];
     },
-    handleEndOpenChange(open) {
-      this.endOpen = open;
+
+    finishit(val){
+      axios.patch('/api/prop/repair/operate',{
+        status:5,
+        repair_id: val.id,
+        version: val.version
+      }).then((res) =>{
+        console.log(res);
+        this.matterlist();
+      })
     },
     //获取列表数据;
     matterlist() {
-      axios.get("/api/prop/repair?per_page=99999").then((res) => {
+      axios.get("/api/prop/repair?per_page=99999&time=2").then((res) => {
         if (res.status_code == 200) {
           this.dataSource = res.data.data;
         }
       });
     },
     // 指派modal弹框显示
-    show_assign() {
+    show_assign(val) {
+      this.record = val;
       this.visibleSent = true;
     },
     // 确认指派
@@ -270,8 +269,13 @@ export default {
       this.visibleSent = false;
     },
     // 维修单详情
-    show_detail() {
-      this.$router.push("/home/Rmatterdetail");
+    showdetail(val) {
+      this.$router.push({
+        path: "/property/matterdetail",
+        query: {
+          id: val.id,
+        },
+      });
     },
     // 维修员下拉选择内容
     GetRepair() {
@@ -310,7 +314,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

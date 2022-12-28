@@ -1,13 +1,12 @@
 <template>
   <div class="wrap">
     <div class="wrapA">
-      <div class="content" style="margin-top: 20px">
+      <div class="content">
         <div class="cad_one" @click="btn">
-          <a-card style="width: 20vw; height: 20vh">
+          <a-card>
             <a-statistic
               title="本月应收总账单(元)"
               :value="112893"
-              style="margin-right: 60px"
               :precision="2"
               :value-style="{ color: '#cf1322' }"
             >
@@ -25,7 +24,7 @@
           </a-card>
         </div>
         <div class="cad_one">
-          <a-card style="width: 20vw; height: 20vh">
+          <a-card>
             <a-statistic
               title="物业管理费应收账单(元)"
               :value="112893"
@@ -47,7 +46,7 @@
           </a-card>
         </div>
         <div class="cad_one">
-          <a-card style="width: 20vw; height: 20vh">
+          <a-card>
             <a-statistic
               title="租金应收账单(元)"
               :value="112893"
@@ -69,7 +68,7 @@
           </a-card>
         </div>
         <div class="cad_one">
-          <a-card style="width: 20vw; height: 20vh">
+          <a-card>
             <a-statistic
               title="水电费应收账单(元)"
               :value="112893"
@@ -92,22 +91,19 @@
         </div>
       </div>
 
-      <div
-        class="bottom"
-        style="margin-top: 20px; display: flex; justify-content: space-between"
-      >
-        <a-tabs default-active-key="1" @change="callback">
+      <div class="bottom">
+        <a-tabs default-active-key="1" @change="callback" class="left_box">
           <a-tab-pane key="1" tab="应收款"
             ><div ref="myechart" style="width: 1200px; height: 400px"></div
           ></a-tab-pane>
           <a-tab-pane key="2" tab="已收款"> </a-tab-pane>
           <a-tab-pane key="3" tab="未收款">3</a-tab-pane>
         </a-tabs>
-        <a-tabs type="card" @change="callback">
+        <a-tabs type="card" @change="callback" class="right_box">
           <a-tab-pane key="1" tab="本月">
             <div class="card_one">
               <h3 style="margin-left: 36px">企业应收账单TOP10排行榜</h3>
-              <ul>
+              <ul class="topitem">
                 <li style="display: flex; justify-content: space-between">
                   <div>
                     <span style="color: black">①</span>
@@ -184,7 +180,7 @@
           <a-tab-pane key="2" tab="本年">
             <div class="card_one">
               <h3 style="margin-left: 36px">企业应收账单TOP10排行榜</h3>
-              <ul>
+              <ul class="topitem">
                 <li style="display: flex; justify-content: space-between">
                   <div>
                     <span style="color: black">①</span>
@@ -452,23 +448,34 @@ export default {
 }
 .wrap {
   .wrapA {
-    height: 85vh;
-    width: 88vw;
-    overflow-y: auto;
+    flex: 1;
     .content {
       display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
       .cad_one {
+        flex: 1;
         margin-right: 20px;
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
     .bottom {
-      width: 84.6vw;
-      background-color: #fff;
-      .card_one {
-        width: 20vw;
-        height: 40vh;
-        margin-right: 50px;
-        overflow: hidden;
+      margin-top: 20px;
+      display: flex;
+      .left_box {
+        margin-right: 20px;
+        background: #fff;
+        flex: 1;
+      }
+      .right_box {
+        background: #fff;
+        flex: 0 0 25vw;
+      }
+      .topitem {
+        padding-right: 20px;
       }
     }
     .thone {

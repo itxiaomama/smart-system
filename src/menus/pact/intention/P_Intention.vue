@@ -12,10 +12,7 @@
               />
             </div>
             <div class="bottom">
-              <a-button type="primary">
-                <!-- 新增功能 -->
-                <router-link to="/home/Pintentionpush">新增</router-link>
-              </a-button>
+              <a-button type="primary" @click="toedit(0,1)"> 新增</a-button>
             </div>
           </div>
         </div>
@@ -26,30 +23,24 @@
               bordered
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
+              :pagination="pagination"
             >
               <a slot="belong" slot-scope="text">{{ text }}</a>
-              <template slot="action" slot-scope="">
-                <a href="javascript:;">
-                  <a-icon type="edit" theme="twoTone" />
-                  <!-- 编辑功能 -->
-                  <router-link to="/home/Pintentionedit">编辑</router-link></a
-                >
+              <template slot="action" slot-scope="text,record">
+                <a href="javascript:;" @click="toedit(record.id,2)">
+                  <a-icon type="edit" theme="twoTone" /> 编辑</a>
                 <a-divider type="vertical" />
 
-                <a href="javascript:;">
+                <a href="javascript:;"  @click="delit(record)">
                   <!-- 删除功能 -->
                   <a-icon type="delete" theme="twoTone" />删除</a
                 >
 
                 <a-divider type="vertical" />
-                <a href="javascript:;">
+                <a href="javascript:;" @click="tocon(record)">
                   <!-- 内容详情 -->
-                  <a-icon type="file-text" theme="twoTone" /><router-link
-                    to="/home/Pintentiondetail"
-                    >详情</router-link
-                  ></a
-                >
+                  <a-icon type="file-text" theme="twoTone" />详情</a>
               </template>
             </a-table>
           </div>
@@ -70,7 +61,7 @@ export default {
         {
           title: "意向名称",
           dataIndex: "name",
-          scopedSlots: { customRender: "belong" },
+          scopedSlots: { customRender: "name" },
         },
         {
           title: "意向类型",
@@ -83,50 +74,23 @@ export default {
         {
           title: "签订日期",
           align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.floor;
-            let bTimeString = b.floor;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
           dataIndex: "sign_date",
-          scopedSlots: { customRender: "floor" },
+          defaultSortOrder: 'descend', // 默认上到下为由大到小的顺序
+          sorter: (a, b) => { return a.time> b.time? 1 : -1 },
         },
         {
           title: "租赁开始日期",
           align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.area;
-            let bTimeString = b.area;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
           dataIndex: "start_date",
-          scopedSlots: { customRender: "area" },
+          defaultSortOrder: 'descend', // 默认上到下为由大到小的顺序
+          sorter: (a, b) => { return a.time> b.time? 1 : -1 },
         },
         {
           title: "租赁结束日期",
           align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.collect;
-            let bTimeString = b.collect;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
           dataIndex: "end_date",
-          scopedSlots: { customRender: "collect" },
+          defaultSortOrder: 'descend', // 默认上到下为由大到小的顺序
+          sorter: (a, b) => { return a.time> b.time? 1 : -1 },
         },
         {
           title: "租赁方",
@@ -147,15 +111,86 @@ export default {
         },
       ],
       visible: false,
+      pagination: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = pageSize;
+          this.IntentionList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = size;
+          this.IntentionList();
+        },
+      }, // 页面显示数据分页内容
     };
   },
   methods: {
+    tocon(val){
+      this.$router.push({
+        path:'/contract/intentioncon',
+        query:{
+          id:val.id
+        }
+      })
+    },
     // 获取意向合同列表数据
     IntentionList() {
-      axios.get("/api/ics/intentionContract").then((res) => {
+      axios.get("/api/ics/intentionContract?per_page=9999").then((res) => {
         if (res.status_code == 200) {
           this.dataSource = res.data.data;
         }
+      });
+    },
+    toedit(id,type){
+      if(type == 1){
+        this.$router.push({
+          path:'/contract/intentiondetail',
+          query:{
+            type:type,
+            othen:false
+          }
+        })
+      }else{
+        this.$router.push({
+          path:'/contract/intentiondetail',
+          query:{
+            id:id,
+            type:type,
+            other:false
+          }
+        })
+      }
+    },
+    delit(info){
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/ics/intentionContract", {
+              params: {
+                id: info.id,
+                version: info.version,
+              },
+            })
+            .then((res) => {
+              if (res.message === "success") {
+              } // 成功重新更新列表
+              that.$message.success("删除成功");
+              that.IntentionList();
+            });
+        },
+        onCancel() {},
       });
     },
   },
@@ -180,7 +215,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

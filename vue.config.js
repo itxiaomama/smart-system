@@ -18,6 +18,7 @@ module.exports = defineConfig({
     // host: '192.168.0.159',
     // port: 8080
   },
+  runtimeCompiler: true
 })
 // // 引入等比适配插件
 // const px2rem = require('postcss-px2rem')

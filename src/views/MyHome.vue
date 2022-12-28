@@ -1,32 +1,38 @@
 <template>
-  <div>
-    <div class="left">
-      <MyLeft></MyLeft>
-    </div>
+  <div class="container">
+    <MyLeft />
     <div class="routerview">
-      <router-view></router-view>
+      <myHeader />
+      <router-view class="newview"></router-view>
     </div>
   </div>
 </template>
 
 <script>
 import MyLeft from "@/components/MyLeft.vue";
+import myHeader from "@/components/header.vue";
 export default {
   name: "MyHome",
   components: {
     MyLeft,
+    myHeader,
   },
 };
 </script>
 
 <style lang="less" scoped>
-.left {
-  position: relative;
+.container {
+  display: flex;
+  overflow-x: hidden;
+  height: 100%;
 }
 .routerview {
-  position: absolute;
-  top: 130px;
-  left: 11vw;
-  min-height: 200px;
+  flex: 1;
+  background: #eee;
+}
+.newview {
+  min-height: 80vh;
+  overflow-y: auto;
+  margin: 20px;
 }
 </style>

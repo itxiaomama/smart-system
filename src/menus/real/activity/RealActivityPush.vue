@@ -1,206 +1,267 @@
 <template>
   <div class="wrap" style="border-radius: 10px">
-    <div>
-      <div class="ouer">
-        <div class="left">
-          <div class="inpA">
-            <span>活动名称：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="请输入活动名称"
-              @change="onChange"
-              style="width: 26vw"
-              v-model="list.name"
-            />
-          </div>
-          <div class="inpB" style="margin-top: 50px">
-            <span>活动地点：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="请输入活动地点"
-              @change="onChange"
-              style="width: 26vw"
-            />
-          </div>
-          <div class="inpD" style="margin-left: -28px; margin-top: 50px">
-            <div class="Dset">
-              <p style="white-space: nowrap">上传活动头像：</p>
-              <a-upload
-                name="avatar"
-                list-type="picture-card"
-                class="avatar-uploader"
-                :show-upload-list="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :before-upload="beforeUpload"
-                @change="handleChange"
-              >
-                <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">上传</div>
-                </div>
-              </a-upload>
-            </div>
-            <p style="margin-left: 98px">尺寸建议:宽160px,高160px</p>
-          </div>
-          <div class="inpF" style="margin-left: 0px; margin-top: 60px">
-            <div class="Fset">
-              <p>上传详情：</p>
-              <a-textarea
-                placeholder="请输入活动详情"
-                :rows="9.5"
-                style="width: 26vw"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="right">
-          <div class="inpO">
-            <span>报名起止时间：</span>
-            <a-range-picker @change="onChange" style="width: 26vw" />
-          </div>
-          <div class="inpO" style="margin-top: 50px">
-            <span>活动起止时间：</span>
-            <a-range-picker @change="onChange" style="width: 26vw" />
-          </div>
-          <div class="inpE" style="margin-left: -10px; margin-top: 50px">
-            <div class="Eset">
-              <span style="white-space: nowrap; margin-right: 8px"
-                >上传活动小图：</span
-              >
-              <a-upload
-                name="avatar"
-                list-type="picture-card"
-                class="avatar-uploader"
-                :show-upload-list="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :before-upload="beforeUpload"
-                @change="handleChange"
-              >
-                <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">上传</div>
-                </div>
-              </a-upload>
-            </div>
-            <p style="margin-left: 108px">尺寸建议:宽750px,高300px</p>
-          </div>
-          <div class="inpA">
-            <span>联系电话：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="请输入联系电话"
-              @change="onChange"
-              style="width: 26vw; margin-top: 48px"
-            />
-          </div>
-          <div class="inpA">
-            <span>活动金额：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="请输入活动金额"
-              @change="onChange"
-              style="width: 26vw; margin-top: 50px"
-            />
-          </div>
-          <div class="inpA">
-            <span>限制人数：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="请输入限制人数"
-              @change="onChange"
-              style="width: 26vw; margin-top: 50px"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="pay">
-        <div class="inpN">
-          <a-button type="primary" @click="btn"> 提交 </a-button>
-          <a-button style="margin-left: 40px" type="close-square" @click="btnN">
-            <a-icon type="rollback" />关闭
-          </a-button>
-        </div>
-      </div>
-    </div>
+    <a-form-model
+      ref="ruleForm"
+      :model="form"
+      :rules="rules"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+    >
+      <a-form-model-item label="活动名称：" prop="name">
+        <a-input v-model="form.name" />
+      </a-form-model-item>
+
+      <a-form-model-item
+        label="报名起止时间："
+        prop="signbegin"
+        class="leftitem"
+      >
+        <a-range-picker
+          :ranges="{
+            Today: [moment(), moment()],
+            'This Month': [moment(), moment().endOf('month')],
+          }"
+          show-time
+          format="YYYY-MM-DD HH:mm:ss"
+          v-model="form.signbegin"
+          @change="onChange"
+        />
+      </a-form-model-item>
+
+      <a-form-model-item
+        label="活动起止时间："
+        prop="actbegin"
+        class="leftitem"
+      >
+        <a-range-picker
+          :ranges="{
+            Today: [moment(), moment()],
+            'This Month': [moment(), moment().endOf('month')],
+          }"
+          show-time
+          v-model="form.actbegin"
+          format="YYYY-MM-DD HH:mm:ss"
+          @change="onChange1"
+        />
+      </a-form-model-item>
+
+      <a-form-model-item label="活动地点：" prop="location">
+        <a-input v-model="form.location" />
+      </a-form-model-item>
+
+      <a-form-model-item label="上传活动头像：">
+        <uploadimgVue 
+           :FileList="headimg"
+           :limit="1"
+            @upload="getupload"
+            @remove="remove"
+         />
+      </a-form-model-item>
+
+      <a-form-model-item label="上传活动小图：">
+        <uploadimgVue 
+          :FileList="smallimg" 
+          :limit="1"
+          @upload="getupload1"
+          @remove="remove1"
+        />
+      </a-form-model-item>
+
+      <a-form-model-item label="上传详情：">
+        <wangeditorVue v-model="content" @change="changeit" />
+      </a-form-model-item>
+
+      <a-form-model-item label="联系电话：" prop="contacts" class="leftitem">
+        <a-input v-model="form.contacts" style="width: 300px;" />
+      </a-form-model-item>
+
+      <a-form-model-item label="活动金额（元）：" prop="price" class="leftitem">
+        <a-input-number v-model="form.price" style="width: 300px;" />
+      </a-form-model-item>
+
+      <a-form-model-item label="限制人数：" prop="full_num" class="leftitem" >
+        <a-input-number v-model="form.full_num" style="width: 300px;" />
+      </a-form-model-item>
+
+      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click="onSubmit"> 提交 </a-button>
+        <a-button style="margin-left: 10px" @click="resetForm"> 返回 </a-button>
+      </a-form-model-item>
+    </a-form-model>
   </div>
 </template>
 
 <script>
+import moment from "moment";
+import uploadimgVue from "@/components/common/uploadimg.vue";
+import wangeditorVue from "@/components/common/wangeditor.vue";
+import axios from "axios";
 export default {
   name: "RealActivityPush",
+  components: {
+    uploadimgVue,
+    wangeditorVue,
+  },
   data() {
     return {
-      list: [{}],
+      content:'',
+      type:null,
+      labelCol: { span: 6 },
+      wrapperCol: { span: 14 },
+      smallimg:[],
+      headimg:[],
+      form: {
+        name: "",
+        small_img:'',
+        head_img:'',
+        content:''
+        },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: "请输入活动名称",
+            trigger: "blur",
+          },
+        ],
+        location: [
+          {
+            required: true,
+            message: "请输入活动地点",
+            trigger: "blur",
+          },
+        ],
+        contacts: [
+          {
+            required: true,
+            message: "请输入联系电话",
+            trigger: "blur",
+          },
+        ],
+        full_num: [
+          {
+            required: true,
+            message: "请输入限制人数",
+            trigger: "blur",
+          },
+        ],
+        price: [
+          {
+            required: true,
+            message: "请输入活动金额",
+            trigger: "blur",
+          },
+        ],
+        signbegin: [
+          { required: true, message: "请选择报名起止时间", trigger: "change" },
+        ],
+        actbegin: [
+          { required: true, message: "请选择活动起止时间", trigger: "change" },
+        ],
+      },
     };
   },
+  mounted(){
+    
+    this.type = JSON.parse(this.$route.query.type);
+    if(this.type == 2){
+      let obj = JSON.parse(this.$route.query.form);
+      this.form = obj;
+      this.form.head_img = obj.head_img;
+      this.form.small_img = obj.small_img;
+      this.form.signbegin = [moment(obj.sign_begin),moment(obj.sign_end)];
+      this.form.actbegin = [moment(obj.act_begin),moment(obj.act_end)];
+      this.$nextTick(() =>{
+        this.content = obj.content;
+      })
+      if(obj.head_img){
+        this.headimg.push(obj.head_img);
+      }
+      if(obj.small_img){
+        this.smallimg.push(obj.small_img);
+      }
+    }
+  },
   methods: {
-    btnN() {
-      this.$router.push("/home/Ractivity");
+    moment,
+    onChange(dates, dateStrings) {
+      this.form.sign_begin = dateStrings[0];
+      this.form.sign_end = dateStrings[1];
     },
+    onChange1(dates, dateStrings) {
+      this.form.act_begin = dateStrings[0];
+      this.form.act_end = dateStrings[1];
+    },
+    btnN() {
+      this.$router.push("/property/activity");
+    },
+    onSubmit() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          let data ={
+            name: this.form.name,
+            sign_begin:this.form.sign_begin,
+            sign_end:this.form.sign_end,
+            act_begin:this.form.act_begin,
+            act_end:this.form.act_end,
+            location:this.form.location,
+            head_img:this.form.head_img,
+            small_img:this.form.small_img,
+            content:this.content,
+            contacts:this.form.contacts,
+            price:this.form.price,
+            full_num:this.form.full_num
+          }
+          if(this.type == 1){
+            axios.post('/api/prop/activity',data).then((res) =>{
+              this.resetForm();
+            });
+          }else{
+            data.id = this.form.id ;
+            data.version = this.form.version ;
+            axios.patch('/api/prop/activity',data).then((res) =>{
+              this.resetForm();
+            });
+          }
+          
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm() {
+      this.$refs.ruleForm.resetFields();
+      this.$router.push({
+        path:'/property/activity'
+      })
+    },
+    getupload(file){
+      this.form.head_img = file;
+      this.headimg.push(file)
+    },
+    remove(){
+      this.form.head_img = '';
+      this.headimg = [];
+    },
+    getupload1(file){
+      this.form.small_img = file;
+      this.smallimg.push(file)
+    },
+    remove1(){
+      this.form.small_img = '';
+      this.smallimg = [];
+    },
+    changeit(val){
+      this.content = val ;
+    }
   },
 };
 </script>
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
   background-color: #fff;
-  .ouer {
-    width: 85vw;
-    display: flex;
-    margin: 20px auto;
-    justify-content: space-evenly;
-    .left {
-      margin-left: 0px;
-      .inpD {
-        .Dset {
-          display: flex;
-        }
-      }
-      .inpF {
-        .Fset {
-          display: flex;
-        }
-      }
-    }
-    .right {
-      .inpE {
-        .Eset {
-          display: flex;
-        }
-      }
-      .inpF {
-        .Fset {
-          display: flex;
-        }
-      }
-      .inpI {
-        display: flex;
-        span {
-          margin-right: 8px;
-        }
-        .scope {
-          display: flex;
-          width: 17vw;
-          height: 2.1rem;
-          background-color: rgb(255, 255, 255);
-          border: 1px solid rgb(224, 227, 228);
-          border-right: 0;
-          border-radius: 5px;
-          span {
-            color: rgb(116, 113, 113);
-            margin-top: 4px;
-            margin-left: 0px;
-          }
-        }
-      }
-    }
-  }
-  .pay {
-    margin: 0 auto;
-    margin: 30px 0 30px 700px;
-  }
+  padding: 50px;
 }
 </style>

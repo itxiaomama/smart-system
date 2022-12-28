@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <router-view></router-view>
   </div>
 
@@ -15,12 +15,33 @@
 
 <script>
 export default {
-  name: "MyApp",
+  name: "App",
   data() {
     return {
       // scalesNum: 1, // 缩放比例
     };
   },
+  created() {
+    // // 解决vuex 刷新丢失问题
+    // if (sessionStorage.getItem("store")) {
+    //   let state = JSON.parse(sessionStorage.getItem("store"));
+    //   this.$store.commit("set_token", state.token);
+    //   sessionStorage.setItem("store", "  ");
+    // }
+    // window.onbeforeunload = this.beforeunloadfn;
+    // let btn = ["add", "edit", "view", "del"];
+    // this.$store.commit("set_permission", btn);
+  },
+  methods: {
+    // beforeunloadfn(e) {
+    //   console.log(this.$store.state);
+    //   e = e || window.event;
+    //   if (e) {
+    //     sessionStorage.setItem("store", JSON.stringify(this.$store.state));
+    //   }
+    // },
+  },
+
   // mounted() {
   //   var browerWidth = window.innerWidth; //浏览器可视宽度
   //   var baseWidth = 1920; //设计稿宽度

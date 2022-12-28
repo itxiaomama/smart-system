@@ -127,7 +127,7 @@ export default {
       );
     },
     btn_send() {
-      this.$router.push("/home/Rinform");
+      this.$router.push("/property/inform");
     },
   },
   computed: {
@@ -154,7 +154,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

@@ -142,6 +142,7 @@ export default {
     return {
       list: [{}],
       valuea: 4,
+      type: null,
     };
   },
   methods: {
@@ -149,6 +150,9 @@ export default {
     btnN() {
       this.$router.go(-1);
     },
+  },
+  created() {
+    this.type = this.$route.query.type;
   },
 };
 </script>

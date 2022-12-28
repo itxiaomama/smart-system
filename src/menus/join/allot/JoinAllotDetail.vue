@@ -91,7 +91,7 @@
             ></a-button
           >
           <a-button type="primary" style="margin-left: 30px"
-            ><router-link to="/home/Pintentionpush"
+            ><router-link to="/contract/intentiondetail"
               >签订合同</router-link
             ></a-button
           >

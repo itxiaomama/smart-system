@@ -14,69 +14,9 @@
           </div>
           <div class="bottom">
             <!-- 新增 -->
-            <a-button type="primary" @click="AddList">新增</a-button>
-            <!-- 新增modal弹框 -->
-            <a-modal v-model="visibleAdd" title="新增banner菜单" width="40%">
-              <div class="buildname" style="margin: 20px 12px">
-                <span>bannner菜单：</span>
-                <a-input
-                  placeholder="请输入bannner菜单"
-                  style="width: 30vw"
-                  v-model="FromAdd.banner_name"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 35px">
-                <span>菜单简介：</span>
-                <a-input
-                  placeholder="请输入菜单简介"
-                  style="width: 30vw"
-                  v-model="FromAdd.banner_desc"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 21px; display: flex">
-                <p>供应商图标：</p>
-                <div>
-                  <el-upload
-                    action="https://park.cngiantech.com/api/system/upload"
-                    list-type="picture-card"
-                    :limit="1"
-                    :headers="headers"
-                    :data="fileData"
-                    :before-upload="beforeAvatarUpload1"
-                    :on-success="handleSuccess1"
-                  >
-                    <i class="el-icon-plus"></i>
-                  </el-upload>
-                  <img width="100%" :src="FromAdd.banner_img" alt="" />
-                </div>
-              </div>
-              <div class="buildname" style="margin: 20px 22px">
-                <span>落地页URL：</span>
-                <a-input
-                  placeholder="请输入落地页URL"
-                  style="width: 30vw"
-                  v-model="FromAdd.uri"
-                />
-              </div>
-              <div
-                style="
-                  padding: 10px 16px;
-                  text-align: right;
-                  background: transparent;
-                  border-top: 1px solid #e8e8e8;
-                  border-radius: 0 0 4px 4px;
-                "
-              >
-                <a href="javascript:;"
-                  ><a-button style="margin-right: 20px" @click="AddListUp"
-                    >取消</a-button
-                  ></a
-                >
-                <a href="javascript:;" @click="AddListSure">
-                  <a-button type="primary">确定</a-button></a
-                >
-              </div>
-            </a-modal>
+            <a-button type="primary" @click="AddList({}, 1, '新增banner')"
+              >新增</a-button
+            >
           </div>
         </div>
         <div class="content" style="margin-top: 20px">
@@ -89,7 +29,6 @@
               :rowKey="(record, id) => id"
               :pagination="paginationBanner"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
               <span slot="area" slot-scope="text, record">
                 <a-switch
                   v-if="record.is_marketable == 1"
@@ -142,80 +81,9 @@
               </span>
               <template slot="action" slot-scope="text, record">
                 <!-- 编辑-->
-                <a href="javascript:;" @click="EditList(record)"
+                <a href="javascript:;" @click="AddList(record, 2, '编辑banner')"
                   ><a-icon type="edit" theme="twoTone" />编辑</a
                 >
-                <!-- 编辑modal弹框 -->
-                <a-modal
-                  v-model="visibleEdit"
-                  title="新增banner菜单"
-                  width="40%"
-                >
-                  <div class="buildname" style="margin: 20px 12px">
-                    <span>bannner菜单：</span>
-                    <a-input
-                      placeholder="请输入bannner菜单"
-                      style="width: 30vw"
-                      v-model="FromEdit.banner_name"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 35px">
-                    <span>菜单简介：</span>
-                    <a-input
-                      placeholder="请输入菜单简介"
-                      style="width: 30vw"
-                      v-model="FromEdit.banner_desc"
-                    />
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 21px; display: flex"
-                  >
-                    <p>供应商图标：</p>
-                    <div>
-                      <el-upload
-                        action="https://park.cngiantech.com/api/system/upload"
-                        list-type="picture-card"
-                        :limit="1"
-                        :headers="headers"
-                        :data="fileData"
-                        :before-upload="beforeAvatarUpload1"
-                        :on-success="handleSuccess1"
-                        :on-preview="handlePictureCardPreview1"
-                        :on-remove="handleRemove1"
-                      >
-                        <i class="el-icon-plus"></i>
-                      </el-upload>
-                      <img width="100%" :src="FromEdit.banner_img" alt="" />
-                    </div>
-                  </div>
-                  <div class="buildname" style="margin: 20px 22px">
-                    <span>落地页URL：</span>
-                    <a-input
-                      placeholder="请输入落地页URL"
-                      style="width: 30vw"
-                      v-model="FromEdit.uri"
-                    />
-                  </div>
-                  <div
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a href="javascript:;"
-                      ><a-button style="margin-right: 20px" @click="EditListUp"
-                        >取消</a-button
-                      ></a
-                    >
-                    <a href="javascript:;" @click="EditListSure">
-                      <a-button type="primary">确定</a-button></a
-                    >
-                  </div>
-                </a-modal>
                 <a-divider type="vertical" />
                 <!-- 删除 -->
                 <a
@@ -229,15 +97,75 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal v-model="visibleAdd" :title="title" width="40%">
+      <div class="buildname" style="margin: 20px 12px">
+        <span>bannner菜单：</span>
+        <a-input
+          placeholder="请输入bannner菜单"
+          style="width: 30vw"
+          v-model="FromAdd.banner_name"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 35px">
+        <span>菜单简介：</span>
+        <a-input
+          placeholder="请输入菜单简介"
+          style="width: 30vw"
+          type="textarea"
+          v-model="FromAdd.banner_desc"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 21px; display: flex">
+        <p>供应商图标：</p>
+        <div>
+         <uploadimgVue  
+         :FileList="bannerimg"
+         :limit="1"
+          @upload="getupload"
+          @remove="remove"
+         />
+        </div>
+      </div>
+      <div class="buildname" style="margin: 20px 22px">
+        <span>落地页URL：</span>
+        <a-input
+          placeholder="请输入落地页URL"
+          style="width: 30vw"
+          v-model="FromAdd.uri"
+        />
+      </div>
+      <template slot="footer">
+        <div>
+          <a href="javascript:;"
+            ><a-button style="margin-right: 20px" @click="AddListUp"
+              >取消</a-button
+            ></a
+          >
+          <a href="javascript:;" @click="AddListSure">
+            <a-button type="primary">确定</a-button></a
+          >
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import uploadimgVue from "@/components/common/uploadimg.vue";
 export default {
   name: "FirmBanner",
+  components:{
+    uploadimgVue
+  },
   data() {
     return {
+      banner_img:'',
+      bannerimg:[],
+      type: 1,
+      title: "新增banner",
       dataSource: [],
       columns: [
         {
@@ -256,7 +184,7 @@ export default {
         {
           title: "上架时间",
           align: "center",
-          dataIndex: "created_at",
+          dataIndex: "marketable_time",
           width: "20%",
           scopedSlots: { customRender: "belongbuild" },
         },
@@ -339,6 +267,14 @@ export default {
     },
   },
   methods: {
+    getupload(file){
+      this.banner_img = file ;
+      this.bannerimg.push(file)
+    },
+    remove(file){
+      this.banner_img = '';
+      this.bannerimg = [];
+    },
     async switchChange(checked, id, version, name) {
       let obj = { id };
       obj[name] = checked ? 1 : 0;
@@ -365,31 +301,6 @@ export default {
           }
         });
     },
-    // 图片上传成功
-    handleSuccess1(res, file) {
-      for (let item of res.data) {
-        this.FromAdd.banner_img = item.path;
-      }
-    },
-    handleSuccess2(res, file) {
-      for (let item of res.data) {
-        this.FroEdit.banner_img = item.path;
-        console.log(this.FroEdit.banner_img);
-      }
-    },
-    // 图片上传之前
-    beforeAvatarUpload1(file) {
-      this.fileData["files[]"] = file;
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
     // 获取列表数据
     bannerList() {
       axios.get("/api/ics/serviceBanner?per_page=9999").then((res) => {
@@ -398,24 +309,52 @@ export default {
     },
     //todo 新增
     // 新增banner弹框显示
-    AddList() {
+    AddList(form, type, title) {
+      this.type = type;
+      this.title = title;
+      this.FromAdd = { ...form };
+      if(this.type == 2){
+        this.$nextTick(() =>{
+          if(form.banner_img){
+            let arr = [] ;
+            arr.push(form.banner_img)
+            this.banner_img = form.banner_img;
+            this.bannerimg = arr ;
+          }
+        })
+      }
       this.visibleAdd = true;
-      this.FromAdd = {
-        banner_name: "",
-      };
     },
     // 新增确认
     AddListSure() {
-      axios.post("/api/ics/serviceBanner", this.FromAdd).then((res) => {
-        if (res.status_code == 201) {
-          this.visibleAdd = false;
-          this.$message.success("新增成功");
-          this.bannerList();
-        }
-      });
+      let data ={
+        banner_name:this.FromAdd.banner_name,
+        banner_desc:this.FromAdd.banner_desc,
+        banner_img:this.banner_img,
+        uri:this.FromAdd.uri,
+      }
+      if (this.type == 1) {
+        axios.post("/api/ics/serviceBanner", data).then((res) => {
+            this.visibleAdd = false;
+            this.$message.success("操作成功");
+           this.AddListUp();
+            this.bannerList();
+        });
+      } else {
+        data.id =  this.FromAdd.id;
+        data.version =  this.FromAdd.version;
+         axios.patch("/api/ics/serviceBanner", data).then((res) => {
+            this.visibleAdd = false;
+            this.$message.success("操作成功");
+            this.AddListUp();
+            this.bannerList();
+        });
+      }
     },
     // 取消新增
     AddListUp() {
+      this.banner_img = '';
+      this.bannerimg = [];
       this.visibleAdd = false;
     },
     //todo 删除
@@ -497,7 +436,6 @@ export default {
   display: block;
 }
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

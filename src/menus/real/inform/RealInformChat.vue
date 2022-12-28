@@ -4,21 +4,13 @@
       <div class="text">
         <div class="supplier" style="display: flex">
           <span style="white-space: nowrap">所属物业：</span>
-          <a-select
-            default-value="请选择"
-            style="width: 60vw"
-            @change="handleChange"
-          >
+          <a-select default-value="请选择" style="width: 60vw">
             <a-select-option value="lucy">1</a-select-option>
           </a-select>
         </div>
         <div class="supplier" style="display: flex">
           <span style="white-space: nowrap">所属主体：</span>
-          <a-select
-            default-value="请选择"
-            style="width: 60vw"
-            @change="handleChange"
-          >
+          <a-select default-value="请选择" style="width: 60vw">
             <a-select-option value="lucy">1</a-select-option>
           </a-select>
         </div>
@@ -36,11 +28,7 @@
         </div>
         <div class="supplier" style="display: flex">
           <span style="white-space: nowrap">通知类别：</span>
-          <a-select
-            default-value="请选择"
-            style="width: 60vw"
-            @change="handleChange"
-          >
+          <a-select default-value="请选择" style="width: 60vw">
             <a-select-option value="lucy">1</a-select-option>
           </a-select>
         </div>
@@ -50,7 +38,27 @@
         </div>
         <div class="site">
           <span style="line-height: 28px">时间范围：</span>
-          <a-range-picker placeholder="Select week" @change="onChange" />
+          <a-range-picker />
+        </div>
+        <div class="site" v-if="type == '2'">
+          <span>发布范围：</span>
+          <div>
+            <a-radio-group v-model="value">
+              <a-radio :value="1">全部</a-radio>
+              <a-radio :value="2">指定楼宇</a-radio>
+              <a-radio :value="3">指定单元</a-radio>
+              <a-radio :value="4">指定房屋</a-radio>
+            </a-radio-group>
+          </div>
+        </div>
+        <div class="site" v-if="type == '3'">
+          <span>发布范围：</span>
+          <div>
+            <a-radio-group v-model="value">
+              <a-radio :value="1">全部</a-radio>
+              <a-radio :value="2">指定商铺</a-radio>
+            </a-radio-group>
+          </div>
         </div>
         <div class="action">
           <a-button type="primary">提交</a-button>
@@ -65,11 +73,19 @@
 
 <script>
 export default {
-  name: " RealInformChat",
+  data() {
+    return {
+      type: null,
+    };
+  },
   methods: {
     btnA() {
-      this.$router.push("Rinform");
+      this.$router.push("/property/inform");
     },
+  },
+  created() {
+    this.type = this.$route.query.type;
+    console.log(typeof this.$route.query.type);
   },
 };
 </script>

@@ -45,90 +45,12 @@
           <div class="bottom">
             <div class="bottom">
               <div class="new">
-                <a-button type="primary" @click="showModal"> +新建 </a-button>
-                <a-modal
-                  v-model="visible"
-                  title="添加用户"
-                  @ok="handleOk"
-                  style="width: 150px"
-                  cancelText="取消"
-                  okText="确认"
+                <a-button
+                  type="primary"
+                  @click="showModal({}, 1, '新增定时任务')"
                 >
-                  <div
-                    class="build"
-                    style="margin: 20px 20px 20px 10px; display: flex"
-                  >
-                    <span style="white-space: nowrap">任务名称：</span>
-                    <a-input
-                      placeholder="请输入任务名称"
-                      style="width: 19.4vw"
-                    />
-                  </div>
-                  <div
-                    class="inputG"
-                    style="display: flex; margin: 20px 20px 20px 10px"
-                  >
-                    <span class="spanA">任务分组：</span>
-                    <a-input-group style="width: 15vw" compact>
-                      <a-cascader
-                        style="width: 19.4vw"
-                        :options="property"
-                        placeholder="请选择"
-                      />
-                    </a-input-group>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 10px; display: flex"
-                  >
-                    <span style="white-space: nowrap">调用方法：</span>
-                    <a-input
-                      placeholder="请输入调用目标"
-                      style="width: 19.4vw"
-                    />
-                  </div>
-                  <div
-                    class="inputG"
-                    style="display: flex; margin: 20px 20px 20px 38px"
-                  >
-                    <span class="spanA">状态：</span>
-                    <a-input-group style="width: 15vw" compact>
-                      <a-cascader
-                        style="width: 19.4vw"
-                        :options="property"
-                        placeholder="请选择"
-                      />
-                    </a-input-group>
-                  </div>
-                  <div style="display: flex; margin: 20px 20px 20px 10px">
-                    <span style="white-space: nowrap">错误策略：</span>
-                    <div>
-                      <a-radio-group v-model="value" @change="onChange">
-                        <a-radio-button value="a"> 立即执行 </a-radio-button>
-                        <a-radio-button value="b"> 执行一次 </a-radio-button>
-                        <a-radio-button value="c"> 放弃执行 </a-radio-button>
-                      </a-radio-group>
-                    </div>
-                  </div>
-                  <div style="display: flex; margin: 20px 20px 20px 10px">
-                    <span style="white-space: nowrap">是否并发：</span>
-                    <div>
-                      <a-radio-group v-model="value" @change="onChange">
-                        <a-radio-button value="a"> 允许 </a-radio-button>
-                        <a-radio-button value="b"> 禁止 </a-radio-button>
-                      </a-radio-group>
-                    </div>
-                  </div>
-                  <div style="display: flex; margin: 20px 20px 20px 38px">
-                    <span style="white-space: nowrap">状态：</span>
-                    <div>
-                      <a-radio-group v-model="value" @change="onChange">
-                        <a-radio :value="1"> 是 </a-radio>
-                        <a-radio :value="2"> 否 </a-radio>
-                      </a-radio-group>
-                    </div>
-                  </div>
-                </a-modal>
+                  +新建
+                </a-button>
               </div>
               <a-button type="danger" style="margin-left: 20px">
                 删除
@@ -143,7 +65,6 @@
               :data-source="data"
               :row-selection="rowSelection"
               :pagination="{ pageSize: 500 }"
-              :scroll="{ y: 560 }"
             >
               <a slot="name" slot-scope="text">{{ text }}</a>
               <span slot="stats"
@@ -152,18 +73,83 @@
                   un-checked-children="暂停"
                   default-checked
               /></span>
-              <span slot="actions">
-                <a>执行一次</a>
+              <template slot="actions" slot-scope="record">
+                <a @click="todoit(record)">执行一次</a>
                 <a-divider type="vertical" />
-                <a>编辑</a>
+                <a @click="showModal(record, 2, '编辑定时任务')">编辑</a>
                 <a-divider type="vertical" />
                 <a>删除</a>
-              </span>
+              </template>
             </a-table>
           </div>
         </div>
       </div>
     </div>
+
+    <a-modal v-model="visible" :title="title">
+      <div class="build" style="margin: 20px 20px 20px 10px; display: flex">
+        <span style="white-space: nowrap">任务名称：</span>
+        <a-input placeholder="请输入任务名称" style="width: 19.4vw" />
+      </div>
+      <div class="inputG" style="display: flex; margin: 20px 20px 20px 10px">
+        <span class="spanA">任务分组：</span>
+        <a-input-group style="width: 15vw" compact>
+          <a-cascader
+            style="width: 19.4vw"
+            :options="property"
+            placeholder="请选择"
+          />
+        </a-input-group>
+      </div>
+      <div class="buildname" style="margin: 20px 10px; display: flex">
+        <span style="white-space: nowrap">调用方法：</span>
+        <a-input placeholder="请输入调用目标" style="width: 19.4vw" />
+      </div>
+      <div class="inputG" style="display: flex; margin: 20px 20px 20px 38px">
+        <span class="spanA">状态：</span>
+        <a-input-group style="width: 15vw" compact>
+          <a-cascader
+            style="width: 19.4vw"
+            :options="property"
+            placeholder="请选择"
+          />
+        </a-input-group>
+      </div>
+      <div style="display: flex; margin: 20px 20px 20px 10px">
+        <span style="white-space: nowrap">错误策略：</span>
+        <div>
+          <a-radio-group v-model="value" @change="onChange">
+            <a-radio-button value="a"> 立即执行 </a-radio-button>
+            <a-radio-button value="b"> 执行一次 </a-radio-button>
+            <a-radio-button value="c"> 放弃执行 </a-radio-button>
+          </a-radio-group>
+        </div>
+      </div>
+      <div style="display: flex; margin: 20px 20px 20px 10px">
+        <span style="white-space: nowrap">是否并发：</span>
+        <div>
+          <a-radio-group v-model="value" @change="onChange">
+            <a-radio-button value="a"> 允许 </a-radio-button>
+            <a-radio-button value="b"> 禁止 </a-radio-button>
+          </a-radio-group>
+        </div>
+      </div>
+      <div style="display: flex; margin: 20px 20px 20px 38px">
+        <span style="white-space: nowrap">状态：</span>
+        <div>
+          <a-radio-group v-model="value" @change="onChange">
+            <a-radio :value="1"> 是 </a-radio>
+            <a-radio :value="2"> 否 </a-radio>
+          </a-radio-group>
+        </div>
+      </div>
+      <template slot="footer">
+        <div class="btnant" style="margin-top: 20px">
+          <a-button style="margin-right: 20px" @click="Addserve">取消</a-button>
+          <a-button type="primary" @click="AddChargeSure">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -212,7 +198,6 @@ const columns = [
   {
     title: "操作",
     dataIndex: "action",
-    width: 180,
     scopedSlots: { customRender: "actions" },
   },
 ];
@@ -244,10 +229,14 @@ export default {
   name: "SystemSettime",
   data() {
     return {
+      type: null,
+      title: null,
       data,
       columns,
       visible: false,
       value: "",
+      form: {},
+      property: [],
     };
   },
   methods: {
@@ -260,6 +249,29 @@ export default {
     handleOk(e) {
       console.log(e);
       this.visible = false;
+    },
+    AddChargeSure(form, type, title) {
+      this.type = type;
+      this.title = title;
+      this.form = { ...form };
+      this.visible = false;
+    },
+    Addserve() {
+      this.visible = false;
+    },
+
+    todoit(record) {
+      console.log(record);
+      this.$confirm({
+        title: "警告",
+        content: "确认要立即执行一次",
+        onOk() {
+          return new Promise((resolve, reject) => {
+            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+          }).catch(() => console.log("Oops errors!"));
+        },
+        onCancel() {},
+      });
     },
   },
   computed: {
@@ -286,7 +298,8 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
+  border-radius: 10px;
+  padding-right: 20px;
   background-color: #fff;
   .wrapA {
     width: 100%;

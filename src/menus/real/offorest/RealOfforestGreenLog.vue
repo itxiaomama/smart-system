@@ -229,7 +229,6 @@ export default {
   }
 }
 .wrap {
-  width: 85vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

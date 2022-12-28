@@ -22,7 +22,7 @@
             <div class="bottom" style="margin-bottom: 20px">
               <div class="new">
                 <a-button type="primary">
-                  <router-link to="/home/Rconpanypush">+新增</router-link>
+                  <router-link to="/property/companydetail">+新增</router-link>
                 </a-button>
               </div>
             </div>
@@ -59,7 +59,9 @@
               <template slot="action" slot-scope="text, record">
                 <a
                   ><a-icon type="edit" theme="twoTone" />
-                  <router-link to="/home/Rconpanyedit">编辑</router-link></a
+                  <router-link to="/property/companydetail"
+                    >编辑</router-link
+                  ></a
                 >
                 <a-divider type="vertical" />
                 <a-popconfirm
@@ -224,7 +226,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

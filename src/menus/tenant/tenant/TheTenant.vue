@@ -6,6 +6,7 @@
         <div class="left">
           <a-input-search
             placeholder="快速搜索"
+            v-permission="'search'"
             style="width: 200px; margin-right: 20px"
             @click="ShowEdit(true)"
             v-model="inputVal"
@@ -13,36 +14,14 @@
         </div>
         <!-- 新增 -->
         <div class="bottom">
-          <a-button type="primary" style="margin-bottom: 20px" @click="AddList">
+          <a-button
+            type="primary"
+            v-permission="'add'"
+            style="margin-bottom: 20px"
+            @click="AddList({}, 1, '新增租户')"
+          >
             新增
           </a-button>
-          <!-- 新增modal弹框 -->
-          <a-modal v-model="visibleAdd" title="新增租户" width="35%">
-            <div class="buildname" style="margin-bottom: 20px">
-              <span>租户名称：</span
-              ><a-input
-                placeholder="租户名称"
-                style="width: 28vw"
-                v-model="From.name"
-                allow-clear
-              ></a-input>
-            </div>
-            <div
-              class="btnant"
-              style="
-                padding: 10px 16px;
-                text-align: right;
-                background: transparent;
-                border-top: 1px solid #e8e8e8;
-                border-radius: 0 0 4px 4px;
-              "
-            >
-              <a-button style="margin-right: 20px" @click="AddListUp"
-                >取消</a-button
-              >
-              <a-button type="primary" @click="AddTenantList">确定</a-button>
-            </div>
-          </a-modal>
         </div>
       </div>
       <!-- 内容区域 -->
@@ -50,52 +29,21 @@
         <div>
           <a-table
             bordered
-            :row-selection="rowSelection"
             :data-source="dataSource"
             :columns="columns"
-            :rowKey="(record, id) => id"
+            rowKey="id"
             :pagination="pagination"
           >
             <template slot="operation" slot-scope="record">
               <!-- 编辑 -->
-              <a href="javascript:;" @click="EditList(record)"
-                ><a-icon type="edit" theme="twoTone" />编辑</a
+              <a href="javascript:;" v-permission="'edit'" @click="AddList(record, 2, '编辑租户')"
+                ><a-icon type="edit"  theme="twoTone" />编辑</a
               >
-              <!-- 编辑modal弹框 -->
-              <a-modal v-model="visibleEdit" title="编辑园区" width="35%">
-                <div class="buildname" style="margin-bottom: 20px">
-                  <span>租户名称：</span
-                  ><a-input
-                    placeholder="租户名称"
-                    style="width: 28vw"
-                    v-model="FromEdit.name"
-                    allow-clear
-                  ></a-input>
-                </div>
-                <div
-                  class="btnant"
-                  style="
-                    padding: 10px 16px;
-                    text-align: right;
-                    background: transparent;
-                    border-top: 1px solid #e8e8e8;
-                    border-radius: 0 0 4px 4px;
-                  "
-                >
-                  <a href="javascript:;"
-                    ><a-button style="margin-right: 20px" @click="EditListUp"
-                      >取消</a-button
-                    ></a
-                  >
-                  <a href="javascript:;" @click="EditTenantList">
-                    <a-button type="primary">确定</a-button></a
-                  >
-                </div>
-              </a-modal>
               <a-divider type="vertical" />
               <!-- 删除 -->
               <a
                 href="javascript:;"
+                v-permission="'delete'"
                 @click="DeleteTenant(record.id, record.version)"
                 ><a-icon type="delete" theme="twoTone" />删除</a
               >
@@ -104,15 +52,64 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal
+      v-model="visibleAdd"
+      centered
+      :maskClosable="false"
+      :title="title"
+      width="35%"
+    >
+      <div class="buildname" style="margin-bottom: 20px">
+        <span>租户名称：</span>
+
+        <a-input
+          placeholder="租户名称"
+          style="width: 28vw"
+          v-model="From.name"
+          allow-clear
+        ></a-input>
+        <!-- <dict v-model="selectId" :keyValue="'ics_room_rent_type'" /> -->
+        <!-- <uploadimg
+          :FileList="filelist"
+          @upload="getupload"
+          @remove="remove"
+          :limit="5"
+          :multiple="true"
+        />
+        <keditor :isClear="isClear" @change="change" /> -->
+      </div>
+      <template slot="footer">
+        <div class="btnant">
+          <a-button style="margin-right: 20px" @click="AddListUp"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="AddTenantList">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import uploadimg from "@/components/common/uploadimg.vue";
+import keditor from "@/components/common/wangeditor.vue";
+import dict from "@/components/common/dict.vue";
+import { tenant, postTenant, deleteTenant } from "../../../API/index";
 export default {
   name: "GardenBuild",
+  components: {
+    uploadimg,
+    keditor,
+    dict
+  },
   data() {
     return {
+      selectId:'',
+      isClear: false,
+      filelist: [],
       inputVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
       dataSource: [], // 列表页面数据源
@@ -131,10 +128,10 @@ export default {
           scopedSlots: { customRender: "operation" },
         },
       ], //table表格表头内容
+      title: "新增租户",
+      type: 1,
       visibleAdd: false, //新增  modal弹框 默认状态
-      visibleEdit: false, //编辑  modal弹框 默认状态
       From: {}, // 存放新增数据
-      FromEdit: {}, // 存放编辑数据
       pagination: {
         defaultCurrent: 1, // 默认当前页数
         defaultPageSize: 10, // 默认当前页显示数据的大小
@@ -171,9 +168,38 @@ export default {
     },
   },
   methods: {
+    dictChange(value){
+      console.log(value)
+      this.selectId = value;
+    },
+    change(val) {
+      console.log(val);
+    },
+    getupload(file, url) {
+      console.log(file);
+      // console.log(filelist);
+      // var obj = {
+      //   uid: filelist.uid,
+      //   name: filelist.name,
+      //   status: "done",
+      //   url: "https://park.cngiantech.com" + file,
+      // };
+      // // let url = "https://park.cngiantech.com" + file;
+      this.filelist.push(file);
+      console.log(this.filelist);
+      // console.log(filelist);
+    },
+    remove(file) {
+      this.filelist.map((el, index) => {
+        if (el.uid == file.uid) {
+          this.filelist.splice(index, 1);
+        }
+      });
+      console.log(file);
+    },
     //获取租户列表
     tenantList() {
-      axios.get("/api/system/tenant?per_page=9999").then((res) => {
+      tenant().then((res) => {
         if (res.status_code == 200) {
           this.dataSource = res.data.data;
         }
@@ -181,20 +207,32 @@ export default {
     },
     //todo 新增//
     // 点击新增租户按钮弹框显示
-    AddList() {
+    AddList(form, type, title) {
+      this.title = title;
+      this.From = { ...form };
+      this.type = type;
       this.visibleAdd = true;
     },
     // 新增确认
     AddTenantList() {
-      axios.post("/api/system/tenant", this.From).then((res) => {
-        if (res.status_code === 201) {
-          console.log(res);
-          this.From.name = "";
-          this.$message.success("新增租户成功");
+      if (this.type == 1) {
+        postTenant(this.From).then((res) => {
+          if (res.status_code === 201) {
+            this.From.name = "";
+            this.$message.success("新增租户成功");
+            this.visibleAdd = false;
+          }
+        });
+      } else {
+        axios.patch("/api/system/tenant", this.From).then(() => {
+          // 成功重新更新列表
           this.visibleAdd = false;
           this.tenantList();
-        }
-      });
+          this.$message.success("编辑租户成功");
+          this.visibleAdd = false;
+          this.tenantList(this.FromEdit.id ? this.page : 1);
+        });
+      }
     },
     // 新增取消
     AddListUp() {
@@ -204,38 +242,17 @@ export default {
     //todo 删除//
     // 删除租户
     DeleteTenant(id, version) {
-      axios
-        .delete("/api/system/tenant", {
-          params: {
-            id: id,
-            version: version,
-          },
-        })
-        .then(() => {
-          this.$message.success("删除租户成功");
-          // 成功重新更新列表
-          this.tenantList();
-        });
-    },
-    //todo 编辑//
-    // 点击编辑租户按钮弹框显示，数据浅拷贝
-    EditList(record) {
-      this.visibleEdit = true;
-      this.FromEdit = { ...record };
-    },
-    // 编辑确认
-    EditTenantList() {
-      axios.patch("/api/system/tenant", this.FromEdit).then(() => {
-        this.visibleEdit = false;
+      let data = {
+        id: id,
+        version: version,
+      };
+      deleteTenant(data).then((res) => {
+        this.$message.success("删除租户成功");
         // 成功重新更新列表
-        this.$message.success("编辑租户成功");
-        this.tenantList(this.FromEdit.id ? this.page : 1);
+        this.tenantList();
       });
     },
-    // 编辑取消
-    EditListUp() {
-      this.visibleEdit = false;
-    },
+
     //todo 查询//
     // 查询租户
     ShowEdit(bool) {
@@ -253,28 +270,11 @@ export default {
       }
     },
   },
-  computed: {
-    // 列表数据选择框 控制是否全选
-    rowSelection() {
-      return {
-        onChange: () => {},
-      };
-    },
-  },
 };
 </script>
 
-<style>
-.ant-modal-footer {
-  display: none !important;
-}
-.ant-modal-mask {
-  background-color: rgba(255, 255, 255, 0) !important;
-}
-</style>
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   height: 80vh;
   overflow-y: auto;
   border-radius: 10px;

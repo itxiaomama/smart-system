@@ -1,0 +1,97 @@
+form textarea.ant-input {
+  height: 200px;
+  resize: none;
+}
+.ant-form-item-control {
+  text-align: center;
+}
+.k_modal .ant-modal {
+  width: 50% !important;
+}
+.k_modal .ant-modal-content {
+  width: 100%;
+}
+.k_modal .ant-form-item-label {
+  width: 30%;
+}
+.ant-modal-content {
+  width: 100%;
+}
+.ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+.ant-form {
+  width: 100%;
+}
+.ant-menu .ant-menu-item a {
+  font-size: 16px;
+}
+.ant-menu .ant-menu-submenu-title span {
+  font-size: 16px;
+}
+.bigmodal .ant-modal-body {
+  height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.bigmodal .ant-form-item-control {
+  text-align: left!important;
+}
+.ant-input-group-compact .ant-select-selection {
+  width: 150px !important;
+}
+.krow {
+  display: flex;
+}
+.krow .ant-select {
+  width: 150px;
+}
+.flex {
+  display: flex;
+}
+.flex .ant-input {
+  margin-top: 4px;
+}
+.kselect {
+  width: 30%;
+}
+.mytable {
+  border: 1px solid #e8e8e8;
+  width: 70%;
+  margin: 0 auto;
+}
+.mytable .title {
+  height: 60px;
+  text-align: center;
+  line-height: 60px;
+  background: #fafafa;
+}
+.mytable .flex {
+  display: flex;
+  align-items: center;
+}
+.mytable .flex .text1 {
+  display: inline-block;
+  width: 80px;
+}
+.mytable .flex .ant-input {
+  margin-top: 0;
+}
+.mytable .item {
+  display: flex;
+}
+.mytable .item .same {
+  flex: 1;
+  box-sizing: border-box;
+  border-top: 1px solid #e8e8e8;
+}
+.mytable .item .same .ant-form-item {
+  margin: 0;
+  padding: 10px 0;
+}
+.mytable .item .left {
+  border-right: 1px solid #e8e8e8;
+}
+.leftitem .ant-form-item-control {
+  text-align: left;
+}

@@ -13,44 +13,13 @@
         </div>
         <!-- 新增 -->
         <div class="bottom">
-          <a-button type="primary" style="margin-bottom: 20px" @click="AddArea">
+          <a-button
+            type="primary"
+            style="margin-bottom: 20px"
+            @click="AddArea({}, 1, '新增区域')"
+          >
             新增
           </a-button>
-          <!-- 新增modal弹框 -->
-          <a-modal v-model="visibleAdd" title="新增区域" width="35vw">
-            <div class="buildname" style="margin: 20px 12px">
-              <span>区域名称：</span>
-              <a-input
-                placeholder="请输入区域名称"
-                style="width: 26vw"
-                v-model="fromAdd.district_name"
-              />
-            </div>
-            <div class="remake" style="margin: 20px 40px; display: flex">
-              <span>备注：</span>
-              <a-textarea
-                placeholder="请输入备注"
-                :rows="2"
-                style="width: 26vw"
-                v-model="fromAdd.remark"
-              />
-            </div>
-            <div
-              class="btnant"
-              style="
-                padding: 10px 16px;
-                text-align: right;
-                background: transparent;
-                border-top: 1px solid #e8e8e8;
-                border-radius: 0 0 4px 4px;
-              "
-            >
-              <a-button style="margin-right: 20px" @click="AddAreaUp"
-                >取消</a-button
-              >
-              <a-button type="primary" @click="AddAreaSure">确定</a-button>
-            </div>
-          </a-modal>
         </div>
       </div>
       <div class="content">
@@ -60,50 +29,15 @@
             :row-selection="rowSelection"
             :data-source="dataSource"
             :columns="columns"
-            :rowKey="(record, id) => id"
+            rowKey="id"
             :pagination="pagination"
           >
-            <a slot="district_name" slot-scope="text">{{ text }}</a>
+            <!-- <a slot="district_name" slot-scope="text">{{ text }}</a> -->
             <template slot="operation" slot-scope="text, record">
               <!-- 编辑 -->
-              <a href="javascript:;" @click="AddEdit(record)"
+              <a href="javascript:;" @click="AddArea(record, 2, '编辑车位')"
                 ><a-icon type="edit" theme="twoTone" />编辑</a
               >
-              <!-- 编辑modal弹框 -->
-              <a-modal v-model="visibleEdit" title="编辑园区" width="35%">
-                <div class="buildname" style="margin: 20px 12px">
-                  <span>区域名称：</span>
-                  <a-input
-                    placeholder="请输入区域名称"
-                    style="width: 26vw"
-                    v-model="fromEdit.district_name"
-                  />
-                </div>
-                <div class="remake" style="margin: 20px 40px; display: flex">
-                  <span>备注：</span>
-                  <a-textarea
-                    placeholder="请输入备注"
-                    :rows="2"
-                    style="width: 26vw"
-                    v-model="fromEdit.remark"
-                  />
-                </div>
-                <div
-                  class="btnant"
-                  style="
-                    padding: 10px 16px;
-                    text-align: right;
-                    background: transparent;
-                    border-top: 1px solid #e8e8e8;
-                    border-radius: 0 0 4px 4px;
-                  "
-                >
-                  <a-button style="margin-right: 20px" @click="AddEditUp"
-                    >取消</a-button
-                  >
-                  <a-button type="primary" @click="AddEditSure">确定</a-button>
-                </div>
-              </a-modal>
               <a-divider type="vertical" />
               <!-- 删除 -->
               <a
@@ -116,6 +50,35 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal v-model="visibleAdd" :title="title" width="35vw">
+      <div class="buildname" style="margin: 20px 12px">
+        <span>区域名称：</span>
+        <a-input
+          placeholder="请输入区域名称"
+          style="width: 26vw"
+          v-model="fromAdd.district_name"
+        />
+      </div>
+      <div class="remake" style="margin: 20px 40px; display: flex">
+        <span>备注：</span>
+        <a-textarea
+          placeholder="请输入备注"
+          :rows="2"
+          style="width: 26vw"
+          v-model="fromAdd.remark"
+        />
+      </div>
+      <template slot="footer">
+        <div class="btnant">
+          <a-button style="margin-right: 20px" @click="AddAreaUp"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="AddAreaSure">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -125,6 +88,8 @@ export default {
   name: "GardenArea",
   data() {
     return {
+      type: 1,
+      title: "新增区域",
       inputVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
       dataSource: [], // 列表数据源
@@ -211,21 +176,42 @@ export default {
     },
     // todo 新增
     // 新增modal弹框展开
-    AddArea() {
+    AddArea(form, type, title) {
+      this.type = type;
+      this.title = title;
+      this.fromAdd = { ...form };
       this.visibleAdd = true;
     },
     // 新增确认
     AddAreaSure() {
-      axios.post("/api/ics/district", this.fromAdd).then((res) => {
-        if (res.message === "success") {
-          this.fromAdd.district_name = "";
-          this.fromAdd.remark = "";
-          this.$message.success("新增区域成功");
-          // 成功重新更新列表
-          this.areaList();
-          this.visibleAdd = false;
-        }
-      });
+      if (this.type == 1) {
+        axios.post("/api/ics/district", this.fromAdd).then((res) => {
+          if (res.message === "success") {
+            this.fromAdd.district_name = "";
+            this.fromAdd.remark = "";
+            this.$message.success("新增区域成功");
+            // 成功重新更新列表
+            this.areaList();
+            this.visibleAdd = false;
+          }
+        });
+      } else {
+        console.log(this.fromAdd);
+        axios
+          .patch("/api/ics/district", this.fromAdd, {
+            params: {
+              id: this.fromAdd.id,
+              version: this.fromAdd.version,
+            },
+          })
+          .then((res) => {
+            if (res.message === "success") {
+              this.visibleAdd = false;
+              this.$message.success("编辑区域成功");
+              this.areaList(this.fromAdd.id ? this.page : 1);
+            }
+          });
+      }
     },
     // 取消新增
     AddAreaUp() {
@@ -236,19 +222,27 @@ export default {
     //todo 删除
     // 删除区域
     DeleteArea(id, version) {
-      axios
-        .delete("/api/ics/district", {
-          params: {
-            id: id,
-            version: version,
-          },
-        })
-        .then((res) => {
-          if (res.message === "success") {
-          } // 成功重新更新列表
-          this.$message.success("删除区域成功");
-          this.areaList();
-        });
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/ics/district", {
+              params: {
+                id: id,
+                version: version,
+              },
+            })
+            .then((res) => {
+              if (res.message === "success") {
+              } // 成功重新更新列表
+              that.$message.success("删除区域成功");
+              that.areaList();
+            });
+        },
+        onCancel() {},
+      });
     },
     // todo 编辑
     // 编辑modal弹框展开
@@ -304,17 +298,8 @@ export default {
 };
 </script>
 
-<style>
-.ant-modal-footer {
-  display: none !important;
-}
-.ant-modal-mask {
-  background-color: rgba(255, 255, 255, 0) !important;
-}
-</style>
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

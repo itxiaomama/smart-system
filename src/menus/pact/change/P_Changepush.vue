@@ -3,35 +3,33 @@
     <div class="wrap">
       <div class="top">
         <div class="content">
-          <div class="return" @click="btn_return">
-            <a-icon type="left-circle" class="icon" />
-          </div>
-          <a-divider class="divider" orientation="left">基本信息</a-divider>
+          <a-divider orientation="left">基本信息</a-divider>
           <a-descriptions
             :column="{ xxl: 4 }"
             title=""
             style="margin: 80px 0 0 180px"
           >
             <a-descriptions-item label="合同编号">
-              <p>HT464650021</p>
+              <p>{{ info.sn }}</p>
             </a-descriptions-item>
             <a-descriptions-item label="管理编号">
-              <p>SA46465566F5656S</p>
+              <p>{{ info.pm_sn }}</p>
             </a-descriptions-item>
             <a-descriptions-item label="合同名称">
-              <p>租赁退租</p>
+              <p>{{ info.name }}</p>
             </a-descriptions-item>
             <a-descriptions-item label="租户名称">
-              <p>老王头</p>
+              <p>{{ info.customer_name }}</p>
             </a-descriptions-item>
           </a-descriptions>
         </div>
         <div class="content">
-          <a-divider class="dividera" orientation="left">租赁场地</a-divider>
+          <a-divider orientation="left">租赁场地</a-divider>
           <a-table
             style="width: 50vw; margin: 10vh auto"
             :data-source="dataSource"
             :columns="columns"
+            rowKey="id"
           >
             <a slot="name" slot-scope="text">{{ text }}</a>
             <span slot="">
@@ -42,59 +40,68 @@
         <div class="content">
           <a-divider class="dividerb" orientation="left">退租信息</a-divider>
           <div style="margin: 1px auto">
-            <div class="buildname">
-              <span>退租日期：</span><a-date-picker style="width: 38.5vw" placeholder="" />
-            </div>
-            <div class="buildname">
-              <span>所属园区：</span>
-              <a-select default-value="lucy" style="width: 38.5vw">
-                <a-select-option value="lucy"> 正常到期 </a-select-option>
-                <a-select-option value="jack"> 协商提前退租 </a-select-option>
-                <a-select-option value="Yiminghe"> 违约清退 </a-select-option>
-                <a-select-option value="Yiming"> 其他 </a-select-option>
-              </a-select>
-            </div>
-            <div class="buildname">
-              <span>应收费用：</span
-              ><a-input placeholder="应收费用" style="width: 40vw"></a-input
-              ><span>元</span>
-            </div>
-            <div class="buildname">
-              <span>应退费用：</span
-              ><a-input placeholder="应退费用" style="width: 40vw"></a-input
-              ><span>元</span>
-            </div>
-            <div class="buildname">
-              <span>费用合计：</span
-              ><a-input placeholder="费用合计" style="width: 40vw"></a-input
-              ><span>元</span>
-            </div>
-            <div class="buildname" style="margin-left: 19.6vw">
-              <p>备注(可选)：</p>
-              <a-textarea
-                placeholder="请输入备注"
-                :rows="6"
-                style="width: 38.5vw"
-              />
-            </div>
-            <div class="buildname" style="margin-left: 18.6vw">
-              <p style="white-space: nowrap">上传园区小图：</p>
-              <a-upload
-                name="avatar"
-                list-type="picture-card"
-                class="avatar-uploader"
-                :show-upload-list="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :before-upload="beforeUpload"
-                @change="handleChange"
-              >
-                <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">上传</div>
-                </div>
-              </a-upload>
-            </div>
+            <a-form-model
+              ref="ruleForm"
+              :model="form"
+              :rules="rules"
+              :label-col="labelCol"
+              :wrapper-col="wrapperCol"
+            >
+              <a-form-model-item  label="退租日期：" prop="refund_date">
+                <a-date-picker
+                  v-model="form.refund_date"
+                  type="date"
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="请选择时间"
+                  style="width: 100%;"
+                />
+              </a-form-model-item>
+
+              <a-form-model-item  label="退租原因：" prop="refund_reason">
+                <dict v-model="form.refund_reason" :keyValue="'ics_contract_refund_reason'" />
+              </a-form-model-item>
+
+              <a-form-model-item  label="应收费用(元)：" prop="receive_fee">
+                <a-input
+                  type="number"
+                  v-model="form.receive_fee"
+                  @change="changerecevice"
+                />
+              </a-form-model-item>
+
+              <a-form-model-item  label="应退费用(元)：" prop="refund_fee">
+                <a-input
+                 type="number"
+                  v-model="form.refund_fee"
+                  @change="changerefund"
+                />
+              </a-form-model-item>
+
+              <a-form-model-item  label="费用合计(元)：" prop="total_fee">
+                <a-input
+                  v-model="form.total_fee"
+                  disabled
+                />
+                <p style="text-align:left;">正数为应收费用-- 负数为应退费用</p>
+              </a-form-model-item>
+
+              <a-form-model-item  label="备注：">
+                <a-input
+                  v-model="form.remark"
+                  type="textarea"
+                />
+              </a-form-model-item>
+
+              <a-form-model-item  label="存档图片：">
+                <uploadimgVue 
+                v-model="form.archive_image_list"
+                :limit="5"
+                @upload="getupload"
+                @remove="remove"
+                 :FileList="form.archive_image_list" />
+              </a-form-model-item>
+
+            </a-form-model>
           </div>
         </div>
         <div
@@ -102,7 +109,7 @@
           style="padding: 30px 35vw; border-top: 1px solid #e8e8e8"
         >
           <a-button style="margin-right: 20px" @click="btnup">返回</a-button>
-          <a-button type="primary">提交</a-button>
+          <a-button type="primary" @click="submit">提交</a-button>
         </div>
       </div>
     </div>
@@ -110,15 +117,23 @@
 </template>
 
 <script>
+import dict from "@/components/common/dict.vue";
+import uploadimgVue from "@/components/common/uploadimg.vue";
+import axios from "axios";
+import moment from "moment";
 export default {
   name: "My_P_Changepush",
+  components: {
+    dict,
+    uploadimgVue,
+  },
   data() {
     return {
+      info: {},
       columns: [
         {
           title: "所属园区",
-          dataIndex: "name",
-          scopedSlots: { customRender: "name" },
+          dataIndex: "name1",
         },
         {
           title: "所属楼宇",
@@ -132,33 +147,131 @@ export default {
         },
         {
           title: "房间名称",
-          dataIndex: "time",
-          scopedSlots: { customRender: "time" },
+          dataIndex: "name",
         },
         {
           title: "收租面积(平方米)",
-          dataIndex: "news",
-          scopedSlots: { customRender: "news" },
+          dataIndex: "rent_area",
+          scopedSlots: { customRender: "rent_area" },
         },
       ],
-      dataSource: [
-        {
-          key: "0",
-          name: "智慧园区",
-          build: "西边楼",
-          address: "4层",
-          time: "111",
-          news: "111",
-        },
-      ],
+      dataSource: [],
+       labelCol: { span: 6 },
+      wrapperCol: { span: 14 },
+      other: '',
+      form: {
+        refund_reason:'1',
+        refund_fee: 0,
+        receive_fee:0,
+        archive_image_list:[]
+      },
+      rules: {
+        refund_fee: [
+          { required: true, message: '请输入应退费用', trigger: 'blur' },
+        ],
+        receive_fee: [
+          { required: true, message: '请输入应收费用', trigger: 'blur' },
+        ],
+        refund_reason: [{ required: true, message: '请选择退原因', trigger: 'change' }],
+        refund_date: [{ required: true, message: '请选择退租时间', trigger: 'change' }],
+      },
     };
   },
+  mounted() {
+    this.type = this.$route.query.type ;
+    if(this.type == 1){
+        this.getInfo(this.$route.query.id);
+    }else{
+      this.getrefund(this.$route.query.id)
+    }
+    
+  },
   methods: {
+    getInfo(id) {
+      axios.get("/api/ics/customerContract?id=" + id).then((res) => {
+        this.info = res.data;
+        this.dataSource = res.data.contract_room;
+      });
+    },
+    getrefund(id){
+        axios.get("/api/ics/contractRefund?id=" + id).then((res) => {
+        this.getInfo(res.data.contract_id);
+        this.form = res.data ;
+        this.form.refund_reason = JSON.stringify(res.data.refund_reason);
+        console.log(res.data.archive_image_list)
+        if(res.data.archive_image_list !== ''){
+          this.form.archive_image_list = res.data.archive_image_list.split(',')
+        }else{
+          this.form.archive_image_list = [];
+        }
+        
+      });
+    },
     btn_return() {
-      this.$router.push("/home/Pchange");
+      this.$router.push("/contract/change");
     },
     btnup() {
-      this.$router.push("/home/Pchange");
+      this.$refs.ruleForm.resetFields();
+      this.$router.push("/contract/change");
+    },
+    submit(){
+       this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          let rooms = this.info.contract_room.map(item => {return item.id})
+          let data = {
+            customer_id: this.info.customer_id,
+            contract_id:this.info.id,
+            refund_date:moment(this.form.refund_date).format('YYYY-MM-DD'),
+            receive_fee:this.form.receive_fee,
+            refund_fee:this.form.refund_fee,
+            total_fee:this.form.total_fee,
+            refund_reason:this.form.refund_reason,
+            remark: this.form.remark,
+            room_ids:rooms,
+            archive_image_list:this.form.archive_image_list
+          }
+          if(this.type == 1){
+            axios.post('/api/ics/contractRefund',data).then((res) =>{
+            this.$message.success('操作成功');
+            this.$router.push({
+              path:'/contract/change'
+            })
+          })
+          }else{
+            data.id = this.form.id;
+            data.version = this.form.version ;
+           axios.patch('/api/ics/contractRefund',data).then((res) =>{
+            this.$message.success('操作成功');
+            this.$router.push({
+              path:'/contract/change'
+            })
+          }) 
+          }
+          
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    changerecevice(event){
+      console.log(event.target.value)
+      let  value = event.target.value ;
+      this.form.total_fee = Number(value) - Number(this.form.refund_fee) ;
+    },
+    changerefund(event){
+      let value  = event.target.value ;
+      this.form.total_fee = Number(this.form.receive_fee) - Number(value) ;
+    },
+    getupload(file) {
+      this.form.archive_image_list.push(file);
+    },
+    remove(file) {
+      this.form.archive_image_list.map((el, index) => {
+        if (el == file.uid) {
+         this.form.archive_image_list.splice(index, 1);
+        }
+      });
     },
   },
 };
@@ -169,7 +282,6 @@ export default {
   margin-top: 0px;
   .top {
     width: 85vw;
-    height: 135vh;
     background-color: #fff;
     border-radius: 10px;
     .content {

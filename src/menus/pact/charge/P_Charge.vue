@@ -15,93 +15,9 @@
             </div>
             <!-- 新增 -->
             <div class="bottom">
-              <a-button type="primary" @click="AddCharge">新增</a-button>
-              <!-- 新增modal弹框 -->
-              <a-modal v-model="visibleAdd" title="添加费项" width="35%">
-                <div
-                  class="lefta"
-                  style="display: flex; margin-top: 20px; width: 30vw"
-                >
-                  <p style="white-space: nowrap; line-height: 30px">
-                    费项名称：
-                  </p>
-                  <a-input placeholder="费项名称" v-model="FromAdd.name" />
-                </div>
-                <div
-                  class="lefta"
-                  style="display: flex; margin-top: 20px; width: 30vw"
-                >
-                  <p style="white-space: nowrap; line-height: 30px">
-                    费项类型：
-                  </p>
-                  <a-select style="width: 30vw" v-model="FromAdd.type">
-                    <a-select-option value="0"> 系统费项 </a-select-option>
-                    <a-select-option value="1"> 周期性费项 </a-select-option>
-                    <a-select-option value="2"> 一次性费项 </a-select-option>
-                  </a-select>
-                </div>
-                <div
-                  class="lefta"
-                  style="display: flex; margin-top: 20px; width: 30vw"
-                >
-                  <p style="white-space: nowrap; line-height: 30px">
-                    计量单位：
-                  </p>
-                  <a-select style="width: 30vw" v-model="FromAdd.units_code">
-                    <a-select-option value="1"> 度 </a-select-option>
-                    <a-select-option value="2"> 平方米 </a-select-option>
-                    <a-select-option value="3"> 吨 </a-select-option>
-                    <a-select-option value="4"> 立方米 </a-select-option>
-                    <a-select-option value="5"> 千克 </a-select-option>
-                    <a-select-option value="6"> 元 </a-select-option>
-                  </a-select>
-                </div>
-                <div
-                  class="lefta"
-                  style="
-                    display: flex;
-                    margin-top: 20px;
-                    margin-left: 16px;
-                    width: 29.2vw;
-                  "
-                >
-                  <p style="white-space: nowrap; line-height: 30px">税率%：</p>
-                  <a-input placeholder="税率" v-model="FromAdd.tax_fee" />
-                </div>
-                <div
-                  class="lefta"
-                  style="
-                    display: flex;
-                    margin-top: 20px;
-                    margin-left: 28px;
-                    width: 29.2vw;
-                  "
-                >
-                  <p style="white-space: nowrap; line-height: 30px">备注：</p>
-                  <a-textarea
-                    placeholder="备注"
-                    :rows="4"
-                    v-model="FromAdd.memo"
-                  />
-                </div>
-                <div
-                  class="btnant"
-                  style="
-                    padding: 10px 16px;
-                    text-align: right;
-                    background: transparent;
-                    border-top: 1px solid #e8e8e8;
-                    border-radius: 0 0 4px 4px;
-                  "
-                >
-                  <a-button style="margin-right: 20px" @click="AddChargeUp"
-                    >取消</a-button
-                  >
-                  <a-button type="primary" @click="AddChargeSure"
-                    >确定</a-button
-                  >
-                </div>
-              </a-modal>
+              <a-button type="primary" @click="AddCharge({}, 1, '新增费用')"
+                >新增</a-button
+              >
             </div>
           </div>
         </div>
@@ -109,13 +25,11 @@
           <div>
             <a-table
               bordered
-              :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
               :pagination="pagination"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
               <span slot="roomname" slot-scope="text, record">
                 <a-switch
                   v-if="record.is_enabled == 1"
@@ -125,9 +39,7 @@
                   @change="
                     switchChange(
                       $event,
-                      record.id,
-                      record.version,
-                      'is_enabled'
+                      record
                     )
                   "
                 />
@@ -139,106 +51,20 @@
                   @change="
                     switchChange(
                       $event,
-                      record.id,
-                      record.version,
-                      'is_enabled'
+                      record
                     )
                   "
                 />
               </span>
               <template slot="operation" slot-scope="text, record">
                 <!-- 编辑 -->
-                <a href="javascript:;" @click="EditCharge(record)">
+                <a
+                  href="javascript:;"
+                  @click="AddCharge(record, 2, '编辑费用')"
+                >
                   <a-icon type="edit" theme="twoTone" />编辑</a
                 >
-                <!-- 编辑modal弹框 -->
-                <a-modal v-model="visibleEdit" title="编辑费项" width="35%">
-                  <div
-                    class="lefta"
-                    style="display: flex; margin-top: 20px; width: 30vw"
-                  >
-                    <p style="white-space: nowrap; line-height: 30px">
-                      费项名称：
-                    </p>
-                    <a-input placeholder="费项名称" v-model="FromEdit.name" />
-                  </div>
-                  <div
-                    class="lefta"
-                    style="display: flex; margin-top: 20px; width: 30vw"
-                  >
-                    <p style="white-space: nowrap; line-height: 30px">
-                      费项类型：
-                    </p>
-                    <a-select style="width: 30vw" v-model="FromEdit.type">
-                      <a-select-option value="0"> 系统费项 </a-select-option>
-                      <a-select-option value="1"> 周期性费项 </a-select-option>
-                      <a-select-option value="2"> 一次性费项 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div
-                    class="lefta"
-                    style="display: flex; margin-top: 20px; width: 30vw"
-                  >
-                    <p style="white-space: nowrap; line-height: 30px">
-                      计量单位：
-                    </p>
-                    <a-select style="width: 30vw" v-model="FromEdit.units_code">
-                      <a-select-option value="1"> 度 </a-select-option>
-                      <a-select-option value="2"> 平方米 </a-select-option>
-                      <a-select-option value="3"> 吨 </a-select-option>
-                      <a-select-option value="4"> 立方米 </a-select-option>
-                      <a-select-option value="5"> 千克 </a-select-option>
-                      <a-select-option value="6"> 元 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div
-                    class="lefta"
-                    style="
-                      display: flex;
-                      margin-top: 20px;
-                      margin-left: 16px;
-                      width: 29.2vw;
-                    "
-                  >
-                    <p style="white-space: nowrap; line-height: 30px">
-                      税率%：
-                    </p>
-                    <a-input placeholder="税率" v-model="FromEdit.tax_fee" />
-                  </div>
-                  <div
-                    class="lefta"
-                    style="
-                      display: flex;
-                      margin-top: 20px;
-                      margin-left: 28px;
-                      width: 29.2vw;
-                    "
-                  >
-                    <p style="white-space: nowrap; line-height: 30px">备注：</p>
-                    <a-textarea
-                      placeholder="备注"
-                      :rows="4"
-                      v-model="FromEdit.memo"
-                    />
-                  </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button style="margin-right: 20px" @click="EditChargeUp"
-                      >取消</a-button
-                    >
-                    <a-button type="primary" @click="EditChargeSure"
-                      >确定</a-button
-                    >
-                  </div>
-                </a-modal>
+
                 <a-divider type="vertical" />
                 <!-- 删除 -->
                 <a
@@ -253,15 +79,73 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal v-model="visibleAdd" :title="title" width="35%">
+      <a-form-model
+        ref="ruleForm"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-form-model-item  label="费项名称：" prop="name">
+          <a-input v-model="form.name" />
+        </a-form-model-item>
+
+        <a-form-model-item label="费项类型：" prop="type">
+          <!-- ics_expense_type -->
+          <dict v-model="form.type" :keyValue="'ics_expense_type'" />
+        </a-form-model-item>
+
+        <a-form-model-item label="计量单位：" prop="units_code">
+          <!-- ics_units_code -->
+          <dict v-model="form.units_code" :keyValue="'ics_units_code'" />
+        </a-form-model-item>
+
+        <a-form-model-item  label="税率%：">
+          <a-input v-model="form.tax_fee" />
+        </a-form-model-item>
+
+        <a-form-model-item  label="备注：">
+          <a-input type="textarea" v-model="form.memo" />
+        </a-form-model-item>
+      </a-form-model>
+      <template slot="footer">
+        <div class="btnant" style="margin-top: 20px">
+          <a-button style="margin-right: 20px" @click="AddChargeUp"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="AddChargeSure">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import dict from "@/components/common/dict.vue";
 export default {
   name: "My_P_Charge",
+  components: {
+    dict,
+  },
   data() {
     return {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 18 },
+      other: "",
+      form: {},
+      rules: {
+        name: [{ required: true, message: "请输入费项名称", trigger: "blur" }],
+        type: [
+          { required: true, message: "请选择", trigger: "change" },
+        ],
+        units_code: [{ required: true, message: "请选择", trigger: "change" }],
+      },
+      title: "添加费用",
+      type: 1,
       ChargeinputVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
       dataSource: [], // 列表数据源
@@ -303,7 +187,6 @@ export default {
       visibleEdit: false, // 编辑 modal弹框默认状态
       valueState: 1, // 状态默认启用
       FromAdd: {}, // 新增 数据源
-      FromEdit: {}, // 编辑 数据源
       pagination: {
         defaultCurrent: 1, // 默认当前页数
         defaultPageSize: 10, //默认当前页显示数据的大小
@@ -340,6 +223,30 @@ export default {
     this.ChargeList(); //列表数据
   },
   methods: {
+    AddChargeSure() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          if (this.type == 1) {
+        axios.post("/api/ics/expenseSettings", this.form).then((res) => {
+          if (res.message === "success") {
+            this.visibleAdd = false;
+            this.$message.success("新增费项成功");
+            this.ChargeList(); // 成功重新更新列表
+          }
+        });
+      } else {
+        axios.patch("/api/ics/expenseSettings", this.form).then(() => {
+          this.visibleAdd = false;
+          this.$message.success("编辑费项成功");
+          this.ChargeList();
+        });
+      }
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
     //获取费项配置列表
     ChargeList() {
       axios.get("/api/ics/expenseSettings").then((res) => {
@@ -349,42 +256,44 @@ export default {
       });
     },
     // 开关
-    async switchChange(checked, id, version, name) {
-      let obj = { id };
-      obj[name] = checked ? 1 : 0;
+    async switchChange(checked, info) {
       axios
-        .patch("/api/ics/expenseSettings", obj, {
-          params: { version: version },
+        .patch("/api/ics/expenseSettings",  {
+          id:info.id,
+          version:info.version,
+          is_enabled :checked ? 1:0,
+          name:info.name,
+          type:info.type,
+          units_code: info.units_code
         })
         .then((res) => {
-          if (res.status_code == 200) {
             this.ChargeList(); //列表数据
-          }
         });
     },
     // todo 新增
     // 新增modal弹框显示
-    AddCharge() {
+    AddCharge(form, type, title) {
+      this.title = title;
+      this.type = type;
+      this.form = { ...form };
+      this.form.type = JSON.stringify(form.type);
+      this.form.units_code = JSON.stringify(form.units_code);
       this.visibleAdd = true;
-    },
-    // 新增确认
-    AddChargeSure() {
-      axios.post("/api/ics/expenseSettings", this.FromAdd).then((res) => {
-        if (res.message === "success") {
-          this.visibleAdd = false;
-          this.$message.success("新增费项成功");
-          this.ChargeList(); // 成功重新更新列表
-        }
-      });
     },
     // 取消新增
     AddChargeUp() {
+       this.$refs.ruleForm.resetFields();
       this.visibleAdd = false;
     },
     // todo 删除
     // 删除费项
     DeleteCharge(id, version) {
-      axios
+      var that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
         .delete("/api/ics/expenseSettings", {
           params: {
             id: id,
@@ -392,30 +301,14 @@ export default {
           },
         })
         .then((res) => {
-          if (res.status_code === 200) {
-          }
-          this.ChargeList(); // 成功重新更新列表
+          that.$message.success("删除费项成功")
+          that.ChargeList(); // 成功重新更新列表
         });
-      this.$message.success("删除费项成功");
-    },
-    // todo 编辑
-    // 编辑modal弹框显示
-    EditCharge(record) {
-      this.visibleEdit = true;
-      this.FromEdit = { ...record };
-    },
-    // 编辑确认
-    EditChargeSure() {
-      axios.patch("/api/ics/expenseSettings", this.FromEdit).then(() => {
-        this.visibleEdit = false;
-        this.$message.success("编辑费项成功");
-        this.ChargeList(this.FromEdit.id ? this.page : 1);
+        },
+        onCancel() {},
       });
     },
-    // 取消编辑
-    EditChargeUp() {
-      this.visibleEdit = false;
-    },
+
     // todo 搜索
     ChargeShow(bool) {
       this.currentPage = 1;
@@ -432,19 +325,11 @@ export default {
       }
     },
   },
-  computed: {
-    rowSelection() {
-      return {
-        onChange: () => {},
-      };
-    },
-  },
 };
 </script>
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   max-height: 80vh;
   overflow-y: auto;
   border-radius: 10px;

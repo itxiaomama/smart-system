@@ -11,7 +11,7 @@
             v-model="inputVal"
           />
         </div>
-        <div class="content" style="margin-top: 20px; width: 85.3vw">
+        <div class="content" style="margin-top: 20px; width: 84.5vw">
           <div>
             <a-table
               bordered
@@ -22,7 +22,7 @@
               :rowKey="(record, id) => id"
               :scroll="{ x: '130%' }"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
+              <!-- <a slot="belong" slot-scope="text">{{ text }}</a> -->
               <span
                 slot="action"
                 slot-scope="text, record"
@@ -33,34 +33,6 @@
                   <a type="primary" @click="audit(record)">
                     <a-icon type="check-circle" theme="twoTone" />审批
                   </a>
-                  <!-- 审批modal弹框 -->
-                  <a-modal v-model="visible" title="审批">
-                    <div class="buildname" style="margin: 20px 9px">
-                      <span>审批结果：</span>
-                      <a-select
-                        default-value=""
-                        style="width: 16.3vw"
-                        v-model="approvalFrom.status_remark"
-                      >
-                        <a-select-option value="1"> 审批通过 </a-select-option>
-                      </a-select>
-                    </div>
-                    <div
-                      class="remake"
-                      style="margin: 20px 9px; display: flex; width: 20vw"
-                    >
-                      <span style="white-space: nowrap">审批意见：</span>
-                      <a-textarea placeholder="......" :rows="5" />
-                    </div>
-                    <div class="btnant">
-                      <a-button style="margin-right: 20px" @click="auditUp"
-                        >取消</a-button
-                      >
-                      <a-button type="primary" @click="auditSure"
-                        >确定
-                      </a-button>
-                    </div>
-                  </a-modal>
                 </div>
                 <a-divider type="vertical" />
                 <!-- 取消审批 -->
@@ -82,6 +54,29 @@
         </div>
       </div>
     </div>
+    <!-- 审批modal弹框 -->
+    <a-modal v-model="visible" title="审批">
+      <div class="buildname" style="margin: 20px 9px">
+        <span>审批结果：</span>
+        <a-select
+          default-value=""
+          style="width: 16.3vw"
+          v-model="approvalFrom.status_remark"
+        >
+          <a-select-option value="1"> 审批通过 </a-select-option>
+        </a-select>
+      </div>
+      <div class="remake" style="margin: 20px 9px; display: flex; width: 20vw">
+        <span style="white-space: nowrap">审批意见：</span>
+        <a-textarea placeholder="......" :rows="5" />
+      </div>
+      <template slot="footer">
+        <div class="btnant">
+          <a-button style="margin-right: 20px" @click="auditUp">取消</a-button>
+          <a-button type="primary" @click="auditSure">确定 </a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -343,11 +338,9 @@ export default {
   padding: 10px 16px;
   text-align: right;
   background: transparent;
-  border-top: 1px solid #e8e8e8;
   border-radius: 0 0 4px 4px;
 }
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

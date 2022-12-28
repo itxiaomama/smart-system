@@ -4,11 +4,7 @@
       <div class="text">
         <div class="supplier" style="display: flex">
           <span style="white-space: nowrap">资讯分类：</span>
-          <a-select
-            default-value="请选择"
-            style="width: 60vw"
-            @change="handleChange"
-          >
+          <a-select default-value="请选择">
             <a-select-option value="菜单1"> 党建服务 </a-select-option>
             <a-select-option value="菜单2"> 政策服务 </a-select-option>
             <a-select-option value="菜单3"> 创业支持 </a-select-option>
@@ -36,7 +32,7 @@
         <div class="site">
           <span>是否推荐：</span>
           <div>
-            <a-radio-group v-model="valuea" @change="onChangea">
+            <a-radio-group v-model="valuea">
               <a-radio :value="1">推荐</a-radio>
               <a-radio :value="2">不推荐</a-radio>
             </a-radio-group>
@@ -45,7 +41,7 @@
         <div class="site" style="margin-left: 28px">
           <span>状态：</span>
           <div>
-            <a-radio-group v-model="valueb" @change="onChangeb">
+            <a-radio-group v-model="valueb">
               <a-radio :value="1">显示</a-radio>
               <a-radio :value="2">隐藏</a-radio>
             </a-radio-group>
@@ -64,17 +60,20 @@
 
 <script>
 export default {
-  name: " RealNewsAdd",
   data() {
     return {
       valuea: 1,
       valueb: 1,
+      type: null,
     };
   },
   methods: {
     btnA() {
-      this.$router.push("Rnews");
+      this.$router.push("/property/news");
     },
+  },
+  created() {
+    this.type = this.$route.query.type;
   },
 };
 </script>

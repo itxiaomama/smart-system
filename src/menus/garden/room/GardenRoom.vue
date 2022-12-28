@@ -17,536 +17,47 @@
             <a-button
               type="primary"
               style="margin-bottom: 20px"
-              @click="Addroom"
+              @click="Addroom({}, 1, '新增房间')"
             >
               新增
             </a-button>
-            <!-- 新增modal弹框 -->
-            <a-modal v-model="AddRoom" title="新增园区" width="50%">
-              <div class="buildname" style="margin: 20px 140px">
-                <span>所属楼宇：</span>
-                <a-select
-                  default-value="请选择"
-                  style="width: 30vw"
-                  v-model="Form.building_id"
-                  option-label-prop="label"
-                  @change="GetFloor()"
-                >
-                  <a-select-option
-                    v-for="item in BuildOptions"
-                    :key="item.id"
-                    :label="item.building_name"
-                    :value="item.id"
-                  >
-                    <span role="img" :aria-label="item.building_name">
-                      {{ item.building_name }}
-                    </span>
-                  </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 140px">
-                <span>所属楼层：</span>
-                <a-select
-                  default-value="请选择"
-                  style="width: 30vw"
-                  v-model="Form.building_detail_id"
-                  option-label-prop="label"
-                >
-                  <a-select-option
-                    v-for="item in FloorOptions"
-                    :key="item.id"
-                    :label="item.floor_name"
-                    :value="item.id"
-                  >
-                    <span role="img" :aria-label="item.floor_name">
-                      {{ item.floor_name }}
-                    </span>
-                  </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 140px; width: 60vw">
-                <span>房间名称：</span>
-                <a-input
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.name"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 168px">
-                <span>租金：</span>
-                <a-input-number
-                  placeholder="请输入租金"
-                  style="width: 10vw"
-                  v-model="Form.rent"
-                />
-                <a-select
-                  placeholder="请选择"
-                  style="width: 5vw"
-                  v-model="Form.rent_type"
-                >
-                  <a-select-option value="1"> 元/㎡/天 </a-select-option>
-                  <a-select-option value="2"> 元/㎡/月 </a-select-option>
-                  <a-select-option value="3"> 元/天 </a-select-option>
-                  <a-select-option value="4"> 元/月 </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 154px">
-                <span>物业费：</span>
-                <a-input-number
-                  placeholder="请输入物业费"
-                  style="width: 10vw"
-                  v-model="Form.management_fee"
-                />
-                <a-select
-                  placeholder="请选择"
-                  style="width: 5vw"
-                  v-model="Form.management_fee_type"
-                >
-                  <a-select-option value="1"> 元/㎡/天 </a-select-option>
-                  <a-select-option value="2"> 元/㎡/月 </a-select-option>
-                  <a-select-option value="3"> 元/天 </a-select-option>
-                  <a-select-option value="4"> 元/月 </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 154px">
-                <span>能耗费：</span>
-                <a-input-number
-                  placeholder="请输入能耗费"
-                  style="width: 10vw"
-                  v-model="Form.energy_fee"
-                />
-                <a-select
-                  placeholder="请选择"
-                  style="width: 5vw"
-                  v-model="Form.energy_fee_type"
-                >
-                  <a-select-option value="1"> 元/㎡/天 </a-select-option>
-                  <a-select-option value="2"> 元/㎡/月 </a-select-option>
-                  <a-select-option value="3"> 元/天 </a-select-option>
-                  <a-select-option value="4"> 元/月 </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 70px; width: 60vw">
-                <span>房间面积（平方米）：</span>
-                <a-input
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.area"
-                />
-                <div style="margin: 10px 140px">
-                  <a-checkbox v-model="Form.can_be_divided">
-                    可分割
-                  </a-checkbox>
-                </div>
-              </div>
-              <div class="buildname" style="margin: 20px 70px; width: 60vw">
-                <span>收租面积（平方米）：</span>
-                <a-input
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.rent_area"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 70px; width: 60vw">
-                <span>公摊面积（平方米）：</span>
-                <a-input
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.common_area"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 168px">
-                <span>房型：</span>
-                <a-select
-                  placeholder="请选择"
-                  style="width: 20vw"
-                  v-model="Form.layout"
-                >
-                  <a-select-option value="1"> loft </a-select-option>
-                  <a-select-option value="2"> 商业配套 </a-select-option>
-                  <a-select-option value="3"> 办公场所 </a-select-option>
-                  <a-select-option value="4"> 其他 </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 168px; width: 60vw">
-                <span>层高：</span>
-                <a-input
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.floor_height"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 140px; width: 60vw">
-                <span>可住日期：</span>
-                <a-date-picker
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.available_from"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 140px">
-                <span>装修类型：</span>
-                <a-select
-                  placeholder="请选择"
-                  style="width: 20vw"
-                  v-model="Form.decoration_type"
-                >
-                  <a-select-option value="1"> 简装 </a-select-option>
-                  <a-select-option value="2"> 精装 </a-select-option>
-                  <a-select-option value="3"> 毛坯房 </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 168px; width: 60vw">
-                <span>奖金：</span>
-                <a-input
-                  placeholder="请输入房间名称"
-                  style="width: 15vw"
-                  v-model="Form.bonus"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 112px; display: flex">
-                <span>上传园区小图：</span>
-                <div>
-                  <el-upload action="#" list-type="picture-card" :limit="1">
-                    <i class="el-icon-plus"></i>
-                  </el-upload>
-                  <img width="100%" alt="small_pic" />
-                </div>
-              </div>
-              <div class="buildname" style="margin: 20px 82px; display: flex">
-                <span>上传园区banner图：</span>
-                <div>
-                  <el-upload action="#" list-type="picture-card" :limit="1">
-                    <i class="el-icon-plus"></i>
-                  </el-upload>
-                  <img width="100%" alt="banner_images" />
-                </div>
-              </div>
-              <div class="buildname" style="margin: 20px 140px; display: flex">
-                <span>园区简介：</span>
-                <a-textarea
-                  placeholder="请输入园区简介"
-                  :rows="4"
-                  style="width: 31vw"
-                  v-model="Form.brief_intro"
-                />
-              </div>
-              <!-- 确定按钮 -->
-              <div
-                class="btnant"
-                style="
-                  padding: 10px 16px;
-                  text-align: right;
-                  background: transparent;
-                  border-top: 1px solid #e8e8e8;
-                  border-radius: 0 0 4px 4px;
-                "
-              >
-                <a-button @click="AddroomUp" style="margin-right: 20px"
-                  >取消</a-button
-                >
-                <a-button type="primary" @click="AddroomSure">确定</a-button>
-              </div>
-            </a-modal>
+
+            <a-radio-group
+              class="kradio"
+              v-model="mode"
+              :style="{ marginBottom: '8px' }"
+              @change="tabit"
+            >
+              <a-radio-button value="1"> 列表模式 </a-radio-button>
+              <a-radio-button value="2"> 房态模式 </a-radio-button>
+            </a-radio-group>
           </div>
         </div>
-        <div class="content">
+        <div class="content" v-if="mode == 1">
           <div>
             <a-table
               bordered
               :row-selection="rowSelection"
               :data-source="dataSource"
               :columns="columns"
-              :rowKey="(record, id) => id"
+              rowKey="id"
               :pagination="pagination"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
               <!-- 状态开关 -->
               <span slot="putaway" slot-scope="text, record">
                 <a-switch
-                  v-if="record.is_marketable == 1"
-                  default-checked
                   checked-children="是"
                   un-checked-children="否"
-                  @change="
-                    switchChange(
-                      $event,
-                      record.id,
-                      record.version,
-                      'is_marketable'
-                    )
-                  "
+                  :checked="record.is_marketable == 0 ? false : true"
+                  @change="switchChange(record)"
                 />
-                <a-switch
-                  v-if="record.is_marketable == 0"
-                  default-unchecked
-                  checked-children="是"
-                  un-checked-children="否"
-                  @change="
-                    switchChange(
-                      $event,
-                      record.id,
-                      record.version,
-                      'is_marketable'
-                    )
-                  "
-                />
+                
               </span>
               <template slot="operation" slot-scope="text, scoped">
                 <!-- 编辑 -->
-                <a href="javascript:;" @click="Editroom(scoped)">
+                <a href="javascript:;" @click="Addroom(scoped, 2, '编辑房间')">
                   <a-icon type="edit" theme="twoTone" />编辑
                 </a>
-                <!-- 编辑modal弹框 -->
-                <a-modal v-model="EditRoom" title="编辑园区" width="50%">
-                  <div class="buildname" style="margin: 20px 140px">
-                    <span>所属楼宇：</span>
-                    <a-select
-                      default-value="请选择"
-                      style="width: 30vw"
-                      v-model="FormEdit.building_id"
-                      option-label-prop="label"
-                      @change="GetFloor()"
-                    >
-                      <a-select-option
-                        v-for="item in BuildOptions"
-                        :key="item.id"
-                        :label="item.building_name"
-                        :value="item.id"
-                      >
-                        <span role="img" :aria-label="item.building_name">
-                          {{ item.building_name }}
-                        </span>
-                      </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 140px">
-                    <span>所属楼层：</span>
-                    <a-select
-                      default-value="请选择"
-                      style="width: 30vw"
-                      v-model="FormEdit.building_detail_id"
-                      option-label-prop="label"
-                    >
-                      <a-select-option
-                        v-for="item in FloorOptions"
-                        :key="item.id"
-                        :label="item.floor_name"
-                        :value="item.id"
-                      >
-                        <span role="img" :aria-label="item.floor_name">
-                          {{ item.floor_name }}
-                        </span>
-                      </a-select-option>
-                    </a-select>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 140px; width: 60vw"
-                  >
-                    <span>房间名称：</span>
-                    <a-input
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.name"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 168px">
-                    <span>租金：</span>
-                    <a-input-number
-                      placeholder="请输入租金"
-                      style="width: 10vw"
-                      v-model="FormEdit.rent"
-                    />
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 5vw"
-                      v-model="FormEdit.rent_type"
-                    >
-                      <a-select-option value="1"> 元/㎡/天 </a-select-option>
-                      <a-select-option value="2"> 元/㎡/月 </a-select-option>
-                      <a-select-option value="3"> 元/天 </a-select-option>
-                      <a-select-option value="4"> 元/月 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 154px">
-                    <span>物业费：</span>
-                    <a-input-number
-                      placeholder="请输入物业费"
-                      style="width: 10vw"
-                      v-model="FormEdit.management_fee"
-                    />
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 5vw"
-                      v-model="FormEdit.management_fee_type"
-                    >
-                      <a-select-option value="1"> 元/㎡/天 </a-select-option>
-                      <a-select-option value="2"> 元/㎡/月 </a-select-option>
-                      <a-select-option value="3"> 元/天 </a-select-option>
-                      <a-select-option value="4"> 元/月 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 154px">
-                    <span>能耗费：</span>
-                    <a-input-number
-                      placeholder="请输入能耗费"
-                      style="width: 10vw"
-                      v-model="FormEdit.energy_fee"
-                    />
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 5vw"
-                      v-model="FormEdit.energy_fee_type"
-                    >
-                      <a-select-option value="1"> 元/㎡/天 </a-select-option>
-                      <a-select-option value="2"> 元/㎡/月 </a-select-option>
-                      <a-select-option value="3"> 元/天 </a-select-option>
-                      <a-select-option value="4"> 元/月 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 70px; width: 60vw">
-                    <span>房间面积（平方米）：</span>
-                    <a-input
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.area"
-                    />
-                    <div style="margin: 10px 140px">
-                      <a-checkbox v-model="FormEdit.can_be_divided">
-                        可分割
-                      </a-checkbox>
-                    </div>
-                  </div>
-                  <div class="buildname" style="margin: 20px 70px; width: 60vw">
-                    <span>收租面积（平方米）：</span>
-                    <a-input
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.rent_area"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 70px; width: 60vw">
-                    <span>公摊面积（平方米）：</span>
-                    <a-input
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.common_area"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 168px">
-                    <span>房型：</span>
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 20vw"
-                      v-model="FormEdit.layout"
-                    >
-                      <a-select-option value="1"> loft </a-select-option>
-                      <a-select-option value="2"> 商业配套 </a-select-option>
-                      <a-select-option value="3"> 办公场所 </a-select-option>
-                      <a-select-option value="4"> 其他 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 168px; width: 60vw"
-                  >
-                    <span>层高：</span>
-                    <a-input
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.floor_height"
-                    />
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 140px; width: 60vw"
-                  >
-                    <span>可住日期：</span>
-                    <a-date-picker
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.available_from"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 140px">
-                    <span>装修类型：</span>
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 20vw"
-                      v-model="FormEdit.decoration_type"
-                    >
-                      <a-select-option value="1"> 简装 </a-select-option>
-                      <a-select-option value="2"> 精装 </a-select-option>
-                      <a-select-option value="3"> 毛坯房 </a-select-option>
-                    </a-select>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 168px; width: 60vw"
-                  >
-                    <span>奖金：</span>
-                    <a-input
-                      placeholder="请输入房间名称"
-                      style="width: 15vw"
-                      v-model="FormEdit.bonus"
-                    />
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 112px; display: flex"
-                  >
-                    <span>上传园区小图：</span>
-                    <div>
-                      <el-upload action="#" list-type="picture-card" :limit="1">
-                        <i class="el-icon-plus"></i>
-                      </el-upload>
-                      <img width="100%" alt="small_pic" />
-                    </div>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 82px; display: flex"
-                  >
-                    <span>上传园区banner图：</span>
-                    <div>
-                      <el-upload action="#" list-type="picture-card" :limit="1">
-                        <i class="el-icon-plus"></i>
-                      </el-upload>
-                      <img width="100%" alt="banner_images" />
-                    </div>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 140px; display: flex"
-                  >
-                    <span>园区简介：</span>
-                    <a-textarea
-                      placeholder="请输入园区简介"
-                      :rows="4"
-                      style="width: 31vw"
-                      v-model="FormEdit.brief_intro"
-                    />
-                  </div>
-                  <!-- 确定按钮 -->
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button @click="EditroomUp" style="margin-right: 20px"
-                      >取消</a-button
-                    >
-                    <a-button type="primary" @click="EditroomSure"
-                      >确定</a-button
-                    >
-                  </div>
-                </a-modal>
                 <a-divider type="vertical" />
                 <!-- 删除 -->
                 <a
@@ -559,19 +70,304 @@
             </a-table>
           </div>
         </div>
+        <div v-else>
+          <div v-for="(item, index) in list" :key="index">
+            <h2>{{ item.park_name }}</h2>
+            <div v-for="val in item.building_list" :key="val.id">
+              <div v-for="el in val.building_detail_list">
+              <h3 style="margin:10px 0;background:#fafbfc;line-height: 2;padding-left: 10px;">{{ val.building_name }}{{ el.floor_name }}</h3>
+              <div class="cardwrap">
+                <a-row>
+                  <a-col
+                    :span="4"
+                    v-for="(value, idx) in el.room_list"
+                    :key="value.id"
+                  >
+                    <a-card @click="getroominfo(value.room_id)">
+                      <div>{{ value.room_name }}</div>
+                      <div>{{ value.area }}  -{{value.rent}}{{value.rent_type}}</div>
+                    </a-card>
+                  </a-col>
+                </a-row>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal
+      v-model="AddRoom"
+      :title="title"
+      width="50%"
+      @ok="handleSubmit"
+      class="bigmodal"
+    >
+      <a-form :form="form" :label-col="{ span: 6 }" :wrapper-col="{ span: 14 }">
+        <a-form-item label="所属楼宇：">
+          <a-select
+            @change="getbuildid"
+            v-decorator="[
+              'building_id',
+              {
+                rules: [{ required: true, message: '请选择楼宇!' }],
+              },
+            ]"
+            placeholder="请选择"
+          >
+            <a-select-option
+              v-for="item in BuildOptions"
+              :key="item.id"
+              :label="item.building_name"
+              :value="item.id"
+            >
+              <span role="img" :aria-label="item.building_name">
+                {{ item.building_name }}
+              </span>
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="所属楼层：">
+          <a-select
+            :disabled="isbuild"
+            v-decorator="[
+              'building_detail_id',
+              {
+                rules: [{ required: true, message: '请选择楼宇!' }],
+              },
+            ]"
+            placeholder="请选择"
+          >
+            <a-select-option
+              v-for="item in FloorOptions"
+              :key="item.id"
+              :label="item.floor_name"
+              :value="item.id"
+            >
+              <span role="img" :aria-label="item.floor_name">
+                {{ item.floor_name }}
+              </span>
+            </a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="房间名称：">
+          <a-input v-decorator="['name']" />
+        </a-form-item>
+
+        <a-form-item label="租金：">
+          <div class="flex krow">
+            <a-input
+              type="number"
+              v-decorator="[
+                'rent',
+                {
+                  rules: [{ required: true, message: '请输入房间名称!' }],
+                },
+              ]"
+            />
+            <a-form-item>
+              <a-select v-decorator="['rent_type', { initialValue: '1' }]">
+                <a-select-option value="1">元/㎡/天 </a-select-option>
+                <a-select-option value="2"> 元/㎡/月 </a-select-option>
+                <a-select-option value="3"> 元/天 </a-select-option>
+                <a-select-option value="4"> 元/月 </a-select-option>
+              </a-select>
+            </a-form-item>
+          </div>
+        </a-form-item>
+
+        <a-form-item label="物业费：">
+          <div class="flex krow">
+            <a-input
+              type="number"
+              v-decorator="[
+                'management_fee',
+                {
+                  rules: [{ required: true, message: '请输入物业费!' }],
+                },
+              ]"
+            />
+            <a-form-item>
+              <a-select
+                v-decorator="['management_fee_type', { initialValue: '1' }]"
+              >
+                <a-select-option value="1">元/㎡/天 </a-select-option>
+                <a-select-option value="2"> 元/㎡/月 </a-select-option>
+                <a-select-option value="3"> 元/天 </a-select-option>
+                <a-select-option value="4"> 元/月 </a-select-option>
+              </a-select>
+            </a-form-item>
+          </div>
+        </a-form-item>
+        <a-form-item label="能耗费：">
+          <div class="flex krow">
+            <a-input
+              v-decorator="[
+                'energy_fee',
+                {
+                  rules: [{ required: true, message: '请输入能耗费!' }],
+                },
+              ]"
+            />
+            <a-form-item>
+              <a-select
+                v-decorator="['energy_fee_type', { initialValue: '1' }]"
+              >
+                <a-select-option value="1">元/㎡/天 </a-select-option>
+                <a-select-option value="2"> 元/㎡/月 </a-select-option>
+                <a-select-option value="3"> 元/天 </a-select-option>
+                <a-select-option value="4"> 元/月 </a-select-option>
+              </a-select>
+            </a-form-item>
+          </div>
+        </a-form-item>
+        <a-form-item label="房间面积（平方米）：">
+          <a-input
+            type="number"
+            v-decorator="[
+              'area',
+              {
+                rules: [{ required: true, message: '请输入房间名称!' }],
+              },
+            ]"
+          />
+          <a-form-item>
+            <a-checkbox-group v-decorator="['can_be_divided']">
+              <a-checkbox value="1"> 可分割 </a-checkbox>
+            </a-checkbox-group>
+          </a-form-item>
+        </a-form-item>
+        <a-form-item label="收租面积（平方米）：">
+          <a-input
+            type="number"
+            v-decorator="[
+              'rent_area',
+              {
+                rules: [{ required: true, message: '请输入房间名称!' }],
+              },
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="公摊面积（平方米）：">
+          <a-input
+            type="number"
+            v-decorator="[
+              'common_area',
+              {
+                rules: [{ required: true, message: '请输入房间名称!' }],
+              },
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item label="房型：">
+          <a-select
+            v-decorator="[
+              'layout',
+              {
+                rules: [{ required: true, message: '请选择楼宇!' }],
+              },
+            ]"
+            placeholder="请选择"
+          >
+            <a-select-option value="1"> loft </a-select-option>
+            <a-select-option value="2"> 商业配套 </a-select-option>
+            <a-select-option value="3"> 办公场所 </a-select-option>
+            <a-select-option value="4"> 其他 </a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="层高：">
+          <a-input type="number" v-decorator="['floor_height']" />
+        </a-form-item>
+
+        <a-form-item label="可入驻日期：">
+          <a-date-picker
+            v-decorator="[
+              'available_from',
+              {
+                rules: [{ required: true, message: '请输入房间名称!' }],
+              },
+            ]"
+            style="width: 100%"
+          />
+        </a-form-item>
+
+        <a-form-item label="装修类型：">
+          <a-select
+            v-decorator="[
+              'decoration_type',
+              {
+                rules: [{ required: true, message: '请选择楼宇!' }],
+              },
+            ]"
+            placeholder="请选择"
+          >
+            <a-select-option value="1"> 简装 </a-select-option>
+            <a-select-option value="2"> 精装 </a-select-option>
+            <a-select-option value="3"> 毛坯房 </a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="奖金：">
+          <a-input type="number" v-decorator="['bonus']" />
+        </a-form-item>
+        <a-form-item label="上传房间小图：">
+          <uploadimgVue
+            :FileList="smallpic"
+            :limit="1"
+            @upload="getupload"
+            @remove="remove"
+            v-decorator="['small_pic']"
+          />
+        </a-form-item>
+        <a-form-item label="上传园区banner图：">
+          <uploadimgVue
+            :FileList="bannerlist"
+            :limit="5"
+            @upload="getupload1"
+            @remove="remove1"
+            v-decorator="['banner_images']"
+          />
+        </a-form-item>
+
+        <a-form-item label="房间简介（可选）：">
+          <a-input type="textarea" v-decorator="['brief_intro']" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import uploadimgVue from "@/components/common/uploadimg.vue";
 export default {
   name: "GardenRoom",
+  components: {
+    uploadimgVue,
+  },
   data() {
     return {
+      ismap: 0,
+      checked: false,
+      smallpic: [],
+      small_pic: "",
+      bannerlist: [],
+      title: "新增房间",
+      form: this.$form.createForm(this, { name: "coordinated" }),
+      type: 1,
+      buildid: null,
+      isbuild: true,
       inputVal: "", // 搜索框数据绑定
       total: 0, // 总条数，分页时有用
+      mode: "1",
+      list: [],
       columns: [
         {
           title: "所属园区",
@@ -697,9 +493,6 @@ export default {
     this.roomList(); // 获取房间列表数据
     this.GetBuilding(); //新增之楼宇选项
   },
-  mounted() {
-    this.GetFloor(); //新增之楼层选项
-  },
   watch: {
     // 监听搜索框是否有内容自动搜索
     inputVal(newValue) {
@@ -709,22 +502,120 @@ export default {
         this.ShowEdit(false);
       }
     },
+    buildid(newval, oldval) {
+      this.isbuild = false;
+      this.GetFloor(newval);
+    },
   },
   methods: {
-    // 获取房间列表数据
-    roomList() {
-      axios.get("/api/ics/room?per_page=9999").then((res) => {
-        if (res.message === "success") {
-          this.dataSource = res.data.data;
+    onChange1(e) {
+      this.checked = e.target.checked;
+    },
+    getupload(file) {
+      this.small_pic = file;
+      this.smallpic.push(file);
+    },
+    getupload1(file) {
+      this.bannerlist.push(file);
+    },
+    remove(file) {
+      this.smallPic.map((el, index) => {
+        if (el == file.uid) {
+          this.smallPic.splice(index, 1);
+        }
+      });
+      this.small_pic = "";
+    },
+    remove1(file) {
+      this.bannerlist.map((el, index) => {
+        if (el == file.uid) {
+          this.bannerlist.splice(index, 1);
         }
       });
     },
-    async switchChange(checked, id, version, name) {
-      let obj = { id };
-      obj[name] = checked ? 1 : 0;
+    getbuildid(val) {
+      this.buildid = val;
+    },
+    handleSubmit(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        let data = {
+          building_id: values.building_id,
+          building_detail_id: values.building_detail_id,
+          name: values.name,
+          rent: values.rent,
+          rent_type: values.rent_type,
+          management_fee: values.management_fee,
+          management_fee_type: values.management_fee_type,
+          energy_fee: values.energy_fee,
+          energy_fee_type: values.energy_fee_type,
+          area: values.area,
+          can_be_divided: values.can_be_divided.length == 0 ? 0 : 1,
+          rent_area: values.rent_area,
+          common_area: values.common_area,
+          layout: values.layout,
+          floor_height: values.floor_height,
+          available_from: values.available_from,
+          decoration_type: values.decoration_type,
+          bonus: values.bonus,
+          small_pic: this.small_pic,
+          banner_images: this.bannerlist,
+          brief_intro: values.brief_intro,
+        };
+        if (this.bannerlist.length == 0) {
+          this.$message.error("请上传banner图");
+          return false;
+        }
+        if (!err) {
+          if (this.type == 1) {
+            axios.post("/api/ics/room", data).then((res) => {
+              this.$message.success("新增房间成功");
+              // 成功重新更新列表
+              this.roomList();
+              this.AddRoom = false;
+            });
+          } else {
+            data.id = this.Form.id;
+            data.version = this.Form.version;
+            axios.patch("/api/ics/room", data).then((res) => {
+              this.$message.success("编辑房间成功");
+              // 成功重新更新列表
+              this.roomList();
+              this.AddRoom = false;
+            });
+          }
+        }
+      });
+    },
+    // 切换
+    tabit() {
+      this.ismap = 1;
+      this.roomList();
+    },
+    // 获取房间列表数据
+    roomList() {
       axios
-        .patch("/api/ics/room/status", obj, {
-          params: { version: version },
+        .get("/api/ics/room?per_page=9999", {
+          params: {
+            is_map: this.ismap,
+          },
+        })
+        .then((res) => {
+          if (res.message === "success") {
+            if (this.ismap == 0) {
+              this.dataSource = res.data.data;
+            } else {
+              this.list = res.data;
+            }
+          }
+        });
+    },
+    switchChange(val) {
+      axios
+        .patch("/api/ics/room/status", {
+          id:val.id ,
+          version: val.version,
+          is_marketable: val.is_marketable == 0 ? 1:0
         })
         .then((res) => {
           if (res.status_code == 200) {
@@ -742,28 +633,90 @@ export default {
       });
     },
     // 楼层选择框内容
-    GetFloor() {
-      axios.get("/api/ics/buildingDetail").then((res) => {
+    GetFloor(id) {
+      axios.get("/api/ics/buildingDetail?building_id=" + id).then((res) => {
         if (res.message === "success") {
           this.FloorOptions = res.data.data;
         }
       });
     },
+    getroominfo(id){
+      axios.get('/api/ics/room?id='+id).then((res) =>{
+        // this.form = res.data ;
+        this.Addroom(res.data,2,'编辑房间');
+      })
+    },
     // 新增modal弹框显示
-    Addroom() {
+    Addroom(form, type, title) {
+      this.type = type;
+      this.title = title;
+      this.Form = { ...form };
+      if (type == 1) {
+        this.bannerlist = [];
+        this.small_pic = "";
+        this.smallpic = [];
+        this.form.resetFields();
+      } else {
+        this.$nextTick(() => {
+          this.buildid = form.building_id;
+          this.bannerlist = form.banner_images.split(",");
+          if (form.small_pic) {
+            let arr = [];
+            arr.push(form.small_pic);
+            this.smallpic = arr;
+            this.small_pic = form.small_pic;
+          }
+          let checked = [];
+          checked.push(JSON.stringify(form.can_be_divided));
+
+          this.form.setFieldsValue({
+            building_id: form.building_id,
+            building_detail_id: form.building_detail_id,
+            name: form.name,
+            rent: form.rent,
+            rent_type: JSON.stringify(form.rent_type),
+            management_fee: form.management_fee,
+            management_fee_type: JSON.stringify(form.management_fee_type),
+            energy_fee: form.energy_fee,
+            energy_fee_type: JSON.stringify(form.energy_fee_type),
+            area: form.area,
+            can_be_divided: checked,
+            rent_area: form.rent_area,
+            common_area: form.common_area,
+            layout: JSON.stringify(form.layout),
+            floor_height: form.floor_height,
+            available_from: form.available_from,
+            decoration_type: JSON.stringify(form.decoration_type),
+            bonus: form.bonus,
+            small_pic: form.small_pic,
+            banner_images: form.banner_images,
+            brief_intro: form.brief_intro,
+          });
+        });
+      }
       this.AddRoom = true;
-      this.Form = { building_id: "" };
     },
     // 新增确认
     AddroomSure() {
-      axios.post("/api/ics/room", this.Form).then((res) => {
-        if (res.message === "success") {
-          this.$message.success("新增房间成功");
-          // 成功重新更新列表
-          this.roomList();
-          this.AddRoom = false;
-        }
-      });
+      if (this.type == 1) {
+        axios.post("/api/ics/room", this.Form).then((res) => {
+          if (res.message === "success") {
+            this.$message.success("新增房间成功");
+            // 成功重新更新列表
+            this.roomList();
+            this.AddRoom = false;
+          }
+        });
+      } else {
+        axios.patch("/api/ics/room", this.Form).then((res) => {
+          if (res.message === "success") {
+            this.$message.success("编辑房间成功");
+            // 成功重新更新列表
+            this.roomList();
+            this.AddRoom = false;
+          }
+        });
+      }
     },
     // 取消新增
     AddroomUp() {
@@ -772,20 +725,26 @@ export default {
     //todo 删除//
     // 删除房间
     Deleteroom(id, version) {
-      axios
-        .delete("/api/ics/room", {
-          params: {
-            id: id,
-            version: version,
-          },
-        })
-        .then((res) => {
-          if (res.status_code === 200) {
-          }
-          // 成功重新更新列表
-          this.$message.success("删除房间成功");
-          this.roomList();
-        });
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+            .delete("/api/ics/room", {
+              params: {
+                id: id,
+                version: version,
+              },
+            })
+            .then((res) => {
+              // 成功重新更新列表
+              that.$message.success("删除房间成功");
+              that.roomList();
+            });
+        },
+        onCancel() {},
+      });
     },
     //todo 编辑//
     // 编辑modal弹框显示
@@ -842,7 +801,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   overflow-y: auto;
@@ -858,6 +816,17 @@ export default {
       .state {
         margin-left: 20px;
       }
+    }
+  }
+  .kradio {
+    position: absolute;
+    right: 30px;
+  }
+  .cardwrap {
+    .ant-card {
+      cursor: pointer;
+      border-radius: 10px;
+      margin: 0 20px 20px 0;
     }
   }
 }

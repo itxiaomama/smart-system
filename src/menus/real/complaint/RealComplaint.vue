@@ -26,50 +26,17 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
             >
               <a slot="name" slot-scope="text">{{ text }}</a>
-              <span slot="action">
-                <a href="javascript:;"
+              <span slot="action" slot-scope="text, record">
+                <a href="javascript:;" @click="visible = true"
                   ><a-icon type="tag" theme="twoTone" />指派</a
                 >
                 <a-divider type="vertical" />
-                <a href="javascript:;" @click="show_detail"
+                <a href="javascript:;" @click="show_detail(record)"
                   ><a-icon type="file-text" theme="twoTone" />详情</a
                 >
-                <a-modal v-model="visible" title="指派维修员" width="35%">
-                  <div class="buildname" style="margin-left: 14px">
-                    <span>维修员：</span
-                    ><a-input
-                      placeholder="所属园区"
-                      style="width: 26vw"
-                    ></a-input>
-                  </div>
-                  <div class="buildname" style="margin-top: 40px">
-                    <span>维修时间：</span
-                    ><a-range-picker
-                      style="width: 26vw"
-                      placeholder="Select month"
-                    />
-                  </div>
-                  <div class="remake" style="margin: 40px 0 20px 0">
-                    <span>维修材料：</span>
-                    <a-input placeholder="维修材料" style="width: 26vw" />
-                  </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 20px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button style="margin-right: 20px">取消</a-button>
-                    <a-button type="primary">确定</a-button>
-                  </div>
-                </a-modal>
                 <a-divider type="vertical" />
                 <a href="javascript:;"
                   ><a-icon type="box-plot" theme="twoTone" />完成</a
@@ -80,6 +47,27 @@
         </div>
       </div>
     </div>
+
+    <a-modal v-model="visible" title="指派维修员" width="35%">
+      <div class="buildname" style="margin-left: 14px">
+        <span>维修员：</span
+        ><a-input placeholder="所属园区" style="width: 26vw"></a-input>
+      </div>
+      <div class="buildname" style="margin-top: 40px">
+        <span>维修时间：</span
+        ><a-range-picker style="width: 26vw" placeholder="Select month" />
+      </div>
+      <div class="remake" style="margin: 40px 0 20px 0">
+        <span>维修材料：</span>
+        <a-input placeholder="维修材料" style="width: 26vw" />
+      </div>
+      <template slot="footer">
+      <div>
+        <a-button style="margin-right: 20px">取消</a-button>
+        <a-button type="primary">确定</a-button>
+      </div>
+    </template>
+    </a-modal>
   </div>
 </template>
 
@@ -108,8 +96,8 @@ export default {
         },
         {
           title: "指派人员",
-          dataIndex: "floor",
-          scopedSlots: { customRender: "floor" },
+          dataIndex: "worker_user_name",
+          scopedSlots: { customRender: "worker_user_name" },
         },
         {
           title: "状态",
@@ -136,8 +124,13 @@ export default {
       });
     },
     // 投诉详情
-    show_detail() {
-      this.$router.push("/home/Rcomplaintdetail");
+    show_detail(val) {
+      this.$router.push({
+        path:"/property/complaintdetail",
+        query:{
+          id:val.id
+        }
+      });
     },
   },
   computed: {
@@ -152,7 +145,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

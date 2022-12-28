@@ -14,82 +14,9 @@
           </div>
           <div class="bottom">
             <!-- 新增 -->
-            <a-button type="primary" @click="AddMenu">新增</a-button>
-            <!-- 新增modal弹框 -->
-            <a-modal v-model="AddMenuAdd" title="新增菜单" width="40%">
-              <div class="buildname" style="margin: 20px 12px">
-                <span>上级菜单：</span>
-                <a-select
-                  placeholder="请选择"
-                  style="width: 30vw"
-                  v-model="FromAdd.parent_id"
-                  option-label-prop="label"
-                >
-                  <a-select-option value="0">无</a-select-option>
-                  <a-select-option
-                    v-for="item in MenuOptions"
-                    :key="item.id"
-                    :label="item.menu_name"
-                    :value="item.id"
-                  >
-                    <span role="img" :aria-label="item.menu_name">
-                      {{ item.menu_name }}
-                    </span>
-                  </a-select-option>
-                </a-select>
-              </div>
-              <div class="buildname" style="margin: 20px 12px">
-                <span>菜单名称：</span>
-                <a-input
-                  placeholder="请输入bannner菜单"
-                  style="width: 30vw"
-                  v-model="FromAdd.menu_name"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 12px">
-                <span>菜单简介：</span>
-                <a-input
-                  placeholder="请输入菜单简介"
-                  style="width: 30vw"
-                  v-model="FromAdd.menu_desc"
-                />
-              </div>
-              <div class="buildname" style="margin: 20px 12px; display: flex">
-                <p>菜单图标：</p>
-                <div>
-                  <el-upload
-                    action="https://park.cngiantech.com/api/system/upload"
-                    list-type="picture-card"
-                    :limit="1"
-                    :headers="headers"
-                    :data="fileData"
-                    :before-upload="beforeAvatarUpload1"
-                    :on-success="handleSuccess1"
-                  >
-                    <i class="el-icon-plus"></i>
-                  </el-upload>
-                  <img width="100%" :src="FromAdd.banner_img" alt="" />
-                </div>
-              </div>
-              <div
-                style="
-                  padding: 10px 16px;
-                  text-align: right;
-                  background: transparent;
-                  border-top: 1px solid #e8e8e8;
-                  border-radius: 0 0 4px 4px;
-                "
-              >
-                <a href="javascript:;"
-                  ><a-button style="margin-right: 20px" @click="AddMenuUp"
-                    >取消</a-button
-                  ></a
-                >
-                <a href="javascript:;" @click="AddMenuSure">
-                  <a-button type="primary">确定</a-button></a
-                >
-              </div>
-            </a-modal>
+            <a-button type="primary" @click="AddMenu({}, 1, '新增菜单')"
+              >新增</a-button
+            >
           </div>
         </div>
         <div class="content" style="margin-top: 20px">
@@ -99,10 +26,9 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
               :pagination="paginationMobile"
             >
-              <a slot="belong" slot-scope="text">{{ text }}</a>
               <!-- 状态开关 -->
               <span slot="belongbuild" slot-scope="text, record">
                 <a-switch
@@ -135,88 +61,13 @@
                 />
               </span>
               <template slot="action" slot-scope="text, record">
-                <a-modal v-model="AddMenuEdit" title="编辑菜单" width="40%">
-                  <div class="buildname" style="margin: 20px 12px">
-                    <span>上级菜单：</span>
-                    <a-select
-                      placeholder="请选择"
-                      style="width: 30vw"
-                      v-model="FromEdit.parent_id"
-                      option-label-prop="label"
-                    >
-                      <a-select-option value="0">无</a-select-option>
-                      <a-select-option
-                        v-for="item in MenuOptions"
-                        :key="item.id"
-                        :label="item.menu_name"
-                        :value="item.id"
-                      >
-                        <span role="img" :aria-label="item.menu_name">
-                          {{ item.menu_name }}
-                        </span>
-                      </a-select-option>
-                    </a-select>
-                  </div>
-                  <div class="buildname" style="margin: 20px 12px">
-                    <span>菜单名称：</span>
-                    <a-input
-                      placeholder="请输入bannner菜单"
-                      style="width: 30vw"
-                      v-model="FromEdit.menu_name"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 12px">
-                    <span>菜单简介：</span>
-                    <a-input
-                      placeholder="请输入菜单简介"
-                      style="width: 30vw"
-                      v-model="FromEdit.menu_desc"
-                    />
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 12px; display: flex"
-                  >
-                    <p>菜单图标：</p>
-                    <div>
-                      <el-upload
-                        action="https://park.cngiantech.com/api/system/upload"
-                        list-type="picture-card"
-                        :limit="1"
-                        :headers="headers"
-                        :data="fileData"
-                        :before-upload="beforeAvatarUpload1"
-                        :on-success="handleSuccess1"
-                      >
-                        <i class="el-icon-plus"></i>
-                      </el-upload>
-                      <img width="100%" :src="FromAdd.banner_img" alt="" />
-                    </div>
-                  </div>
-                  <div
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a href="javascript:;"
-                      ><a-button style="margin-right: 20px" @click="EditMenuUp"
-                        >取消</a-button
-                      ></a
-                    >
-                    <a href="javascript:;" @click="EditMenuSure">
-                      <a-button type="primary">确定</a-button></a
-                    >
-                  </div>
-                </a-modal>
                 <!-- 编辑 -->
-                <a @click="EditMenu(record)"
-                  ><a-icon type="edit" theme="twoTone" />编辑</a
-                >
+                <a @click="AddMenu(record, 2, '编辑菜单')"
+                  ><a-icon type="edit" theme="twoTone" />编辑</a>
                 <!-- 编辑modal弹框 -->
+                <a-divider type="vertical" />
+                <a @click="AddMenu(record.id, 3, '新增菜单')"
+                  ><a-icon type="edit" theme="twoTone" />新增</a>
                 <a-divider type="vertical" />
                 <!-- 删除 -->
                 <a
@@ -231,15 +82,77 @@
         </div>
       </div>
     </div>
+
+    <!-- 新增modal弹框 -->
+    <a-modal v-model="AddMenuAdd" :title="title" width="40%">
+      <div class="buildname" style="margin: 20px 12px">
+        <span>上级菜单：</span>
+         <a-tree-select 
+            class="kselect"
+            v-model="FromAdd.parent_id"
+            allow-clear
+            :treeData="MenuOptions"
+            tree-default-expand-all
+            placeholder="请选择"
+          ></a-tree-select>
+      </div>
+      <div class="buildname" style="margin: 20px 12px">
+        <span>菜单名称：</span>
+        <a-input
+          placeholder="请输入bannner菜单"
+          style="width: 30vw"
+          v-model="FromAdd.menu_name"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 12px">
+        <span>菜单简介：</span>
+        <a-input
+          placeholder="请输入菜单简介"
+          style="width: 30vw"
+          v-model="FromAdd.menu_desc"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 12px; display: flex">
+        <p>菜单图标：</p>
+        <div>
+          <uploadimgVue 
+          :FileList="menuimg"
+          :limit="1"
+           @upload="getupload"
+            @remove="remove"
+          />
+        </div>
+      </div>
+      <template slot="footer">
+        <div>
+          <a href="javascript:;"
+            ><a-button style="margin-right: 20px" @click="AddMenuUp"
+              >取消</a-button
+            ></a
+          >
+          <a href="javascript:;" @click="AddMenuSure">
+            <a-button type="primary">确定</a-button></a
+          >
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import uploadimgVue from "@/components/common/uploadimg.vue";
 export default {
   name: "FirmMobile",
+  components:{
+    uploadimgVue
+  },
   data() {
     return {
+      menu_img:"",
+      menuimg:[],
+      type: 1,
+      title: "新增菜单",
       dataSource: [], //页面数据源
       MenuOptions: [], // 存放菜单选择数据
       columns: [
@@ -252,7 +165,7 @@ export default {
         {
           title: "上架时间",
           align: "center",
-          dataIndex: "created_at",
+          dataIndex: "marketable_time",
           width: "20%",
           scopedSlots: { customRender: "roomname" },
         },
@@ -326,6 +239,30 @@ export default {
   },
 
   methods: {
+    getupload(file){
+      this.menu_img = file;
+      this.menuimg.push(file);
+    },
+    remove(file){
+      console.log(file)
+      this.menu_img ='';
+      this.menuimg = [];
+    },
+    getTreedata(data) {
+      var arr = [];
+      for (var i = 0; i < data.length; i++) {
+        var tempobj = {
+          title: data[i].menu_name,
+          value: data[i].id,
+          key: data[i].id,
+        };
+        if ("children" in data[i]) {
+          tempobj.children = this.getTreedata(data[i].children);
+        }
+        arr.push(tempobj);
+      }
+      return arr;
+    },
     // 获取页面数据列表
     menuList() {
       axios.get("/api/ics/serviceMenu?per_page=9999").then((res) => {
@@ -334,7 +271,8 @@ export default {
     },
     menuLista() {
       axios.get("/api/ics/serviceMenu").then((res) => {
-        this.MenuOptions = res.data;
+        let arr = this.getTreedata(res.data);
+        this.MenuOptions.push(...arr);
       });
     },
     // 状态开关
@@ -351,40 +289,59 @@ export default {
           }
         });
     },
-    // 图片上传成功
-    handleSuccess1(res, file) {
-      for (let item of res.data) {
-        this.FromAdd.banner_img = item.path;
-      }
-    },
-    // 图片上传之前
-    beforeAvatarUpload1(file) {
-      this.fileData["files[]"] = file;
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
     // todo 新增
     // 新增弹框显示
-    AddMenu() {
+    AddMenu(form, type, title) {
+      this.type = type;
+      this.title = title;
+      this.FromAdd = { ...form };
+      if(type == 2){
+        this.$nextTick(() => {
+          if(form.menu_img){
+           let arr = [] ;
+          arr.push(form.menu_img)
+          this.menuimg = arr ;
+          this.menu_img = form.menu_img; 
+          }
+        })
+      }else if(type == 3){
+        this.FromAdd.parent_id = form;
+      }
       this.AddMenuAdd = true;
-      this.FromAdd = { parent_id: "" };
+      // this.FromAdd = { parent_id: "" };
     },
     // 新增确认
     AddMenuSure() {
-      axios.post("/api/ics/serviceMenu", this.FromAdd).then((res) => {
-        if (res.message === "success") {
-          this.AddMenuAdd = false;
-          this.$message.success("新增菜单成功");
-          this.menuList();
-        }
-      });
+      let data = {
+        parent_id: this.FromAdd.parent_id,
+        menu_name: this.FromAdd.menu_name,
+        menu_desc: this.FromAdd.menu_desc,
+        menu_img: this.menu_img
+      };
+      if (this.type == 1 || this.type == 3) {
+        axios.post("/api/ics/serviceMenu", data).then((res) => {
+          if (res.message === "success") {
+            this.AddMenuAdd = false;
+            this.menu_img = '';
+            this.menuimg = [];
+            this.$message.success("操作成功");
+            this.menuList();
+          }
+        });
+      } else {
+        data.id = this.FromAdd.id ;
+        data.version = this.FromAdd.version;
+        axios.patch("/api/ics/serviceMenu", data).then((res) => {
+          if (res.message === "success") {
+            this.AddMenuAdd = false;
+            this.menu_img = '';
+            this.menuimg = [];
+            this.$message.success("操作成功");
+            this.menuList();
+          }
+        });
+        this.AddMenuAdd = false;
+      }
     },
     // 取消新增
     AddMenuUp() {
@@ -453,7 +410,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {
@@ -465,6 +421,9 @@ export default {
     .left {
       display: flex;
     }
+  }
+  .ant-select{
+    width: 30%!important;
   }
 }
 </style>

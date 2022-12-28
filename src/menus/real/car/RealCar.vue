@@ -62,93 +62,80 @@
                 <a href="javascript:;" @click="btn_mouth"
                   ><a-icon type="credit-card" theme="twoTone" />月卡</a
                 >
-                <a-modal v-model="visible" title="月卡登记" width="35%">
-                  <div class="buildname">
-                    <span>车主姓名：</span
-                    ><a-input
-                      placeholder="车主姓名"
-                      style="width: 26vw"
-                      @change="onChange"
-                    ></a-input>
-                  </div>
-                  <div class="buildname" style="margin-top: 20px">
-                    <span>手机号码：</span
-                    ><a-input
-                      placeholder="手机号码"
-                      style="width: 26vw"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div class="buildname" style="margin-top: 20px">
-                    <span>车牌号码：</span
-                    ><a-input
-                      placeholder="车牌号码"
-                      style="width: 26vw"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div class="buildname" style="margin-top: 20px">
-                    <span>开始日期：</span>
-                    <a-month-picker
-                      placeholder="请选择日期"
-                      @change="onChange"
-                      style="width: 26vw"
-                    />
-                  </div>
-                  <div class="buildname" style="margin-top: 20px">
-                    <span>结束日期：</span>
-                    <a-month-picker
-                      placeholder="请选择日期"
-                      @change="onChange"
-                      style="width: 26vw"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 0 0 28px">
-                    <span>费用：</span
-                    ><a-input
-                      placeholder="费用"
-                      style="width: 26vw"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div
-                    class="buildname"
-                    style="
-                      margin: 20px 0 20px 28px;
-                      display: flex;
-                      white-space: nowrap;
-                    "
-                  >
-                    <span style="line-height: 24px">备注：</span>
-                    <a-textarea
-                      placeholder="请输入备注信息"
-                      :rows="2"
-                      style="width: 26vw"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button @click="showCancel" style="margin-right: 20px"
-                      >取消</a-button
-                    >
-                    <a-button type="primary" @click="showAdd">确定</a-button>
-                  </div>
-                </a-modal>
               </template>
             </a-table>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 月卡 -->
+    <a-modal v-model="visible" title="月卡登记" width="35%">
+      <div class="buildname">
+        <span>车主姓名：</span
+        ><a-input
+          placeholder="车主姓名"
+          style="width: 26vw"
+          @change="onChange"
+        ></a-input>
+      </div>
+      <div class="buildname" style="margin-top: 20px">
+        <span>手机号码：</span
+        ><a-input
+          placeholder="手机号码"
+          style="width: 26vw"
+          @change="onChange"
+        />
+      </div>
+      <div class="buildname" style="margin-top: 20px">
+        <span>车牌号码：</span
+        ><a-input
+          placeholder="车牌号码"
+          style="width: 26vw"
+          @change="onChange"
+        />
+      </div>
+      <div class="buildname" style="margin-top: 20px">
+        <span>开始日期：</span>
+        <a-month-picker
+          placeholder="请选择日期"
+          @change="onChange"
+          style="width: 26vw"
+        />
+      </div>
+      <div class="buildname" style="margin-top: 20px">
+        <span>结束日期：</span>
+        <a-month-picker
+          placeholder="请选择日期"
+          @change="onChange"
+          style="width: 26vw"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 0 0 28px">
+        <span>费用：</span
+        ><a-input placeholder="费用" style="width: 26vw" @change="onChange" />
+      </div>
+      <div
+        class="buildname"
+        style="margin: 20px 0 20px 28px; display: flex; white-space: nowrap"
+      >
+        <span style="line-height: 24px">备注：</span>
+        <a-textarea
+          placeholder="请输入备注信息"
+          :rows="2"
+          style="width: 26vw"
+          @change="onChange"
+        />
+      </div>
+      <template slot="footer">
+        <div class="btnant">
+          <a-button @click="showCancel" style="margin-right: 20px"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="showAdd">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -239,10 +226,10 @@ export default {
       console.log();
     },
     btn_add() {
-      this.$router.push("/home/Rcarpush");
+      this.$router.push("/property/cardetail");
     },
     btn_edit() {
-      this.$router.push("/home/Rcaredit");
+      this.$router.push("/property/cardetail");
     },
     btn_mouth() {
       this.visible = true;
@@ -285,7 +272,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   background-color: #fff;
   border-radius: 10px;
   .wrapA {

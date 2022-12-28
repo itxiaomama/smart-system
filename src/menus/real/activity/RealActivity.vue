@@ -10,8 +10,8 @@
             />
           </div>
           <div class="bottom" style="margin-bottom: 20px">
-            <a-button type="primary">
-              <router-link to="/home/Ractivitypush">新增</router-link>
+            <a-button type="primary" @click="toactive({},1)">
+              新增
             </a-button>
           </div>
         </div>
@@ -22,9 +22,14 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
             >
-              <a slot="name" slot-scope="text">{{ text }}</a>
+              <span slot="sign_begin" slot-scope="text,record">
+                {{ record.sign_begin }}-{{record.sign_end}}
+                </span>
+                <span slot="act_begin" slot-scope="text,record">
+                {{ record.act_begin }}-{{record.act_end}}
+                </span>
               <span slot="area" slot-scope="area">
                 <a-tag
                   v-for="tag in area"
@@ -42,20 +47,18 @@
                   {{ tag.toUpperCase() }}
                 </a-tag>
               </span>
-              <span slot="collect"
+              <span slot="is_marketable" slot-scope="text,record"
                 ><a-switch
+                  @change="changeit(record)"
                   checked-children="是"
                   un-checked-children="否"
-                  default-checked
+                  :checked="record.is_marketable == 0? false: true"
               /></span>
-              <template slot="action" slot-scope="">
-                <a
-                  ><router-link to="/home/Ractivityedit">
-                    <a-icon type="edit" theme="twoTone" />编辑</router-link
-                  ></a
-                >
+              <template slot="action" slot-scope="text,record">
+                <a @click="toactive(record,2)">
+                  <a-icon type="edit" theme="twoTone" />编辑</a>
                 <a-divider type="vertical" />
-                <a href="javascript:;"
+                <a href="javascript:;" @click="delit(record)"
                   ><a-icon type="delete" theme="twoTone" />删除</a
                 >
               </template>
@@ -82,40 +85,20 @@ export default {
         },
         {
           title: "报名时间",
-          align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.roomname;
-            let bTimeString = b.roomname;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
-          dataIndex: "roomname",
-          scopedSlots: { customRender: "roomname" },
+          align: "left",
+          dataIndex: "sign_begin",
+          scopedSlots: { customRender: "sign_begin" },
         },
         {
           title: "活动时间",
-          align: "center",
-          defaultSortOrder: "(a,b)",
-          sorter: (a, b) => {
-            let aTimeString = a.belongbuild;
-            let bTimeString = b.belongbuild;
-            aTimeString = aTimeString.replace(/-/g, "/");
-            bTimeString = bTimeString.replace(/-/g, "/");
-            let aTime = new Date(aTimeString).getTime();
-            let bTime = new Date(bTimeString).getTime();
-            return aTime - bTime;
-          },
-          dataIndex: "belongbuild",
-          scopedSlots: { customRender: "belongbuild" },
+          align: "left",
+          dataIndex: "act_begin",
+          scopedSlots: { customRender: "act_begin" },
         },
         {
           title: "报名人数",
-          dataIndex: "floor",
-          scopedSlots: { customRender: "floor" },
+          dataIndex: "full_num",
+          scopedSlots: { customRender: "full_num" },
         },
         {
           title: "状态",
@@ -124,8 +107,8 @@ export default {
         },
         {
           title: "是否上架",
-          dataIndex: "collect",
-          scopedSlots: { customRender: "collect" },
+          dataIndex: "is_marketable",
+          scopedSlots: { customRender: "is_marketable" },
         },
         {
           title: "操作",
@@ -136,11 +119,67 @@ export default {
     };
   },
   methods: {
-    activityList() {
-      axios.get("/api/prop/activity").then((res) => {
-        this.dataSource = res.data;
+    changeit(val){
+      console.log(val)
+      let content = '';
+      if(val.is_marketable == 0){
+        content = '确定要上架吗？';
+      }else{
+        content = '确定要下架吗？';
+      }
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: content,
+        onOk() {
+          axios
+        .patch("/api/prop/activity/status", {
+            id: val.id,
+            version: val.version,
+            is_marketable:val.is_marketable == 0?1:0
+        })
+        .then((res) => {
+          that.activityList();
+        });
+        },
+        onCancel() {},
       });
     },
+    delit(val){
+      let that = this;
+      this.$confirm({
+        title: "提示",
+        content: "确定要删除吗？",
+        onOk() {
+          axios
+        .delete("/api/prop/activity", {
+          params:{
+            id: val.id,
+            version: val.version,
+          }
+          
+        })
+        .then((res) => {
+          that.activityList();
+        });
+        },
+        onCancel() {},
+      });
+    },
+    activityList() {
+      axios.get("/api/prop/activity").then((res) => {
+        this.dataSource = res.data.data;
+      });
+    },
+    toactive(form,type){
+      this.$router.push({
+        path:'/property/activitydetail',
+        query:{
+          form:JSON.stringify(form),
+          type:type
+        }
+      })
+    }
   },
   created() {
     this.activityList();
@@ -163,7 +202,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

@@ -305,7 +305,9 @@
       </div>
       <div class="steps-action" style="display: flex">
         <a-button
-          ><router-link to="/home/Pintentionpush">返回</router-link></a-button
+          ><router-link to="/contract/intentiondetail"
+            >返回</router-link
+          ></a-button
         >
         <a-button type="primary" style="margin-left: 20px">
           <router-link to="/home/Pintentioneditf">提交</router-link>

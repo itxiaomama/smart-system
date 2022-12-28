@@ -30,6 +30,28 @@
           <p>内容：</p>
           <a-textarea placeholder="请输入内容" :rows="4" />
         </div>
+        <div class="site" v-if="type == '2'">
+          <span>发布范围：</span>
+          <div>
+            <a-radio-group v-model="value" @change="onChange">
+              <a-radio :value="1">全部</a-radio>
+              <a-radio :value="2">指定楼宇</a-radio>
+              <a-radio :value="3">指定单元</a-radio>
+              <a-radio :value="4">指定房屋</a-radio>
+            </a-radio-group>
+          </div>
+        </div>
+
+        <div class="site" v-if="type == '3'">
+          <span>发布范围：</span>
+          <div>
+            <a-radio-group v-model="value" @change="onChange">
+              <a-radio :value="1">全部</a-radio>
+              <a-radio :value="2">指定商铺</a-radio>
+            </a-radio-group>
+          </div>
+        </div>
+
         <div class="action">
           <a-button type="primary">提交</a-button>
           <a-button @click="btnA" style="margin-left: 30px"
@@ -43,11 +65,18 @@
 
 <script>
 export default {
-  name: " RealInformNote",
+  data() {
+    return {
+      type: null,
+    };
+  },
   methods: {
     btnA() {
-      this.$router.push("Rinform");
+      this.$router.push("/property/inform");
     },
+  },
+  created() {
+    this.type = this.$route.query.type;
   },
 };
 </script>

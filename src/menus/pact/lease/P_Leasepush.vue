@@ -6,7 +6,7 @@
           <div class="return" @click="btn_return">
             <a-icon type="left-circle" class="icon" />
           </div>
-          <a-divider class="divider" orientation="left">基本信息</a-divider>
+          <a-divider  orientation="left">基本信息</a-divider>
           <a-descriptions
             :column="{ xxl: 4 }"
             title=""
@@ -27,7 +27,7 @@
           </a-descriptions>
         </div>
         <div class="content">
-          <a-divider class="dividera" orientation="left">租赁场地</a-divider>
+          <a-divider  orientation="left">租赁场地</a-divider>
           <a-table
             style="width: 50vw; margin: 10vh auto"
             :data-source="dataSource"
@@ -40,7 +40,7 @@
           </a-table>
         </div>
         <div class="content">
-          <a-divider class="dividerb" orientation="left">退租信息</a-divider>
+          <a-divider  orientation="left">退租信息</a-divider>
           <div style="margin: 1px auto">
             <div class="buildname">
               <span>退租日期：</span><a-date-picker style="width: 38.5vw" />
@@ -79,7 +79,7 @@
             </div>
             <div class="buildname" style="margin-left: 18.6vw">
               <p style="white-space: nowrap">上传园区小图：</p>
-              <a-upload
+              <!-- <a-upload
                 name="avatar"
                 list-type="picture-card"
                 class="avatar-uploader"
@@ -93,7 +93,7 @@
                   <a-icon :type="loading ? 'loading' : 'plus'" />
                   <div class="ant-upload-text">上传</div>
                 </div>
-              </a-upload>
+              </a-upload> -->
             </div>
           </div>
         </div>
@@ -141,24 +141,15 @@ export default {
           scopedSlots: { customRender: "news" },
         },
       ],
-      dataSource: [
-        {
-          key: "0",
-          name: "智慧园区",
-          build: "西边楼",
-          address: "4层",
-          time: "111",
-          news: "111",
-        },
-      ],
+      dataSource: [],
     };
   },
   methods: {
     btn_return() {
-      this.$router.push("/home/Please");
+      this.$router.push("/contract/without");
     },
     btnup() {
-      this.$router.push("/home/Please");
+      this.$router.push("/contract/without");
     },
   },
 };
@@ -168,8 +159,8 @@ export default {
 .wrap {
   margin-top: 0px;
   .top {
-    width: 85vw;
-    height: 95vh;
+    min-width: 85vw;
+    min-height: 95vh;
     background-color: #fff;
     border-radius: 10px;
     .content {

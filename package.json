@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -12,8 +12,9 @@
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "echarts": "^4.9.0",
-    "element-ui": "^2.15.10",
+    "element-ui": "^2.15.12",
     "file-saver": "^2.0.5",
+    "moment": "^2.29.4",
     "postcss-px2rem": "^0.3.0",
     "px2rem-loader": "^0.1.9",
     "screenfull": "^6.0.2",
@@ -21,6 +22,8 @@
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2",
+    "wangeditor": "^4.7.15",
+    "wangeditor-antd": "^1.0.8",
     "xlsx-style": "^0.8.13"
   },
   "devDependencies": {

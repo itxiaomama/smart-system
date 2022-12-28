@@ -4,191 +4,224 @@
       <a-steps :current="current">
         <a-step v-for="item in steps" :key="item.title" :title="item.title" />
       </a-steps>
+
+      <a-form-model
+        ref="ruleForm"
+        :model="form"
+        :rules="rules"
+        :label-col="labelCol"
+        :wrapper-col="wrapperCol"
+      >
+        <a-form-model-item ref="name" label="意向名称：" prop="name">
+          <a-input v-model="form.name" />
+        </a-form-model-item>
+
+        <a-form-model-item label="备注">
+          <a-input v-model="form.remark" type="textarea" />
+        </a-form-model-item>
+
+        <a-divider orientation="left">乙方</a-divider>
+
+        <a-form-model-item label="租赁方：" class="leftitem">
+          <a-radio-group default-value="1" v-model="form.lessor_type">
+            <a-radio value="1"> 公司租赁 </a-radio>
+            <a-radio value="2"> 个人租赁 </a-radio>
+          </a-radio-group>
+        </a-form-model-item>
+
+        <a-form-model-item label="客户名称：" prop="customer_name">
+          <a-select
+            show-search
+            v-model="form.customer_name"
+            placeholder="input search text"
+            :default-active-first-option="false"
+            :show-arrow="false"
+            :filter-option="false"
+            :not-found-content="null"
+            @search="handleSearch"
+            @change="handleChange"
+          >
+            <a-select-option v-for="item in comlist" :key="item.id">
+              {{ item.name }}
+            </a-select-option>
+          </a-select>
+        </a-form-model-item>
+        <a-form-model-item label="所属行业：" prop="sector">
+          <a-input v-model="form.sector" />
+        </a-form-model-item>
+
+        <a-form-model-item label="企业信用代码：" v-if="form.lessor_type == 1" prop="credit_no" >
+          <a-input v-model="form.credit_no" />
+        </a-form-model-item>
+
+        <a-form-model-item label="身份证号："  v-else prop="credit_no">
+          <a-input v-model="form.credit_no" />
+        </a-form-model-item>
+
+        <a-form-model-item label="个人邮箱：">
+          <a-input v-model="form.email" />
+        </a-form-model-item>
+
+        <a-form-model-item label="法人：" prop="oper_name">
+          <a-input v-model="form.oper_name" />
+        </a-form-model-item>
+
+        <a-form-model-item label="联系电话：">
+          <a-input v-model="form.phone" />
+        </a-form-model-item>
+
+        <a-form-model-item ref="name" label="通讯地址：" prop="address">
+          <a-input v-model="form.address" />
+        </a-form-model-item>
+
+        <a-form-model-item ref="name" label="渠道名称：">
+          <a-input v-model="form.channel_name" />
+        </a-form-model-item>
+
+        <a-divider orientation="left">选择租赁场地</a-divider>
+        <a-button type="primary" @click="showRoom"> 选择房间 </a-button>
+      </a-form-model>
       <div class="content">
-        <div class="supplier" style="display: flex; margin: 20px 20vw">
-          <span style="white-space: nowrap">意向名称：</span>
-          <a-input placeholder="请输入意向名称" style="width: 40vw" />
-        </div>
-        <div class="brief" style="display: flex; margin: 30px 19.6vw">
-          <p style="white-space: nowrap">备注(可选)：</p>
-          <a-textarea placeholder="请输入备注" :rows="4" style="width: 40vw" />
-        </div>
-        <a-divider orientation="left"> 乙方 </a-divider>
-        <div class="site" style="display: flex; margin: 20px 19.6vw">
-          <span>租赁方：</span>
-          <div>
-            <a-radio-group v-model="value" @change="onChange">
-              <a-radio :value="1">公司租赁</a-radio>
-              <a-radio :value="2">个人租赁</a-radio>
-            </a-radio-group>
-          </div>
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 20vw">
-          <span style="white-space: nowrap">客户名称：</span>
-          <a-input placeholder="请输入客户名称" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 20vw">
-          <span style="white-space: nowrap">所属行业：</span>
-          <a-input placeholder="请输入所属行业" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 18.6vw">
-          <span style="white-space: nowrap">企业信用代码：</span>
-          <a-input placeholder="请输入企业信用代码" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 20vw">
-          <span style="white-space: nowrap">个人邮箱：</span>
-          <a-input placeholder="请输入个人邮箱" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 21.5vw">
-          <span style="white-space: nowrap">法人：</span>
-          <a-input placeholder="请输入法人" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 20vw">
-          <span style="white-space: nowrap">联系电话：</span>
-          <a-input placeholder="请输入联系电话" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 20vw">
-          <span style="white-space: nowrap">通讯地址：</span>
-          <a-input placeholder="请输入通讯地址" style="width: 60vw" />
-        </div>
-        <div class="supplier" style="display: flex; margin: 30px 20vw">
-          <span style="white-space: nowrap">渠道名称：</span>
-          <a-input placeholder="请输入渠道名称" style="width: 60vw" />
-        </div>
-        <a-divider orientation="left"> 选择租赁场地 </a-divider>
         <div>
-          <a-button type="primary" @click="btn_select"> +选择房间 </a-button>
-          <a-modal v-model="visible" title="选择房间" width="55%">
-            <div class="wrapA">
-              <div class="search">
-                <div class="top">
-                  <div class="left">
-                    <a-input
-                      placeholder="请输入房间名称"
-                      addonBefore="房间名称"
-                      style="margin-right: 40px"
-                    />
-                    <a-input
-                      placeholder="请输入所属楼宇名称"
-                      addonBefore="所属楼宇"
-                      style="margin-right: 40px"
-                    />
-                  </div>
-                  <div class="right">
-                    <div class="test">
-                      <a-button type="primary"> 查询 </a-button>
-                      <a-button style="margin-left: 20px">重置</a-button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="content" style="margin-top: 20px">
-                <div>
-                  <a-table
-                    :row-selection="rowSelection"
-                    bordered
-                    :columns="columnsa"
-                    :data-source="dataSourcea"
-                  >
-                    <a slot="" slot-scope="text">{{ text }}</a>
-                  </a-table>
-                </div>
-              </div>
-            </div>
-            <div
-              class="btnant"
-              style="
-                padding: 10px 16px;
-                text-align: right;
-                background: transparent;
-                border-top: 1px solid #e8e8e8;
-                border-radius: 0 0 4px 4px;
-              "
-            >
-              <a-button style="margin-right: 20px" @click="btn_up"
-                >取消</a-button
-              >
-              <a-button type="primary" @click="btn_down">确定</a-button>
-            </div>
-          </a-modal>
           <a-table
             bordered
-            :row-selection="rowSelection"
             :columns="columns"
             :data-source="dataSource"
             style="margin-top: 20px"
           >
-            <a slot="name" slot-scope="text">{{ text }}</a>
           </a-table>
         </div>
       </div>
-      <div class="steps-action" style="padding-bottom: 40px">
+
+      <div class="steps-action" style="padding-top: 20px; padding-bottom: 40px">
         <a-button
-          ><router-link to="/home/Pintention">返回</router-link></a-button
+          ><router-link to="/contract/intention">返回</router-link></a-button
         >
-        <a-button type="primary" style="margin-left: 20px">
-          <router-link to="/home/Pintentionpusht">下一步</router-link>
+        <a-button type="primary" style="margin-left: 20px" @click="nextStep">
+          下一步
         </a-button>
       </div>
     </div>
+
+    <a-modal v-model="visible" centered title="选择房间" class="k_modal" >
+      <div class="wrapA">
+        <div class="search">
+          <div class="top">
+            <a-form-model
+              :model="room"
+              :label-col="labelCol"
+              :wrapper-col="wrapperCol"
+              rowKey="id"
+            >
+              <a-row>
+                <a-col :span="8"
+                  ><a-form-model-item  label="房间名称：">
+                    <a-input v-model="room.name" /> </a-form-model-item
+                ></a-col>
+                <a-col :span="8"
+                  ><a-form-model-item  label="所属楼宇：">
+                    <a-input v-model="room.building_name" /> </a-form-model-item
+                ></a-col>
+                <a-col :span="8">
+                  <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+                    <a-button type="primary" @click="onSubmit"> 查询 </a-button>
+                    <a-button style="margin-left: 10px" @click="resetForm">
+                      重置
+                    </a-button>
+                  </a-form-model-item>
+                </a-col>
+              </a-row>
+            </a-form-model>
+          </div>
+        </div>
+        <div class="content" style="margin-top: 20px">
+          <div>
+            <a-table
+              :row-selection="{ selectedRowKeys: selectedRowKeys,onChange: onSelectChange }"
+              bordered
+              rowKey="id"
+              :columns="columnsa"
+              :data-source="roomlist"
+            >
+              <a slot="" slot-scope="text">{{ text }}</a>
+            </a-table>
+          </div>
+        </div>
+      </div>
+      <template slot="footer">
+      <div class="btnant">
+        <a-button style="margin-right: 20px" @click="btn_up">取消</a-button>
+        <a-button type="primary" @click="btn_down">确定</a-button>
+      </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
+import axios  from 'axios';
 export default {
   name: "My_P_Intentionpush",
   data() {
     return {
+      type:null,
+      id:null,
+      comlist:[],
+      visible1: false,
+      selectedRowKeys:[],
       value: 1,
       current: 0,
-      dataSource: [
-        {
-          belong: "111",
-          roomname: "紫薇广场",
-          belongbuild: "A栋",
-          area: "五楼",
-          collect: "200",
-        },
-        {
-          belong: "222",
-          roomname: "紫薇广场",
-          belongbuild: "A栋",
-          area: "五楼",
-          collect: "200",
-        },
-        {
-          belong: "333",
-          roomname: "紫薇广场",
-          belongbuild: "A栋",
-          area: "五楼",
-          collect: "200",
-        },
-      ],
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      other: "",
+      form: {
+        customer_id:null,
+        name:'',
+        remark:'',
+        lessor_type:'1'
+      },
+      room:{},
+      rules: {
+        name: [{ required: true, message: "请输入意向名称", trigger: "blur" }],
+        customer_name: [
+          { required: true, message: "请输入客户名称", trigger: "blur" },
+        ],
+        sector: [
+          { required: true, message: "请输入所属行业", trigger: "blur" },
+        ],
+        credit_no: [
+          { required: true, message: "请输入企业信用代码", trigger: "blur" },
+        ],
+        oper_name: [{ required: true, message: "请输入法人", trigger: "blur" }],
+        address: [
+          { required: true, message: "请输入通讯地址", trigger: "blur" },
+        ],
+      },
       columns: [
         {
           title: "房间名称",
-          dataIndex: "belong",
-          scopedSlots: { customRender: "belong" },
+          dataIndex: "name",
+          scopedSlots: { customRender: "name" },
         },
         {
           title: "所属园区",
-          dataIndex: "roomname",
-          scopedSlots: { customRender: "roomname" },
+          dataIndex: "park_name",
+          scopedSlots: { customRender: "park_name" },
         },
         {
           title: "所属楼宇",
-          dataIndex: "belongbuild",
-          scopedSlots: { customRender: "belongbuild" },
+          dataIndex: "building_name",
+          scopedSlots: { customRender: "building_name" },
         },
         {
           title: "所属楼层",
-          dataIndex: "area",
-          scopedSlots: { customRender: "area" },
+          dataIndex: "building_detail_name",
+          scopedSlots: { customRender: "building_detail_name" },
         },
         {
           title: "收租面积(平方米)",
-          dataIndex: "collect",
-          scopedSlots: { customRender: "collect" },
+          dataIndex: "area",
+          scopedSlots: { customRender: "area" },
         },
       ],
       steps: [
@@ -203,117 +236,175 @@ export default {
         },
       ],
       visible: false,
-      dataSourcea: [
-        {
-          belong: "111",
-          roomname: "紫薇广场",
-          belongbuild: "A栋",
-          area: "五楼",
-          collect: "200",
-          rent: "元/天",
-          pay: "200",
-        },
-        {
-          belong: "222",
-          roomname: "紫薇广场",
-          belongbuild: "A栋",
-          area: "五楼",
-          collect: "200",
-          rent: "元/㎡/月",
-          pay: "200",
-        },
-        {
-          belong: "333",
-          roomname: "紫薇广场",
-          belongbuild: "A栋",
-          area: "五楼",
-          collect: "200",
-          rent: "元/天",
-          pay: "200",
-        },
-      ],
+      dataSource: [],
+      roomlist:[],
+      record:[],
       columnsa: [
         {
           title: "房间名称",
-          dataIndex: "belong",
-          scopedSlots: { customRender: "belong" },
+          dataIndex: "name",
+          scopedSlots: { customRender: "name" },
         },
         {
           title: "所属园区",
-          dataIndex: "roomname",
-          scopedSlots: { customRender: "roomname" },
+          dataIndex: "park_name",
+          scopedSlots: { customRender: "park_name" },
         },
         {
           title: "所属楼宇",
-          dataIndex: "belongbuild",
-          scopedSlots: { customRender: "belongbuild" },
+          dataIndex: "building_name",
+          scopedSlots: { customRender: "building_name" },
         },
         {
           title: "所属楼层",
-          dataIndex: "area",
-          scopedSlots: { customRender: "area" },
+          dataIndex: "building_detail_name",
+          scopedSlots: { customRender: "building_detail_name" },
         },
         {
-          title: "收租面积(平方米)",
-          dataIndex: "collect",
-          scopedSlots: { customRender: "collect" },
+          title: "出租面积(平方米)",
+          dataIndex: "rent_area",
+          scopedSlots: { customRender: "rent_area" },
         },
         {
           title: "租金类型",
-          dataIndex: "rent",
-          scopedSlots: { customRender: "rent" },
+          dataIndex: "rent_type_name",
+          scopedSlots: { customRender: "rent_type_name" },
         },
         {
           title: "租金(元)",
-          dataIndex: "pay",
-          scopedSlots: { customRender: "pay" },
+          dataIndex: "rent",
+          scopedSlots: { customRender: "rent" },
         },
       ],
     };
   },
+  mounted(){
+    this.getcomList('');
+    this.type = this.$route.query.type ;
+    if(this.type  == 2){
+      this.id = this.$route.query.id;
+      this.getInfo(this.id);
+    }else{
+      if(this.$route.query.form){
+        this.form = JSON.parse(this.$route.query.form);
+        this.selectedRowKeys = this.form.room_ids ;
+        this.dataSource = this.form.rooms ;
+      }
+    }
+    
+  },
   methods: {
+    getInfo(id){
+      axios.get('/api/ics/intentionContract?id='+id).then((res) =>{
+        this.form = res.data;
+        this.form.lessor_type = JSON.stringify(res.data.lessor_type);
+        this.selectedRowKeys = res.data.contract_room.map(el => el.id);
+        this.dataSource = res.data.contract_room;
+        
+      })
+    },
+     handleSearch(value) {
+      this.getcomList(value);
+    },
+    handleChange(value) {
+      console.log(value);
+      this.getcominfo(value)
+    },
+    getroomlist(){
+      axios.get("/api/ics/room?per_page=9999").then((res) => {
+          this.roomlist = res.data.data;
+          
+      });
+    },
+    getcomList(value){
+      axios.get("/api/ics/customer?name="+value).then((res) => {
+          this.comlist = res.data.data;
+      });
+    },
+    getcominfo(id){
+      axios.get("/api/ics/customer?id="+id).then((res) => {
+        console.log(res)
+        let info = res.data;
+          // this.form = res.data;
+          this.form.customer_name =info.name;
+          this.form.customer_type =  info.type;
+          this.form.customer_id =info.id;
+          this.form.sector =info.sector;
+          this.form.credit_no =info.credit_no;
+          this.form.email =info.email;
+          this.form.oper_name =info.oper_name;
+          this.form.phone =info.phone;
+          this.form.address =info.address;
+          this.form.channel_name = info.channel_name;
+      });
+    },
+    showRoom() {
+      this.getroomlist();
+      this.visible = true;
+    },
+    onSelectChange(selectedRowKeys,record) {
+      this.record = record;
+      this.selectedRowKeys = selectedRowKeys;
+    },
     onChange(e) {
       console.log("radio checked", e.target.value);
-    },
-    btn_select() {
-      this.visible = true;
     },
     btn_up() {
       this.visible = false;
     },
     btn_down() {
+      this.dataSource = this.record ;
       this.visible = false;
     },
-  },
-  computed: {
-    rowSelection() {
-      return {
-        onChange: (selectedRowKeys, selectedRows) => {
-          console.log(
-            `selectedRowKeys: ${selectedRowKeys}`,
-            "selectedRows: ",
-            selectedRows
-          );
-        },
-        getCheckboxProps: (record) => ({
-          props: {
-            disabled: record.name === "Disabled User",
-            name: record.name,
-          },
-        }),
-      };
+    onSubmit() {
+      axios.get("/api/ics/room?per_page=9999&name="+this.room.name+'&building_detail_name='+this.room.building_name).then((res) => {
+          this.roomlist = res.data.data;
+      });
+      
     },
-  },
+    resetForm() {
+      this.$refs.ruleForm.resetFields();
+    },
+    nextStep(){
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          if(this.dataSource.length == 0){
+            this.$message.error('请选择房间！');
+            return false;
+
+          }
+          console.log(this.form)
+          this.form.room_ids = this.dataSource.map((item) => {return item.id});
+          console.log(this.form.room_ids)
+          this.form.rooms = this.dataSource ;
+          if(this.$route.query.other){
+            this.form.clueid = this.$route.query.clueid;
+          }
+          this.$router.push({
+            path:'/contract/intentiondetail1',
+            query:{
+              form: JSON.stringify(this.form),
+              type:this.type,
+              id:this.id,
+              other: this.$route.query.other
+            }
+          })
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    }
+  }
 };
 </script>
 
 <style lang="less" scoped>
 .wrap {
   background-color: #fff;
-  border-radius: 15px;
-  width: 87.3vw;
+  border-radius: 10px;
   margin: 10px;
-  height: 85vh;
+  height: 82vh;
   overflow-x: auto;
   .content {
     width: 100%;

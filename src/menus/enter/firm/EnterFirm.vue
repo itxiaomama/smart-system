@@ -24,80 +24,11 @@
               <div class="new">
                 <a-button
                   type="primary"
-                  @click="showModal"
+                  @click="showModal({}, 1, '新增企业')"
                   style="margin-bottom: 20px"
                 >
                   +新增
                 </a-button>
-                <a-modal
-                  v-model="visible"
-                  title="添加企业"
-                  style="width: 150px"
-                >
-                  <div class="buildname" style="margin: 20px 40px">
-                    <span>企业名称：</span>
-                    <a-input
-                      placeholder="请输入名称"
-                      style="width: 16.4vw"
-                      v-model="dataSource.belong"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 12px">
-                    <span>所需办公面积：</span>
-                    <a-input
-                      placeholder="请输入面积"
-                      style="width: 16.4vw"
-                      v-model="dataSource.roomname"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 12px">
-                    <span>申请入驻日期：</span>
-                    <a-input
-                      placeholder="请输入日期"
-                      style="width: 16.4vw"
-                      v-model="dataSource.belongbuild"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div class="buildname" style="margin: 20px 40px">
-                    <span>联系电话：</span>
-                    <a-input
-                      placeholder="请输入电话"
-                      style="width: 16.4vw"
-                      v-model="dataSource.floor"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div
-                    class="inputK"
-                    style="margin: 20px 25px 10px 68px; display: flex"
-                  >
-                    <span>姓名：</span>
-                    <a-input
-                      placeholder="请输入姓名"
-                      style="width: 16.4vw"
-                      v-model="dataSource.area"
-                      @change="onChange"
-                    />
-                  </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a-button @click="showCancel" style="margin-right: 20px"
-                      >取消</a-button
-                    >
-                    <a-button type="primary" @click="showAdd">确定</a-button>
-                  </div>
-                </a-modal>
               </div>
             </div>
           </div>
@@ -115,7 +46,7 @@
                 <a-tag color="pink"> 待审批 </a-tag>
               </span>
               <template slot="operation" slot-scope="text, record">
-                <a href="javascript:;" @click="btn_edit(record.key)"
+                <a href="javascript:;" @click="showModal(record, 2, '编辑企业')"
                   ><a-icon type="edit" theme="twoTone" />编辑</a
                 >
                 <a-modal
@@ -171,16 +102,7 @@
                       @change="onChange"
                     />
                   </div>
-                  <div
-                    class="btnant"
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
+                  <div class="btnant">
                     <a-button @click="btn_cancel" style="margin-right: 20px"
                       >取消</a-button
                     >
@@ -205,6 +127,62 @@
         </div>
       </div>
     </div>
+
+    <a-modal v-model="visible" :title="title" style="width: 150px">
+      <div class="buildname" style="margin: 20px 40px">
+        <span>企业名称：</span>
+        <a-input
+          placeholder="请输入名称"
+          style="width: 16.4vw"
+          v-model="form.belong"
+          @change="onChange"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 12px">
+        <span>所需办公面积：</span>
+        <a-input
+          placeholder="请输入面积"
+          style="width: 16.4vw"
+          v-model="form.roomname"
+          @change="onChange"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 12px">
+        <span>申请入驻日期：</span>
+        <a-input
+          placeholder="请输入日期"
+          style="width: 16.4vw"
+          v-model="form.belongbuild"
+          @change="onChange"
+        />
+      </div>
+      <div class="buildname" style="margin: 20px 40px">
+        <span>联系电话：</span>
+        <a-input
+          placeholder="请输入电话"
+          style="width: 16.4vw"
+          v-model="form.floor"
+          @change="onChange"
+        />
+      </div>
+      <div class="inputK" style="margin: 20px 25px 10px 68px; display: flex">
+        <span>姓名：</span>
+        <a-input
+          placeholder="请输入姓名"
+          style="width: 16.4vw"
+          v-model="form.area"
+          @change="onChange"
+        />
+      </div>
+      <template slot="footer">
+        <div class="btnant">
+          <a-button @click="showCancel" style="margin-right: 20px"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="showAdd">确定</a-button>
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -213,6 +191,8 @@ export default {
   name: "EnterFirm",
   data() {
     return {
+      title: "",
+      type: null,
       dataSource: [
         {
           key: "0",
@@ -288,10 +268,15 @@ export default {
       ],
       visible: false,
       visibleA: false,
+      form: {},
     };
   },
   methods: {
-    showModal() {
+    showModal(form, type, title) {
+      this.form = { ...form };
+      console.log(this.form);
+      this.type = type;
+      this.title = title;
       this.visible = true;
     },
     showCancel() {
@@ -390,7 +375,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

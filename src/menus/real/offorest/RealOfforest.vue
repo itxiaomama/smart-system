@@ -29,7 +29,7 @@
                 <a-button
                   type="primary"
                   style="margin-bottom: 20px"
-                  @click="btnl_add"
+                  @click="btnl_add(1)"
                   >+新增</a-button
                 >
                 <span slot="tab">
@@ -88,7 +88,7 @@
                     </span>
 
                     <template slot="action" slot-scope="text, record">
-                      <a href="javascript:;" @click="btnl_edit">
+                      <a href="javascript:;" @click="btnl_add(2)">
                         <a-icon type="edit" theme="twoTone" />编辑</a
                       >
                       <a-divider type="vertical" />
@@ -109,7 +109,7 @@
                 <a-button
                   type="primary"
                   style="margin-bottom: 20px"
-                  @click="btnb_add"
+                  @click="btnb_add(1)"
                   >+新增</a-button
                 >
                 <span slot="tab">
@@ -150,7 +150,7 @@
                       </a-tag>
                     </span>
                     <template slot="action" slot-scope="text, record">
-                      <a href="javascript:;" @click="btnb_edit">
+                      <a href="javascript:;" @click="btnb_add(2)">
                         <a-icon type="edit" theme="twoTone" />编辑</a
                       >
                       <a-divider type="vertical" />
@@ -398,23 +398,27 @@ export default {
     };
   },
   methods: {
-    btnl_add() {
-      this.$router.push("/home/Rofforestlpush");
+    btnl_add(type) {
+      this.$router.push({
+        path: "/property/offorestdetail",
+        query: {
+          type: type,
+        },
+      });
     },
-    btnb_add() {
-      this.$router.push("/home/Rofforestbpush");
-    },
-    btnl_edit() {
-      this.$router.push("/home/Rofforestledit");
-    },
-    btnb_edit() {
-      this.$router.push("/home/Rofforestbedit");
+    btnb_add(type) {
+      this.$router.push({
+        path: "/property/arrangedetail",
+        query: {
+          type: type,
+        },
+      });
     },
     btnl_log() {
-      this.$router.push("/home/Rofforestllog");
+      this.$router.push("/property/cleanlog");
     },
     btnb_log() {
-      this.$router.push("/home/Rofforestblog");
+      this.$router.push("/property/arrangelog");
     },
     onDeleteB(key) {
       console.log(key);
@@ -451,7 +455,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

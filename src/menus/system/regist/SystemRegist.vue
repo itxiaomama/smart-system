@@ -34,7 +34,7 @@
               </div>
               <div style="margin-left: 20px">
                 <span>操作时间：</span>
-                <a-range-picker @change="onChange" placeholder="开始日期" />
+                <a-range-picker />
               </div>
             </div>
             <div class="right">
@@ -47,9 +47,18 @@
           <div class="bottom">
             <div class="bottom">
               <div class="new">
-                <a-button type="danger" ghost>
-                  <a-icon type="close" />清空
-                </a-button>
+                <a-popover trigger="click">
+                  <template slot="content">
+                    <p>确认清空吗？</p>
+                    <p>
+                      <a-button size="small">确认</a-button>
+                      <a-button type="primary" size="small">取消</a-button>
+                    </p>
+                  </template>
+                  <a-button type="danger" ghost>
+                    <a-icon type="close" />清空
+                  </a-button>
+                </a-popover>
               </div>
               <a-button type="primary" style="margin-left: 20px">
                 <a-icon type="rollback" /> 导出
@@ -210,7 +219,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
   background-color: #fff;
   border-radius: 10px;
   .wrapA {

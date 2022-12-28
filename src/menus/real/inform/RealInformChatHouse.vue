@@ -52,17 +52,6 @@
           <span style="line-height: 28px">时间范围：</span>
           <a-range-picker placeholder="Select week" @change="onChange" />
         </div>
-        <div class="site">
-          <span>发布范围：</span>
-          <div>
-            <a-radio-group v-model="value" @change="onChange">
-              <a-radio :value="1">全部</a-radio>
-              <a-radio :value="2">指定楼宇</a-radio>
-              <a-radio :value="3">指定单元</a-radio>
-              <a-radio :value="4">指定房屋</a-radio>
-            </a-radio-group>
-          </div>
-        </div>
         <div class="action">
           <a-button type="primary">提交</a-button>
           <a-button @click="btnA" style="margin-left: 30px"

@@ -191,7 +191,7 @@ export default {
   },
   methods: {
     btnN() {
-      this.$router.push("/home/RConpany");
+      this.$router.push("/property/company");
     },
   },
 };
@@ -199,13 +199,11 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
   background-color: #fff;
   .ouer {
-    width: 85vw;
     display: flex;
     margin: 20px auto;
-    justify-content: space-evenly;
+    justify-content: space-around;
     .left {
       margin-left: 0px;
       .inpD {

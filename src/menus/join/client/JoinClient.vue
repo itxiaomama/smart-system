@@ -12,25 +12,23 @@
           </div>
           <div class="bottom">
             <!-- 新增 -->
-            <a-button type="primary">
-              <router-link to="/home/Jclientpush">新增</router-link>
-            </a-button>
+            <a-button type="primary" @click="edit({},1)"> 新增 </a-button>
           </div>
         </div>
         <div class="content" style="margin-top: 20px">
           <div>
             <a-table
               bordered
-              :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
               :scroll="{ x: '150%' }"
-              :rowKey="(record, id) => id"
+              rowKey="id"
+              :pagination="pagination"
             >
               <a slot="belong" slot-scope="text">{{ text }}</a>
-              <template slot="action" slot-scope="">
+              <template slot="action" slot-scope="text, record">
                 <!-- 编辑 -->
-                <a href="javascript:;">
+                <a href="javascript:;" @click="edit(record,2)">
                   <a-icon type="edit" theme="twoTone" />编辑
                 </a>
                 <a-divider type="vertical" />
@@ -132,6 +130,26 @@ export default {
           scopedSlots: { customRender: "action" },
         },
       ], //table表格表头数据
+      pagination: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = pageSize;
+          this.ClientList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = size;
+          this.ClientList();
+        },
+      }, // 页面显示数据分页内容
     };
   },
   created() {
@@ -141,18 +159,22 @@ export default {
   methods: {
     //获取客户列表
     ClientList() {
-      axios.get("/api/ics/customer").then((res) => {
+      axios.get("/api/ics/customer?per_page=9999").then((res) => {
         if (res.status_code == 200) {
           this.dataSource = res.data.data;
         }
       });
     },
-  },
-  computed: {
-    rowSelection() {
-      return {
-        onChange: () => {},
-      };
+    edit(form,type) {
+       this.$router.push({
+        path: "/merchants/clientdetail",
+        query: {
+          type:type,
+          form:JSON.stringify(form),
+          other:false
+        },
+      });
+      
     },
   },
 };
@@ -160,7 +182,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

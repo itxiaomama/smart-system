@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import { Message } from 'element-ui'
+import store from '../store'
+// import { Message } from 'element-ui'
 import VueRouter from 'vue-router'
 // 登录首页
 import Login from '@/views/Mylogin'
@@ -119,129 +120,825 @@ import SOperation from '../menus/system/operation/SystemOperation'
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', redirect: 'login' },
-  { path: '/login', component: Login },
+  // { path: '/', redirect: 'login' },
   {
-    path: '/home',
+    path: '/login',
+    name: '登录',
+    meta: {
+      show: false,
+      title: '登录'
+    },
+    component: () => import('@/views/Mylogin')
+  },
+  {
+    path: '',
+    meta: {
+      title: '驾驶舱',
+      show: true
+    },
     component: Home,
-    meta: { requiresAuth: true },
     children: [
-      // 园区管理
-      { path: 'tenant', component: Tenant },
-      { path: 'Bcarden', component: BCarden },
-      { path: 'Glist', component: GList },
-      { path: 'Garea', component: GArea },
-      { path: 'Gbuild', component: GBuild },
-      { path: 'Groom', component: GRoom },
-      { path: 'Gstall', component: GStall },
-      // 入驻管理
-      { path: 'Epack', component: EPack },
-      { path: 'Einto', component: EInto },
-      { path: 'Eenter', component: EEnter },
-      { path: 'Efirm', component: EFirm },
-      // 物业管理
-      { path: 'Ractivity', component: RActivity },
-      { path: 'Ractivitypush', component: RActivitypush },
-      { path: 'Ractivityedit', component: RActivityedit },
-      { path: 'Rcar', component: RCar },
-      { path: 'Rcarpush', component: RCarpush },
-      { path: 'Rcaredit', component: RCaredit },
-      { path: 'Rcomplaint', component: RComplaint },
-      { path: 'Rcomplaintdetail', component: RComplaintdetail },
-      { path: 'Rconpany', component: RConpany },
-      { path: 'Rconpanypush', component: RConpanypush },
-      { path: 'Rconpanyedit', component: RConpanyedit },
-      { path: 'Rfacility', component: RFacility },
-      { path: 'Rinform', component: RInform },
-      { path: 'Rinformchat', component: RInformchat },
-      { path: 'Rinformchath', component: RInformchath },
-      { path: 'Rinformchats', component: RInformchats },
-      { path: 'Rinformnote', component: RInformnote },
-      { path: 'Rinformnoteh', component: RInformnoteh },
-      { path: 'Rinformnotes', component: RInformnotes },
-      { path: 'Rinformsend', component: RInformsend },
-      { path: 'Rinformread', component: RInformread },
-      { path: 'Rmatter', component: RMatter },
-      { path: 'Rmatterdetail', component: RMatterdetail },
-      { path: 'Rnews', component: RNews },
-      { path: 'Rnewsadd', component: RNewsadd },
-      { path: 'Rnewsread', component: RNewsread },
-      { path: 'Rnewsedit', component: RNewsedit },
-      { path: 'Rofforest', component: ROfforest },
-      { path: 'Rofforestlpush', component: ROfforestlpush },
-      { path: 'Rofforestledit', component: ROfforestledit },
-      { path: 'ROfforestbpush', component: ROfforestbpush },
-      { path: 'Rofforestbedit', component: ROfforestbedit },
-      { path: 'Rofforestllog', component: ROfforestllog },
-      { path: 'Rofforestblog', component: ROfforestblog },
-      { path: 'Rstop', component: RStop },
-      { path: 'Rvisitor', component: RVisitor },
-      { path: 'Rpatorl', component: RPatorl },
-      // 招商管理
-      { path: 'Jclue', component: JClue },
-      { path: 'Jcluepush', component: JCluepush },
-      { path: 'Jcluedetail', component: JCluedetail },
-      { path: 'Jcluedetailtest', component: JCluedetailtest },
-      { path: 'Jfollow', component: JFollow },
-      { path: 'Jallot', component: JAllot },
-      { path: 'Jallotdetail', component: JAllotdetail },
-      { path: 'Jallotdetailspace', component: JAllotdetailspace },
-      { path: 'Jallotdetailtest', component: JAllotdetailtest },
-      { path: 'Jmine', component: JMine },
-      { path: 'Jminedetail', component: JMinedetail },
-      { path: 'Jminedetailspace', component: JMinedetailspace },
-      { path: 'Jminedetailtest', component: JMinedetailtest },
-      { path: 'Jclient', component: JClient },
-      { path: 'Jclientpush', component: JClientpush },
-      { path: 'Jclientedit', component: JClientedit },
-      // 合同管理
-      { path: 'Pcharge', component: PCharge },
-      { path: 'Pintention', component: PIntention },
-      { path: 'PIntentiondetail', component: PIntentiondetail },
-      { path: 'Pintentionpush', component: PIntentionpush },
-      { path: 'Pintentionpusht', component: PIntentionpusht },
-      { path: 'Pintentionpushf', component: PIntentionpushf },
-      { path: 'Pintentionedit', component: PIntentionedit },
-      { path: 'Pintentioneditt', component: PIntentioneditt },
-      { path: 'Pintentioneditf', component: PIntentioneditf },
-      { path: 'Ppact', component: PPact },
-      { path: 'Ppactdetail', component: PPactdetail },
-      { path: 'Ppactpush', component: PPactpush },
-      { path: 'Ppactpusht', component: PPactpusht },
-      { path: 'Ppactpushf', component: PPactpushf },
-      { path: 'Ppactedit', component: PPactedit },
-      { path: 'Ppacteditt', component: PPacteditt },
-      { path: 'Ppacteditf', component: PPacteditf },
-      { path: 'Pexamine', component: PExamine },
-      { path: 'Pchange', component: PChange },
-      { path: 'Pchangepush', component: PChangepush },
-      { path: 'Please', component: PLease },
-      { path: 'Pleasepush', component: PLeasepush },
-      { path: 'Pleasedetail', component: PLeasedetail },
-      // 企业服务
-      { path: 'Fbanner', component: FBanner },
-      { path: 'Fmobile', component: FMobile },
-      { path: 'Forder', component: FOrder },
-      { path: 'Fserve', component: FServe },
-      { path: 'Fsubblier', component: FSubblier },
-      //费用管理
-      { path: 'Cbill', component: CBill },
-      { path: 'Creport', component: CReport },
-      //系统管理
-      { path: 'Sdepactment', component: SDepactment },
-      { path: 'Sline', component: SLine },
-      { path: 'Smenu', component: SMenu },
-      { path: 'Soperation', component: SOperation },
-      { path: 'Sregist', component: SRegist },
-      { path: 'Srole', component: SRole },
-      { path: 'Suser', component: SUser },
-      { path: 'Ssettime', component: SSettime },
+      {
+        path: '',
+        meta: {
+          title: '首页',
+          show: true
+        },
+        component: () => import('../menus/bench/garden/BenchGarden')
+      }
     ]
-  }
+  },
+  {
+    path: '/tenant',
+    meta: {
+      title: '租户管理',
+      show: true
+    },
+    component: Home,
+    children: [
+      {
+        path: '',
+        meta: {
+          title: '租户管理',
+          show: true
+        },
+        component: () => import('../menus/tenant/tenant/TheTenant')
+      }
+    ]
+  },
+  {
+    path: '/park',
+    meta: {
+      title: '园区管理',
+      show: true
+    },
+    component: Home,
+    redirect: '/park/list',
+    children: [
+      {
+        path: 'list',
+        meta: {
+          title: '园区列表',
+          show: true
+        },
+        component: () => import('../menus/garden/list/GardenList')
+      },
+      {
+        path: 'area',
+        meta: {
+          title: '区域管理',
+          show: true
+        },
+        component: () => import('../menus/garden/area/GardenArea')
+      },
+      {
+        path: 'build',
+        meta: {
+          title: '楼宇管理',
+          show: true
+        },
+        component: () => import('../menus/garden/build/GardenBuild')
+      },
+      {
+        path: 'room',
+        meta: {
+          title: '房间管理',
+          show: true
+        },
+        component: () => import('../menus/garden/room/GardenRoom')
+      },
+      {
+        path: 'stall',
+        meta: {
+          title: '车位管理',
+          show: true
+        },
+        component: () => import('../menus/garden/stall/GardenStall')
+      },
+    ]
+  },
+  {
+    path: '/settlement',
+    meta: {
+      title: '入驻管理',
+      show: true
+    },
+    redirect: '/settlement/pack',
+    component: Home,
+    children: [
+      {
+        path: 'pack',
+        meta: {
+          title: '入园申请',
+          show: true
+        },
+        component: () => import('../menus/enter/pack/EnterPack')
+      },
+      {
+        path: 'enter',
+        meta: {
+          title: '入驻申请',
+          show: true
+        },
+        component: () => import('../menus/enter/enter/EnterEnter')
+      },
+      {
+        path: 'into',
+        meta: {
+          title: '迁入申请',
+          show: true
+        },
+        component: () => import('../menus/enter/into/EnterInto')
+      },
+      {
+        path: 'firm',
+        meta: {
+          title: '入驻企业',
+          show: true
+        },
+        component: () => import('../menus/enter/firm/EnterFirm')
+      }
+    ]
+  },
+  {
+    path: '/property',
+    meta: {
+      title: '物业管理',
+      show: true
+    },
+    redirect: '/property/inform',
+    component: Home,
+    children: [
+      {
+        path: 'inform',
+        meta: {
+          title: '物业通知',
+          show: true
+        },
+        component: () => import('../menus/real/inform/RealInform')
+      },
+      {
+        path: 'informdetail',
+        meta: {
+          title: '物业详情',
+          show: false
+        },
+        component: () => import('../menus/real/inform/RealInformChat')
+      },
+      {
+        path: 'messdetail',
+        meta: {
+          title: '物业详情',
+          show: false
+        },
+        component: () => import('../menus/real/inform/RealInformNote')
+      },
+      {
+        path: 'senddetail',
+        meta: {
+          title: '发送记录',
+          show: false
+        },
+        component: () => import('../menus/real/inform/RealInformSend')
+      },
+      {
+        path: 'readdetail',
+        meta: {
+          title: '阅读记录',
+          show: false
+        },
+        component: () => import('../menus/real/inform/RealInformRead')
+      },
+      {
+        path: 'news',
+        meta: {
+          title: '政策资讯',
+          show: true
+        },
+        component: () => import('../menus/real/news/RealNews')
+      },
+      {
+        path: 'newsdetail',
+        meta: {
+          title: '政策资讯详情',
+          show: false
+        },
+        component: () => import('../menus/real/news/RealNewsAdd')
+      },
+      {
+        path: 'newsread',
+        meta: {
+          title: '阅读记录',
+          show: false
+        },
+        component: () => import('../menus/real/news/RealNewsRead')
+      },
+      {
+        path: 'activity',
+        meta: {
+          title: '活动管理',
+          show: true
+        },
+        component: () => import('../menus/real/activity/RealActivity')
+      },
+      {
+        path: 'activitydetail',
+        meta: {
+          title: '活动详情',
+          show: false
+        },
+        component: () => import('../menus/real/activity/RealActivityPush')
+      },
+      {
+        path: 'detaillist',
+        meta: {
+          title: '活动报名',
+          show: false
+        },
+        component: () => import('../menus/real/activity/detaillist.vue')
+      },
+      {
+        path: 'matter',
+        meta: {
+          title: '报事报修',
+          show: true
+        },
+        component: () => import('../menus/real/matter/RealMatter')
+      },
+      {
+        path: 'matterdetail',
+        meta: {
+          title: '报事报修详情',
+          show: false
+        },
+        component: () => import('../menus/real/matter/RealMatterDetail')
+      },
+      {
+        path: 'complaint',
+        meta: {
+          title: '投诉建议',
+          show: true
+        },
+        component: () => import('../menus/real/complaint/RealComplaint')
+      },
+      {
+        path: 'complaintdetail',
+        meta: {
+          title: '投诉建议详情',
+          show: false
+        },
+        component: () => import('../menus/real/complaint/RealComplaintDetail')
+      },
+      {
+        path: 'company',
+        meta: {
+          title: '企业装修',
+          show: true
+        },
+        component: () => import('../menus/real/conpany/RealConpany')
+      },
+      {
+        path: 'companydetail',
+        meta: {
+          title: '企业装修详情',
+          show: false
+        },
+        component: () => import('../menus/real/conpany/RealConpanyPush')
+      },
+      {
+        path: 'offorest',
+        meta: {
+          title: '绿化保洁',
+          show: true
+        },
+        component: () => import('../menus/real/offorest/RealOfforest')
+      },
+      {
+        path: 'offorestdetail',
+        meta: {
+          title: '绿化保洁详情',
+          show: false
+        },
+        component: () => import('../menus/real/offorest/RealOfforestGreenPush')
+      },
+      {
+        path: 'cleanlog',
+        meta: {
+          title: '绿化记录',
+          show: false
+        },
+        component: () => import('../menus/real/offorest/RealOfforestGreenLog')
+      },
+      {
+        path: 'arrangedetail',
+        meta: {
+          title: '保洁详情',
+          show: false
+        },
+        component: () => import('../menus/real/offorest/RealOfforestCleanPush')
+      },
+      {
+        path: 'arrangelog',
+        meta: {
+          title: '安排记录',
+          show: false
+        },
+        component: () => import('../menus/real/offorest/RealOfforestCleanLog')
+      },
+      {
+        path: 'facility',
+        meta: {
+          title: '设备管理',
+          show: true
+        },
+        component: () => import('../menus/real/facility/RealFacility')
+      },
+      {
+        path: 'patrol',
+        meta: {
+          title: '巡防管理',
+          show: true
+        },
+        component: () => import('../menus/real/patorl/RealPatorl')
+      },
+      {
+        path: 'vistior',
+        meta: {
+          title: '访客管理',
+          show: true
+        },
+        component: () => import('../menus/real/visitor/RealVisitor')
+      },
+      {
+        path: 'car',
+        meta: {
+          title: '车辆管理',
+          show: true
+        },
+        component: () => import('../menus/real/car/RealCar')
+      },
+      {
+        path: 'cardetail',
+        meta: {
+          title: '车辆详情',
+          show: false
+        },
+        component: () => import('../menus/real/car/RealCarPush')
+      },
+      {
+        path: 'stop',
+        meta: {
+          title: '停车交费',
+          show: true
+        },
+        component: () => import('../menus/real/stop/RealStop')
+      },
+    ]
+  },
+  {
+    path: '/merchants',
+    meta: {
+      title: '招商管理',
+      show: true
+    },
+    redirect: '/merchants/club',
+    component: Home,
+    children: [
+      {
+        path: 'club',
+        meta: {
+          title: '线索管理',
+          show: true
+        },
+        component: () => import('../menus/join/clue/JoinClue')
+      },
+      {
+        path: 'clubdetail',
+        meta: {
+          title: '操作',
+          show: false
+        },
+        component: () => import('../menus/join/clue/JoinCluePush')
+      },
+      {
+        path: 'clubdetailfollow',
+        meta: {
+          title: '线索详情',
+          show: false
+        },
+        component: () => import('../menus/join/clue/JoinClueDetailTest')
+      },
+      {
+        path: 'clubdetail1',
+        meta: {
+          title: '线索跟进',
+          show: false
+        },
+        component: () => import('../menus/join/clue/JoinClueDetail')
+      },
+      {
+        path: 'follow',
+        meta: {
+          title: '线索跟进',
+          show: true
+        },
+        component: () => import('../menus/join/follow/JoinFollow')
+      },
+      {
+        path: 'allot',
+        meta: {
+          title: '线索分派',
+          show: true
+        },
+        component: () => import('../menus/join/allot/JoinAllot')
+      },
+      {
+        path: 'clientdetail',
+        meta: {
+          title: '客户详情',
+          show: false
+        },
+        component: () => import('../menus/join/client/JoinClientPush')
+      },
+      {
+        path:'mine',
+        meta:{
+          title:'我的线索',
+          show:true
+        },
+        component:() => import('../menus/join/mine/JoinMine')
+      },
+      {
+        path: 'customer',
+        meta: {
+          title: '客户管理',
+          show: true
+        },
+        component: () => import('../menus/join/client/JoinClient')
+      },
+    ]
+  },
+  {
+    path: '/contract',
+    meta: {
+      title: '合同管理',
+      show: true
+    },
+    component: Home,
+    redirect: '/contract/charge',
+    children: [
+      {
+        path: 'charge',
+        meta: {
+          title: '收费配置',
+          show: true
+        },
+        component: () => import('../menus/pact/charge/P_Charge')
+      },
+      {
+        path: 'intention',
+        meta: {
+          title: '意向合同',
+          show: true
+        },
+        component: () => import('../menus/pact/intention/P_Intention')
+      },
+      {
+        path: 'intentioncon',
+        meta: {
+          title: '意向合同',
+          show: true
+        },
+        component: () => import('../menus/pact/intention/P_Intentiondetail.vue')
+      },
+      {
+        path: 'intentiondetail',
+        meta: {
+          title: '意向合同详情',
+          show: false
+        },
+        component: () => import('../menus/pact/intention/P_Intentionpush')
+      },
+      {
+        path: 'intentiondetail1',
+        meta: {
+          title: '下一步',
+          show: false
+        },
+        component: () => import('../menus/pact/intention/P_Intentionpusht')
+      },
+      {
+        path: 'intentiondetail2',
+        meta: {
+          title: '提交',
+          show: false
+        },
+        component: () => import('../menus/pact/intention/P_Intentionpushf')
+      },
+      {
+        path: 'pact',
+        meta: {
+          title: '合同管理',
+          show: true
+        },
+        component: () => import('../menus/pact/pact/P_Pact')
+      },
+      {
+         path: 'pactdetail',
+        meta: {
+          title: '合同详情',
+          show: true
+        },
+        component: () => import('../menus/pact/pact/P_Pactpush')
+      },
+      {
+        path: 'pactdetail1',
+        meta: {
+          title: '合同详情',
+          show: true
+        },
+        component: () => import('../menus/pact/pact/P_Pactpusht.vue')
+      },
+      {
+        path: 'pactdetail2',
+        meta: {
+          title: '合同详情',
+          show: true
+        },
+        component: () => import('../menus/pact/pact/P_Pactpushf.vue')
+      },
+      {
+        path: 'kdetail',  
+        meta: {
+          title: '合同详情',
+          show: true
+        },
+        component: () => import('../menus/pact/pact/P_Pactdetail')
+      },
+      {
+        path: 'generateBill',
+        meta: {
+          title: '账单修改',
+          show: false
+        },
+        component: () => import('../menus/pact/pact/generatebill.vue')
+      },
+      {
+        path: 'examine',
+        meta: {
+          title: '合同审批',
+          show: true
+        },
+        component: () => import('../menus/pact/examine/P_Examine')
+      },
+      {
+        path: 'change',
+        meta: {
+          title: '合同变更',
+          show: true
+        },
+        component: () => import('../menus/pact/change/P_Change')
+      },
+      {
+        path: 'modify',
+        meta: {
+          title: '合同变更',
+          show: false
+        },
+        component: () => import('../menus/pact/change/modify.vue')
+      },
+      {
+        path: 'modify1',
+        meta: {
+          title: '合同变更',
+          show: false
+        },
+        component: () => import('../menus/pact/change/modify1.vue')
+      },
+      {
+        path: 'withoutany',
+        meta: {
+          title: '退租',
+          show: false
+        },
+        component: () => import('../menus/pact/change/P_Changepush')
+      },
+      {
+        path: 'without',
+        meta: {
+          title: '退租管理',
+          show: true
+        },
+        component: () => import('../menus/pact/lease/P_Lease')
+      },
+      {
+        path: 'withoutedit',
+        meta: {
+          title: '退租编辑',
+          show: false
+        },
+        component: () => import('../menus/pact/lease/P_Leasepush')
+      },
+      {
+        path: 'withoutdetail',
+        meta: {
+          title: '退租详情',
+          show: false
+        },
+        component: () => import('../menus/pact/lease/P_Leasedetail')
+      },
+        {
+          path: 'bill',
+          meta: {
+            title: '账单管理',
+            show: true
+          },
+          component: () => import('../menus/cost/bill/CostBill')
+        },
+        {
+          path: 'report',
+          meta: {
+            title: '账单报表',
+            show: true
+          },
+          component: () => import('../menus/cost/report/CostReport')
+        },
+    ]
+  },
+  {
+    path: '/enterprise',
+    meta: {
+      title: '企业服务',
+      show: true
+    },
+    redirect: '/enterprise/subblier',
+    component: Home,
+    children: [
+      {
+        path: 'subblier',
+        meta: {
+          title: '供应商管理',
+          show: true
+        },
+        component: () => import('../menus/firm/subblier/FirmSubblier')
+      },
+      {
+        path: 'mobile',
+        meta: {
+          title: '菜单管理',
+          show: true
+        },
+        component: () => import('../menus/firm/mobile/FirmMobile')
+      },
+      {
+        path: 'banner',
+        meta: {
+          title: 'banner管理',
+          show: true
+        },
+        component: () => import('../menus/firm/banner/FirmBanner')
+      },
+      {
+        path: 'serve',
+        meta: {
+          title: '服务管理',
+          show: true
+        },
+        component: () => import('../menus/firm/serve/FirmServe')
+      },
+      {
+        path: 'order',
+        meta: {
+          title: '订单管理',
+          show: true
+        },
+        component: () => import('../menus/firm/order/FirmOrder')
+      },
+    ]
+  },
+  {
+    path: '/cost',
+    meta: {
+      title: '费用管理',
+      show: true
+    },
+    component: Home,
+    redirect: '/cost/bill',
+    children: [
+      {
+        path: 'bill',
+        meta: {
+          title: '账单管理',
+          show: true
+        },
+        component: () => import('../menus/cost/bill/CostBill')
+      },
+      {
+        path: 'report',
+        meta: {
+          title: '账单报表',
+          show: true
+        },
+        component: () => import('../menus/cost/report/CostReport')
+      },
+    ]
+  },
+  {
+    path: '/system',
+    meta: {
+      title: '系统管理',
+      show: true
+    },
+    component: Home,
+    redirect: '/system/user',
+    children: [
+      {
+        path: 'user',
+        meta: {
+          title: '用户管理',
+          show: true
+        },
+        component: () => import('../menus/system/user/SystemUser')
+      },
+      {
+        path: 'role',
+        meta: {
+          title: '角色管理',
+          show: true
+        },
+        component: () => import('../menus/system/role/SystemRole')
+      },
+      {
+        path: 'menu',
+        meta: {
+          title: '菜单管理',
+          show: true
+        },
+        component: () => import('../menus/system/menu/SystemMenu')
+      },
+      {
+        path: 'department',
+        meta: {
+          title: '部门管理',
+          show: true
+        },
+        component: () => import('../menus/system/depactment/SystemDepactment')
+      },
+      {
+        path: 'config',
+        meta: {
+          title: '配置管理',
+          show: true
+        },
+        component: () => import('../menus/system/config/index.vue')
+      },
+      {
+        path: 'line',
+        meta: {
+          title: '在线用户',
+          show: true
+        },
+        component: () => import('../menus/system/line/SystemLine')
+      },
+      {
+        path: 'settime',
+        meta: {
+          title: '定时任务',
+          show: true
+        },
+        component: () => import('../menus/system/settime/SystemSettime')
+      },
+      {
+        path: 'operate',
+        meta: {
+          title: '操作日志',
+          show: true
+        },
+        component: () => import('../menus/system/operation/SystemOperation')
+      },
+      {
+        path: 'login',
+        meta: {
+          title: '登录日志',
+          show: true
+        },
+        component: () => import('../menus/system/regist/SystemRegist')
+      },
+    ]
+  },
 ]
 
 const router = new VueRouter({
   routes
 })
+// router.beforeEach((to, from, next) => {
+//   console.log(store.state.token)
+//   const token = store.state.token;
+//   if (token || JSON.parse(sessionStorage.getItem('store')).token) {
+//     next()
+//   } else {
+//     next('/login')
+//   }
+// })
 
 export default router

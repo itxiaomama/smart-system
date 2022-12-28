@@ -12,7 +12,7 @@
               />
             </div>
             <div class="right">
-              <a-button>导出</a-button>
+              <a-button @click="exportit">导出</a-button>
             </div>
           </div>
         </div>
@@ -23,7 +23,8 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
+              :pagination="pagination"
             >
               <a slot="belong" slot-scope="text">{{ text }}</a>
             </a-table>
@@ -46,6 +47,7 @@ export default {
         {
           title: "客户名称",
           dataIndex: "customer_name",
+          ellipsis: true,
           scopedSlots: { customRender: "" },
         },
         {
@@ -65,19 +67,15 @@ export default {
           dataIndex: "receive_management",
         },
         {
-          title: "应收电费（元）",
+          title: "能耗费（元）",
           dataIndex: "energy_total",
         },
         {
-          title: "已收电费（元）",
+          title: "已收能耗费（元）",
           dataIndex: "receive_energy",
         },
         {
-          title: "应收水费（元）",
-          dataIndex: "pay_refund",
-        },
-        {
-          title: "已收水费（元）",
+          title: "已收其他费用（元）",
           dataIndex: "receive_other",
         },
         {
@@ -101,6 +99,26 @@ export default {
           dataIndex: "receive_total",
         },
       ],
+      pagination: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 10, // 默认当前页显示数据的大小
+        total: 0, // 总数
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = pageSize;
+          this.reportList(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.pagination.defaultCurrent = current;
+          this.pagination.defaultPageSize = size;
+          this.reportList();
+        },
+      }, // 页面显示数据分页内容
     };
   },
   created() {
@@ -110,12 +128,51 @@ export default {
   methods: {
     // 获取账单报表列表
     reportList() {
-      axios.get("/api/ics/billReport").then((res) => {
+      axios.get("/api/ics/billReport?per_page=9999").then((res) => {
         if (res.status_code == 200) {
           this.dataSource = res.data.data;
         }
       });
     },
+    exportit(){
+      // /api/ics/billReport/export
+      axios.post('/api/ics/billReport/export').then((res) =>{
+        console.log(res)
+        //  this.downloadCallback(res, '藏品交易记录.xls');
+        const blob = new Blob([res],{
+          type: "application/vnd.ms-excel"
+        });
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = URL.createObjectURL(blob);
+        const filename ='测试名称';
+        link.fileName = filename ;
+        document.body.appendChild(link);
+        link.click();
+        // this.$message.success('导出成功');
+        document.body.removeChild(link);
+        // window.URL.revokeObjectURL(href)
+      })
+    },
+    //  //生成下载文件
+    //   downloadCallback(res, fileName){
+    //     const content = res.data;
+    //     const blob = new Blob([content]);
+    //     if ("download" in document.createElement("a")) {
+    //       // 非IE下载
+    //       const elink = document.createElement("a");
+    //       elink.download = fileName;
+    //       elink.style.display = "none";
+    //       elink.href = URL.createObjectURL(blob);
+    //       document.body.appendChild(elink);
+    //       elink.click();
+    //       URL.revokeObjectURL(elink.href); // 释放URL 对象
+    //       document.body.removeChild(elink);
+    //     } else {
+    //       // IE10+下载
+    //       navigator.msSaveBlob(blob, fileName);
+    //     }
+    //   },
   },
   computed: {
     rowSelection() {
@@ -129,7 +186,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

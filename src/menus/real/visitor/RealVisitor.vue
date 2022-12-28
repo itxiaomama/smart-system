@@ -5,10 +5,11 @@
         <div class="search">
           <div class="matter" style="position: relative">
             <a-tabs
-              default-active-key="1"
+              default-active-key="0"
               style="position: absolute; width: 97.5%"
+              @change="tabit"
             >
-              <a-tab-pane key="1">
+              <a-tab-pane key="0">
                 <span slot="tab">
                   <a-icon type="contacts" style="fontsize: 24px" />
                   来访人员
@@ -25,88 +26,15 @@
                     :row-selection="rowSelection"
                     :columns="columnsB"
                     :data-source="dataB"
-                    :rowKey="(record, id) => id"
+                      rowKey="id"
                     :pagination="paginationPeople"
                   >
-                    <a slot="visitor_name" slot-scope="text">{{ text }}</a>
                     <span slot="action" slot-scope="text, record">
                       <a
                         href="javascript:;"
-                        @click="
-                          EditPeople(
-                            record.visitor_name,
-                            record.peer_nums,
-                            record.contact,
-                            record.number,
-                            record.come_time,
-                            record.describe,
-                            record.inter_name,
-                            record.leave_time,
-                            record.leave_duty,
-                            record.image
-                          )
-                        "
+                        @click="EditPeople(record)"
                         ><a-icon type="file-text" theme="twoTone" />详情</a
                       >
-                      <a-modal
-                        v-model="visiblePeople"
-                        title="来访人员详情"
-                        width="40%"
-                      >
-                        <a-descriptions>
-                          <a-descriptions-item label="来访人姓名" span="2"
-                            >{{ from.visitor_name }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="同行人数">
-                            {{ from.peer_nums }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="联系方式" span="2"
-                            >{{ from.contact }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="有效证件号码"
-                            >{{ from.number }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="来访时间" span="2"
-                            >{{ from.come_time }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="来访事由"
-                            >{{ from.describe }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="拜访对象"
-                            >{{ from.inter_name }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="离开时间"
-                            >{{ from.leave_time }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="值班人员"
-                            >{{ from.leave_duty }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="访客照片">
-                            <a-card hoverable style="width: 240px">
-                              <img
-                                slot="cover"
-                                alt="example"
-                                :src="from.image"
-                              />
-                            </a-card>
-                          </a-descriptions-item>
-                        </a-descriptions>
-                        <div
-                          style="
-                            padding: 10px 16px;
-                            text-align: right;
-                            background: transparent;
-                            border-top: 1px solid #e8e8e8;
-                            border-radius: 0 0 4px 4px;
-                          "
-                        >
-                          <a-button
-                            @click="EditPeopleCancel"
-                            style="margin-right: 20px"
-                            >取消</a-button
-                          >
-                        </div>
-                      </a-modal>
                       <a-divider type="vertical" />
                       <a
                         href="javascript:;"
@@ -117,7 +45,7 @@
                   </a-table>
                 </div>
               </a-tab-pane>
-              <a-tab-pane key="2">
+              <a-tab-pane key="1">
                 <span slot="tab">
                   <a-icon type="car" style="fontsize: 24px" />
                   来访车辆
@@ -132,80 +60,19 @@
                     :row-selection="rowSelection"
                     :columns="columnsA"
                     :data-source="dataA"
-                    :rowKey="(record, id) => id"
+                    rowKey="id"
                     :pagination="paginationCar"
                   >
                     <span slot="action" slot-scope="text, record">
                       <a
                         href="javascript:;"
-                        @click="
-                          EditCar(
-                            record.number,
-                            record.contact,
-                            record.come_time,
-                            record.describe,
-                            record.leave_time,
-                            record.leave_duty,
-                            record.image
-                          )
-                        "
+                        @click="EditCar(record)"
                         ><a-icon type="file-text" theme="twoTone" />详情</a
                       >
-                      <a-modal
-                        v-model="visibleCar"
-                        title="来访车辆详情"
-                        width="40%"
-                      >
-                        <a-descriptions>
-                          <a-descriptions-item label="车牌号码" span="2"
-                            >{{ from.number }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="联系方式"
-                            >{{ from.contact }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="开进时间" span="2"
-                            >{{ from.come_time }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="来访事由">
-                            {{ from.describe }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="离开时间" span="2"
-                            >{{ from.leave_time }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="值班人员"
-                            >{{ from.leave_duty }}
-                          </a-descriptions-item>
-                          <a-descriptions-item label="访客照片">
-                            <a-card hoverable style="width: 240px">
-                              <img
-                                slot="cover"
-                                alt="example"
-                                :src="from.image"
-                              />
-                            </a-card>
-                          </a-descriptions-item>
-                        </a-descriptions>
-
-                        <div
-                          style="
-                            padding: 10px 16px;
-                            text-align: right;
-                            background: transparent;
-                            border-top: 1px solid #e8e8e8;
-                            border-radius: 0 0 4px 4px;
-                          "
-                        >
-                          <a-button
-                            @click="EditCarCancel"
-                            style="margin-right: 20px"
-                            >取消</a-button
-                          >
-                        </div>
-                      </a-modal>
                       <a-divider type="vertical" />
                       <a
                         href="javascript:;"
-                        @click="DeleteCar(record.id, record.version)"
+                        @click="DeletePeople(record.id, record.version)"
                         ><a-icon type="delete" theme="twoTone" />删除</a
                       >
                     </span>
@@ -220,6 +87,87 @@
         </div>
       </div>
     </div>
+
+    <!-- 来访人员详情 -->
+    <a-modal v-model="visiblePeople" title="来访人员详情" width="40%">
+      <a-descriptions>
+        <a-descriptions-item label="来访人姓名" span="2"
+          >{{ info.visitor_name }}
+        </a-descriptions-item>
+        <a-descriptions-item label="同行人数">
+          {{ info.peer_nums }}
+        </a-descriptions-item>
+        <a-descriptions-item label="联系方式" span="2"
+          >{{ info.contact }}
+        </a-descriptions-item>
+        <a-descriptions-item label="有效证件号码"
+          >{{ info.number }}
+        </a-descriptions-item>
+        <a-descriptions-item label="来访时间" span="2"
+          >{{ info.come_time }}
+        </a-descriptions-item>
+        <a-descriptions-item label="来访事由"
+          >{{ info.describe }}
+        </a-descriptions-item>
+        <a-descriptions-item label="拜访对象"
+          >{{ info.inter_name }}
+        </a-descriptions-item>
+        <a-descriptions-item label="离开时间"
+          >{{ info.leave_time }}
+        </a-descriptions-item>
+        <a-descriptions-item label="值班人员"
+          >{{ info.leave_duty }}
+        </a-descriptions-item>
+        <a-descriptions-item label="访客照片">
+          <a-card hoverable style="width: 240px">
+            <img  alt="example" :src="info.image" />
+          </a-card>
+        </a-descriptions-item>
+      </a-descriptions>
+      <template slot="footer">
+        <div>
+          <a-button @click="visiblePeople = false" style="margin-right: 20px"
+            >取消</a-button
+          >
+        </div>
+      </template>
+    </a-modal>
+
+    <!-- 来访车辆详情 -->
+    <a-modal v-model="visibleCar" title="来访车辆详情" width="40%">
+      <a-descriptions>
+        <a-descriptions-item label="车牌号码" span="2"
+          >{{ from.number }}
+        </a-descriptions-item>
+        <a-descriptions-item label="联系方式"
+          >{{ from.contact }}
+        </a-descriptions-item>
+        <a-descriptions-item label="开进时间" span="2"
+          >{{ from.come_time }}
+        </a-descriptions-item>
+        <a-descriptions-item label="来访事由">
+          {{ from.describe }}
+        </a-descriptions-item>
+        <a-descriptions-item label="离开时间" span="2"
+          >{{ from.leave_time }}
+        </a-descriptions-item>
+        <a-descriptions-item label="值班人员"
+          >{{ from.leave_duty }}
+        </a-descriptions-item>
+        <a-descriptions-item label="访客照片">
+          <a-card hoverable style="width: 240px">
+            <img slot="cover" alt="example" :src="from.image" />
+          </a-card>
+        </a-descriptions-item>
+      </a-descriptions>
+      <template slot="footer">
+        <div>
+          <a-button @click="visibleCar = false" style="margin-right: 20px"
+            >取消</a-button
+          >
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -401,64 +349,44 @@ export default {
         onShowSizeChange: (current, pageSize) => {
           this.paginationCar.defaultCurrent = current;
           this.paginationCar.defaultPageSize = pageSize;
-          this.carlist(); //显示列表的接口名称
+          this.peoplelist(); //显示列表的接口名称
         },
         // 改变每页数量时更新显示
         onChange: (current, size) => {
           this.paginationCar.defaultCurrent = current;
           this.paginationCar.defaultPageSize = size;
-          this.carlist();
+          this.peoplelist();
         },
       },
       // 车辆弹框
       visibleCar: false,
       visiblePeople: false,
       from: {},
+      key:0,
+      info:{}
     };
   },
   methods: {
-    inPutDelete() {},
+    tabit(val){
+      this.key = val;
+      this.peoplelist();
+    },
     // 数据分页调用
-    peoplelist() {
-      console.log(this.cameraParams);
-      const { defaultCurrent, defaultPageSize } = this.paginationPeople;
-      this.$api.Camera.getCameraList({
-        currPage: defaultCurrent,
-        pageSize: defaultPageSize,
-        info: this.cameraParams,
-      })
-        .then((res) => {
-          if (res.code != "200") {
-            return Promise.reject;
-          }
-          this.dataB = res.data;
-          this.paginationPeople.total = res.total;
-        })
-        .catch(() => {});
-    },
-    carlist() {
-      console.log(this.cameraParams);
-      const { defaultCurrent, defaultPageSize } = this.paginationCar;
-      this.$api.Camera.getCameraList({
-        currPage: defaultCurrent,
-        pageSize: defaultPageSize,
-        info: this.cameraParams,
-      })
-        .then((res) => {
-          if (res.code != "200") {
-            return Promise.reject;
-          }
-          this.dataA = res.data;
-          this.paginationCar.total = res.total;
-        })
-        .catch(() => {});
-    },
     //todol 来访人员//
     // 获取访客列表数据
     peoplelist() {
-      axios.get("/api/prop/visit?type=0").then((res) => {
+      axios.get("/api/prop/visit",{
+        params:{
+          type:this.key 
+        }
+      }).then((res) => {
         if (res.status_code == 200) {
-          this.dataB = res.data.data;
+          if(this.key == 0){
+            this.dataB = res.data.data;
+          }else{
+            this.dataA = res.data.data;
+          }
+          this.paginationPeople.total = res.total;
         }
       });
     },
@@ -480,96 +408,25 @@ export default {
         });
     },
     // 来访人员详情
-    EditPeople(
-      visitor_name,
-      peer_nums,
-      contact,
-      number,
-      come_time,
-      describe,
-      inter_name,
-      leave_time,
-      leave_duty,
-      image
-    ) {
+    EditPeople(val) {
+      this.info = val ;
       this.visiblePeople = true;
-      this.from.visitor_name = JSON.parse(JSON.stringify(visitor_name));
-      this.from.peer_nums = JSON.parse(JSON.stringify(peer_nums));
-      this.from.contact = JSON.parse(JSON.stringify(contact));
-      this.from.number = JSON.parse(JSON.stringify(number));
-      this.from.come_time = JSON.parse(JSON.stringify(come_time));
-      this.from.describe = JSON.parse(JSON.stringify(describe));
-      this.from.inter_name = JSON.parse(JSON.stringify(inter_name));
-      this.from.leave_time = JSON.parse(JSON.stringify(leave_time));
-      this.from.leave_duty = JSON.parse(JSON.stringify(leave_duty));
-      this.from.image = image;
-    },
-    // 来访人员详情弹窗
-    EditPeopleCancel() {
-      this.visiblePeople = false;
+      
     },
     //来访人员列表刷新
     Refresh() {
       this.peoplelist();
     },
     //todol 来访车辆//
-    // 获取车辆列表数据
-    carlist() {
-      axios.get("/api/prop/visit?type=1").then((res) => {
-        if (res.status_code == 200) {
-          this.dataA = res.data.data;
-        }
-      });
-    },
-    // 删除车辆列表数据
-    DeleteCar(id, version) {
-      axios
-        .delete("/api/prop/visit", {
-          params: {
-            id: id,
-            version: version,
-          },
-        })
-        .then((res) => {
-          if (res.status_code === 204) {
-            //成功
-          }
-          // 回调获取访客列表数据方法
-          this.carlist();
-        });
-    },
     // 来访车辆详情
-    EditCar(
-      contact,
-      number,
-      come_time,
-      describe,
-      leave_time,
-      leave_duty,
-      image
-    ) {
+    EditCar(val) {
+      this.from = val;
       this.visibleCar = true;
-      this.from.contact = JSON.parse(JSON.stringify(contact));
-      this.from.number = JSON.parse(JSON.stringify(number));
-      this.from.come_time = JSON.parse(JSON.stringify(come_time));
-      this.from.describe = JSON.parse(JSON.stringify(describe));
-      this.from.leave_time = JSON.parse(JSON.stringify(leave_time));
-      this.from.leave_duty = JSON.parse(JSON.stringify(leave_duty));
-      this.from.image = JSON.parse(JSON.stringify(image));
-    },
-    // 来访车辆详情弹窗
-    EditCarCancel() {
-      this.visibleCar = false;
-    },
-    //来访车辆列表刷新
-    Refresh() {
-      this.carlist();
-    },
+    }
   },
   //获取列表数据
   created() {
     this.peoplelist();
-    this.carlist();
   },
   computed: {
     rowSelection() {

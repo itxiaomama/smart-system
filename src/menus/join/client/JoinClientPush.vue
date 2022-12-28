@@ -1,329 +1,455 @@
 <template>
   <div class="wrap" style="border-radius: 10px">
-    <div>
-      <div class="ouer">
-        <div class="left">
-          <div class="inpA">
-            <span>客户名称：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="客户名称"
-              @change="onChange"
-              style="width: 30vw"
-            />
-          </div>
-          <div class="leftb" style="margin-top: 10px">
-            <p style="line-height: 30px">客户类型：</p>
-            <a-select default-value="" style="width: 30vw">
-              <a-select-option value="lucya">公司</a-select-option>
-              <a-select-option value="lucyb">个人</a-select-option>
-            </a-select>
-          </div>
-          <div class="inpB" style="margin-top: 0px">
-            <span>所属行业：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="所属行业"
-              @change="onChange"
-              style="width: 30vw"
-            />
-          </div>
-          <div class="leftb" style="margin-top: 10px">
-            <p style="line-height: 30px">过程管理：</p>
-            <a-select default-value="" style="width: 30vw">
-              <a-select-option value="lucya">初次拜访</a-select-option>
-              <a-select-option value="lucyb">需求引导分析</a-select-option>
-              <a-select-option value="lucyb">竞争阶段</a-select-option>
-              <a-select-option value="lucyb">预定阶段</a-select-option>
-              <a-select-option value="lucyb">合同阶段</a-select-option>
-            </a-select>
-          </div>
-          <div class="inpA" style="margin-top: 0px">
-            <span>联系电话：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="联系电话"
-              @change="onChange"
-              style="width: 30vw"
-            />
-          </div>
-          <div class="inpA" style="margin-top: 10px; margin-left: -27px">
-            <span>统一信用代码：</span>
+    <a-form-model
+      ref="ruleForm"
+      :model="form"
+      :rules="rules"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+    >
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="客户名称：" prop="name">
             <a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="统一信用代码"
-              @change="onChange"
-              style="width: 30vw"
+              v-model="form.name"
             />
-          </div>
-          <div class="inpD" style="margin-left: -28px; margin-top: 15px">
-            <div class="Dset">
-              <p style="white-space: nowrap">上传公司头像：</p>
-              <a-upload
-                name="avatar"
-                list-type="picture-card"
-                class="avatar-uploader"
-                :show-upload-list="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :before-upload="beforeUpload"
-                @change="handleChange"
-              >
-                <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">上传</div>
-                </div>
-              </a-upload>
-            </div>
-            <p style="margin-left: 98px">尺寸建议:宽160px,高160px</p>
-          </div>
-          <div class="leftb" style="margin-top: 10px">
-            <p>渠道分类：</p>
-            <a-select default-value="" style="width: 30vw">
-              <a-select-option value="lucya">中介公司</a-select-option>
-              <a-select-option value="lucyb">广告</a-select-option>
-              <a-select-option value="lucyc">合作推荐</a-select-option>
-              <a-select-option value="lucyd">自开发渠道</a-select-option>
-            </a-select>
-          </div>
-          <div class="leftb" style="margin-top: 10px">
-            <p>渠道类型：</p>
-            <a-select default-value="" style="width: 30vw">
-              <a-select-option value="lucya">中介公司</a-select-option>
-              <a-select-option value="lucyb">广告</a-select-option>
-              <a-select-option value="lucyb">合作推荐</a-select-option>
-              <a-select-option value="lucyb">自开发渠道</a-select-option>
-            </a-select>
-          </div>
-          <div class="inpA" style="margin-top: 10px">
-            <span>渠道名称：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="渠道名称"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="简称：" >
+            <a-input
+              v-model="form.short_name"
             />
-          </div>
-          <div class="inpA" style="margin-left: -14px; margin-top: 10px">
-            <span>工商注册号：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="工商注册号"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="客户类型：" prop="type">
+            <dict :keyValue="'ics_customer_type'" v-model="form.type" />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="客户状态：" prop="customer_status">
+            <dict :keyValue="'ics_customer_c_status'" v-model="form.customer_status" />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="所属行业：" >
+            <a-input
+              v-model="form.sector"
             />
-          </div>
-          <div class="inpA" style="margin-left: -28px; margin-top: 10px">
-            <span>组织机构代码：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="组织机构代码"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="所属国家：">
+            <a-input
+              v-model="form.country"
             />
-          </div>
-          <div class="inpA" style="margin-top: 10px">
-            <span>注册资金：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="注册资金"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="过程管理：">
+            <dict :keyValue="'ics_customer_process'" v-model="form.process" />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="联系人：">
+            <a-input
+              v-model="form.contacts"
             />
-          </div>
-          <div class="inpA" style="margin-top: 10px">
-            <span>注册地址：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="注册地址"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="联系电话：" >
+            <a-input
+              v-model="form.phone"
             />
-          </div>
-        </div>
-        <div class="right">
-          <div class="inpO">
-            <span>简称：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="简称"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="邮箱：" >
+            <a-input
+              v-model="form.email"
             />
-          </div>
-          <div class="leftb" style="margin-left: -28px; margin-top: 10px">
-            <p>客户状态：</p>
-            <a-select default-value="" style="width: 30vw">
-              <a-select-option value="lucya">潜在客户</a-select-option>
-              <a-select-option value="lucyb">意向客户</a-select-option>
-              <a-select-option value="lucyb">成交客户</a-select-option>
-              <a-select-option value="lucyb">流失客户</a-select-option>
-            </a-select>
-          </div>
-          <div class="inpO" style="margin-left: -14px; margin-top: 8px">
-            <span>联系人：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="联系人"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="统一信用代码：" >
+            <a-input
+              v-model="form.credit_no"
             />
-          </div>
-          <div class="inpO" style="margin-top: 10px">
-            <span>邮箱：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="邮箱"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="邮编：" >
+            <a-input
+              v-model="form.postal_code"
             />
-          </div>
-          <div class="inpC" style="margin-left: -56px; margin-top: 10px">
-            <span>园区房间总数：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="请输入房间总数"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+      
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="通讯地址：" >
+            <a-input
+              v-model="form.mail_address"
             />
-          </div>
-          <div class="inpE" style="margin-left: -61px; margin-top: 15px">
-            <div class="Eset" style="margin-left: 22px">
-              <span style="white-space: nowrap; margin-right: 8px"
-                >上传照片墙:</span
-              >
-              <a-upload
-                name="avatar"
-                list-type="picture-card"
-                class="avatar-uploader"
-                :show-upload-list="false"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                :before-upload="beforeUpload"
-                @change="handleChange"
-              >
-                <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-                <div v-else>
-                  <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">上传</div>
-                </div>
-              </a-upload>
-            </div>
-          </div>
-          <div class="inpF" style="margin-top: 25px; margin-left: -28px">
-            <div class="Fset">
-              <p>经营范围：</p>
-              <a-textarea
-                placeholder="经营范围"
-                :rows="8"
-                style="width: 30vw"
-              />
-            </div>
-          </div>
-          <div class="inpA" style="margin-left: -14px; margin-top: 10px">
-            <span>法人名：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="法人名"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="上传公司头像：" >
+            <uploadimgVue 
+            v-model="form.head_img" 
+            :FileList="headimg" 
+            @upload="getupload"
+            @remove="remove"
+            :limit="1"
             />
-          </div>
-          <div class="inpA" style="margin-left: -28px; margin-top: 10px">
-            <span>企业性质：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="企业性质"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="上传照片墙：">
+            <uploadimgVue
+             v-model="form.banner_images" 
+            :FileList="form.banner_images" 
+            @upload="getupload1"
+            @remove="remove1"
+            :limit="5"
             />
-          </div>
-          <div class="inpA" style="margin-left: -28px; margin-top: 10px">
-            <span>成立日期：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="成立日期"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="8">
+          <a-form-model-item  label="渠道类型：" >
+            <dict :keyValue="'ics_customer_channel_type'" v-model="form.channel_type" />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-model-item  label="渠道名称：">
+            <a-input
+              v-model="form.channel_name"
             />
-          </div>
-          <div class="inpA" style="margin-left: -28px; margin-top: 10px">
-            <span>登记机关：</span
-            ><a-input
-              size="1.875rem /* 30/16 */"
-              placeholder="登记机关"
-              @change="onChange"
-              style="width: 30vw"
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="8">
+          <a-form-model-item  label="是否黑名单：">
+            <a-switch v-model="form.switch" @change="onchange" />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="客户备注：" >
+            <a-input
+              v-model="form.remark"
             />
-          </div>
-        </div>
-      </div>
-      <div class="pay">
-        <div class="inpN">
-          <a-button type="primary"> 提交 </a-button>
-          <a-button style="margin-left: 40px" type="close-square" @click="btnN">
-            <a-icon type="rollback" />关闭
-          </a-button>
-        </div>
-      </div>
-    </div>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="工商注册号：" >
+            <a-input
+              v-model="form.reg_no"
+            />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="组织机构代码：">
+           <a-input
+              v-model="form.org_no"
+            />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="法人名：" >
+            <a-input
+              v-model="form.oper_name"
+            />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="经营状态：">
+            <dict :keyValue="'ics_customer_status'" v-model="form.status" />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="公司类型(企业性质)：" >
+            <a-input
+              v-model="form.econ_kind"
+            />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="注册资金：">
+            <a-input
+              v-model="form.regist_capi"
+              type="number"
+            />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="成立日期：">
+            <a-date-picker
+              v-model="form.start_date"
+              type="date"
+              valueFormat="YYYY-MM-DD"
+              placeholder="Pick a date"
+              style="width: 100%;"
+            />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="营业结束日期：">
+            <a-date-picker
+              v-model="form.end_date"
+              type="date"
+              valueFormat="YYYY-MM-DD"
+              placeholder="Pick a date"
+              style="width: 100%;"
+            />
+          </a-form-model-item>
+        </a-col>
+
+        <a-col :span="12">
+          <a-form-model-item  label="登记机关：" >
+            <a-input
+              v-model="form.belong_org"
+            />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-row>
+        <a-col :span="12">
+          <a-form-model-item  label="注册地址：">
+            <a-input
+              v-model="form.address"
+            />
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item  label="经营范围：" >
+            <a-input v-model="form.scope" type="textarea" />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
+
+      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click="onSubmit"> 提交 </a-button>
+        <a-button style="margin-left: 10px" @click="resetForm"> 关闭 </a-button>
+      </a-form-model-item>
+    </a-form-model>
   </div>
 </template>
 
 <script>
+import uploadimgVue from '@/components/common/uploadimg.vue';
+import axios from 'axios';
+import dict from '@/components/common/dict.vue';
 export default {
   name: "JoinClientPush",
+  components:{uploadimgVue,dict},
   data() {
     return {
-      options: [
-        {
-          value: "1",
-          label: "浙江省",
-          children: [
-            {
-              value: "2",
-              label: "杭州市",
-              children: [
-                {
-                  label: "萧山区",
-                },
-                {
-                  label: "西湖区",
-                },
-                {
-                  label: "滨江区",
-                },
-                {
-                  label: "余杭区",
-                },
-              ],
-            },
-            {
-              value: "3",
-              label: "宁波市",
-            },
-          ],
-        },
-        {
-          value: "jiangsu",
-          label: "江苏省",
-          children: [
-            {
-              value: "nanjing",
-              label: "南京市",
-              children: [
-                {
-                  value: "zhonghuamen",
-                  label: "****",
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      switch:false,
+      type:null,
+      headimg:[],
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
+      other: "",
+      form: {
+        name:'',
+        short_name:'',
+        type:null,
+        customer_status:null,
+        sector:'',
+        country:'',
+        process:null,
+        contacts:'',
+        phone:'',
+        email:'',
+        credit_no:'',
+        mail_address:'',
+        postal_code:'',
+        channel_type:null,
+        channel_name:'',
+        remark:'',
+        reg_no:'',
+        status:null,
+        org_no:'',
+        oper_name:'',
+        econ_kind:'',
+        start_date:'',
+        end_date:'',
+        belong_org:'',
+        regist_capi:'',
+        address:'',
+        scope:'',
+        head_img:'',
+        banner_images:[],
+        is_blacklist:false,
+
+      },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: "请输入客户名称",
+            trigger: "blur",
+          },
+        ],
+        type: [
+          {
+            required: true,
+            message: "请选择客户类型",
+            trigger: "change",
+          },
+        ],
+        customer_status: [
+          {
+            required: true,
+            message: "请选择客户状态",
+            trigger: "change",
+          },
+        ],
+      },
     };
   },
+  mounted(){
+    this.type = this.$route.query.type;
+    if(this.$route.query.other){
+        let info = JSON.parse(this.$route.query.form);
+        this.form.sector = info.sector;
+        this.form.customer_status = info.customer_status =='0'?'': info.customer_status;
+        this.form.contacts = info.contacts ;
+        this.form.phone = info.phone ;
+        this.form.email = info.email ;
+        this.form.credit_no = info.credit_no;
+        this.form.remark = info.remark;
+        this.form.channel_name = info.channel_name ;
+        this.form.address = info.address;
+        this.form.clue_id = info.id ;
+    }
+    if(this.$route.query.type == 2){
+      this.$nextTick(() =>{
+        let  info = JSON.parse(this.$route.query.form);
+        this.form = info;
+        this.form.id = info.id;
+        this.form.version = info.version;
+        this.form.customer_status = JSON.stringify(info.customer_status);
+        this.form.type = JSON.stringify(info.type);
+        this.form.process = JSON.stringify(info.process);
+        this.form.channel_type = JSON.stringify(info.channel_type);
+        this.form.status = JSON.stringify(info.status);
+        console.log(this.form)
+        if(info.head_img){
+          let arr =  [];
+          arr.push(info.head_img);
+          this.headimg = arr;
+        }
+        if(info.banner_images){
+          this.form.banner_images = info.banner_images.split(',');
+        }
+        this.form.switch = info.is_blacklist== 0?false:true; 
+      })
+  }
+    
+    
+
+  },
   methods: {
+    onchange(checked){
+      this.switch = checked;
+    },
+    getupload(file){
+      this.form.head_img = file ;
+      this.headimg.push(file)
+    },
+    remove(){
+      this.form.head_img = '';
+      this.headimg = [];
+    },
+    getupload1(file){
+      console.log(file)
+      console.log( this.form.banner_images)
+      this.form.banner_images.push(file);
+    },
+    remove1(file){
+      this.form.banner_images.map((el, index) => {
+        if (el == file.uid) {
+          this.form.banner_images.splice(index, 1);
+        }
+      });
+    },
     btnN() {
       this.$router.push("/home/Jclient");
+    },
+    onSubmit() {
+      console.log(this.form)
+      console.log(this.type)
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          if(this.type == 1){
+            this.form.is_blacklist = this.form.switch ? 1:0;
+             axios.post("/api/ics/customer", this.form).then((res) => {
+              if (res.message === "success") {
+                this.$message.success("操作成功");
+                this.$router.go(-1);
+              
+              }
+            });
+          }else{
+            this.form.is_blacklist = this.form.switch ? 1:0;
+             axios.patch("/api/ics/customer", this.form).then((res) => {
+              if (res.message === "success") {
+                this.$message.success("操作成功");
+                this.$router.go(-1);
+              }
+            });
+          }
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    resetForm() {
+      this.$router.go(-1);
+      this.$refs.ruleForm.resetFields();
     },
   },
 };
@@ -331,70 +457,11 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 85vw;
+  width: 87vw;
   background-color: #fff;
-  .ouer {
-    width: 85vw;
-    display: flex;
-    margin: 20px auto;
-    justify-content: space-evenly;
-    .left {
-      // background-color: pink;
-      margin-left: 0px;
-      .leftb {
-        display: flex;
-      }
-      .inpD {
-        .Dset {
-          display: flex;
-        }
-      }
-      .inpF {
-        .Fset {
-          display: flex;
-        }
-      }
-    }
-    .right {
-      .leftb {
-        display: flex;
-      }
-      // background-color: skyblue;
-      .inpE {
-        .Eset {
-          display: flex;
-        }
-      }
-      .inpF {
-        .Fset {
-          display: flex;
-        }
-      }
-      .inpI {
-        display: flex;
-        span {
-          margin-right: 8px;
-        }
-        .scope {
-          display: flex;
-          width: 17vw;
-          height: 2.1rem;
-          background-color: rgb(255, 255, 255);
-          border: 1px solid rgb(224, 227, 228);
-          border-right: 0;
-          border-radius: 5px;
-          span {
-            color: rgb(116, 113, 113);
-            margin-top: 4px;
-            margin-left: 0px;
-          }
-        }
-      }
-    }
-  }
-  .pay {
-    margin: 0 auto;
-    margin: 30px 0 30px 730px;
+  .ant-form {
+    width: 100%;
+    padding: 20px;
   }
 }
 .wrapA {

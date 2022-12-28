@@ -14,113 +14,9 @@
           </div>
           <div class="bottom">
             <!-- 新增 -->
-            <a-button type="primary" @click="AddList">新增</a-button>
-            <!-- 新增modal弹框 -->
-            <a-modal v-model="visibleAdd" title="新增供应商" width="40%">
-              <div class="text">
-                <div class="buildname" style="margin: 20px 12px">
-                  <span>供应商名称：</span>
-                  <a-input
-                    placeholder="请输入供应商名称"
-                    style="width: 30vw"
-                    v-model="FromAdd.supplier_name"
-                  />
-                </div>
-                <div class="buildname" style="margin: 20px 12px">
-                  <span>供应商简介：</span>
-                  <a-input
-                    placeholder="请输入供应商简介"
-                    style="width: 30vw"
-                    v-model="FromAdd.supplier_desc"
-                  />
-                </div>
-                <div class="buildname" style="margin: 20px 12px; display: flex">
-                  <p>供应商图标：</p>
-                  <div>
-                    <el-upload
-                      action="https://park.cngiantech.com/api/system/upload"
-                      list-type="picture-card"
-                      :limit="1"
-                      :headers="headers"
-                      :data="fileData"
-                      :before-upload="beforeAvatarUpload1"
-                      :on-preview="handlePictureCardPreview1"
-                      :on-remove="handleRemove1"
-                      :on-success="handleSuccess1"
-                    >
-                      <i class="el-icon-plus"></i>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogVisible1">
-                      <img width="100%" :src="dialogImageUrl1" alt="" />
-                    </el-dialog>
-                  </div>
-                </div>
-                <div class="buildnam" style="margin: 20px 12px">
-                  <span>供应商地址：</span>
-                  <a-input
-                    placeholder="请输入供应商地址"
-                    style="width: 30vw"
-                    v-model="FromAdd.supplier_address"
-                  />
-                </div>
-                <div class="buildname" style="margin: 20px 12px">
-                  <span>供应商行业：</span>
-                  <a-input
-                    placeholder="请输入供应商行业"
-                    style="width: 30vw"
-                    v-model="FromAdd.supplier_industry"
-                  />
-                </div>
-                <div class="buildname" style="margin: 20px 12px; display: flex">
-                  <p>供应商资质：</p>
-                  <div>
-                    <el-upload
-                      action="https://park.cngiantech.com/api/system/upload"
-                      list-type="picture-card"
-                      :limit="3"
-                      :headers="headers"
-                      :data="fileData"
-                      :before-upload="beforeAvatarUpload2"
-                      :on-preview="handlePictureCardPreview2"
-                      :on-remove="handleRemove2"
-                      :on-success="handleSuccess2"
-                    >
-                      <i class="el-icon-plus"></i>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogVisible2">
-                      <img width="100%" :src="dialogImageUrl2" alt="" />
-                    </el-dialog>
-                  </div>
-                </div>
-              </div>
-              <div class="buildname" style="margin: 20px 26px; display: flex">
-                <span>上传详情：</span>
-                <a-textarea
-                  placeholder="请输入上传详情"
-                  :rows="6"
-                  style="width: 30vw"
-                  v-model="FromAdd.supplier_content"
-                />
-              </div>
-              <div
-                style="
-                  padding: 10px 16px;
-                  text-align: right;
-                  background: transparent;
-                  border-top: 1px solid #e8e8e8;
-                  border-radius: 0 0 4px 4px;
-                "
-              >
-                <a href="javascript:;"
-                  ><a-button style="margin-right: 20px" @click="AddListUp"
-                    >取消</a-button
-                  ></a
-                >
-                <a href="javascript:;" @click="AddListSure">
-                  <a-button type="primary">确定</a-button></a
-                >
-              </div>
-            </a-modal>
+            <a-button type="primary" @click="AddList({}, 1, '新增供应商')"
+              >新增</a-button
+            >
           </div>
         </div>
         <div class="content" style="margin-top: 20px">
@@ -130,138 +26,15 @@
               :row-selection="rowSelection"
               :columns="columns"
               :data-source="dataSource"
-              :rowKey="(record, id) => id"
+              rowKey="id"
               :pagination="paginationSubblier"
             >
               <template slot="action" slot-scope="text, record">
                 <!-- 编辑-->
-                <a href="javascript:;" @click="EditList(record)"
+                <a href="javascript:;" @click="AddList(record, 2, '编辑供应商')"
                   ><a-icon type="edit" theme="twoTone" />编辑</a
                 >
-                <!-- 编辑modal弹框 -->
-                <a-modal v-model="visibleEdit" title="编辑供应商" width="40%">
-                  <div class="text">
-                    <div class="buildname" style="margin: 20px 12px">
-                      <span>供应商名称：</span>
-                      <a-input
-                        placeholder="请输入供应商名称"
-                        style="width: 30vw"
-                        v-model="FromEdit.supplier_name"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 12px">
-                      <span>供应商简介：</span>
-                      <a-input
-                        placeholder="请输入供应商简介"
-                        style="width: 30vw"
-                        v-model="FromEdit.supplier_desc"
-                      />
-                    </div>
-                    <div
-                      class="buildname"
-                      style="margin: 20px 12px; display: flex"
-                    >
-                      <p>供应商图标：</p>
-                      <div>
-                        <el-upload
-                          action="https://park.cngiantech.com/api/system/upload"
-                          list-type="picture-card"
-                          :limit="1"
-                          :headers="headers"
-                          :data="fileData"
-                          :before-upload="beforeAvatarUpload3"
-                          :on-preview="handlePictureCardPreview3"
-                          :on-remove="handleRemove3"
-                          :on-success="handleSuccess3"
-                          :file-list="FromEdit.supplier_img"
-                        >
-                          <i class="el-icon-plus"></i>
-                        </el-upload>
-                        <el-dialog :visible.sync="dialogVisible3">
-                          <img
-                            width="100%"
-                            :src="FromEdit.supplier_img"
-                            alt=""
-                          />
-                        </el-dialog>
-                      </div>
-                    </div>
-                    <div class="buildname" style="margin: 20px 12px">
-                      <span>供应商地址：</span>
-                      <a-input
-                        placeholder="请输入供应商地址"
-                        style="width: 30vw"
-                        v-model="FromEdit.supplier_address"
-                      />
-                    </div>
-                    <div class="buildname" style="margin: 20px 12px">
-                      <span>供应商行业：</span>
-                      <a-input
-                        placeholder="请输入供应商行业"
-                        style="width: 30vw"
-                        v-model="FromEdit.supplier_industry"
-                      />
-                    </div>
-                    <div
-                      class="buildname"
-                      style="margin: 20px 12px; display: flex"
-                    >
-                      <p>供应商资质：</p>
-                      <div>
-                        <el-upload
-                          action="https://park.cngiantech.com/api/system/upload"
-                          list-type="picture-card"
-                          :limit="3"
-                          :headers="headers"
-                          :data="fileData"
-                          :before-upload="beforeAvatarUpload4"
-                          :on-preview="handlePictureCardPreview4"
-                          :on-remove="handleRemove4"
-                          :on-success="handleSuccess4"
-                          :file-list="FromEdit.qualification_img"
-                        >
-                          <i class="el-icon-plus"></i>
-                        </el-upload>
-                        <el-dialog :visible.sync="dialogVisible4">
-                          <img width="100%" :src="dialogImageUrl4" alt="" />
-                        </el-dialog>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="buildname"
-                    style="margin: 20px 26px; display: flex"
-                  >
-                    <span>上传详情：</span>
-                    <a-textarea
-                      placeholder="请输入上传详情"
-                      :rows="6"
-                      style="width: 30vw"
-                      v-model="FromEdit.supplier_content"
-                    />
-                  </div>
-                  <div
-                    style="
-                      padding: 10px 16px;
-                      text-align: right;
-                      background: transparent;
-                      border-top: 1px solid #e8e8e8;
-                      border-radius: 0 0 4px 4px;
-                    "
-                  >
-                    <a href="javascript:;"
-                      ><a-button style="margin-right: 20px" @click="EditListUp"
-                        >取消</a-button
-                      ></a
-                    >
-                    <a
-                      href="javascript:;"
-                      @click="EditListSure(record.id, record.version)"
-                    >
-                      <a-button type="primary">确定</a-button></a
-                    >
-                  </div>
-                </a-modal>
+
                 <a-divider type="vertical" />
                 <!-- 删除 -->
                 <a
@@ -276,29 +49,115 @@
         </div>
       </div>
     </div>
+    <!-- 新增modal弹框 -->
+    <a-modal v-model="visibleAdd" :title="title" width="40%">
+      <div class="text">
+        <div class="buildname" style="margin: 20px 12px">
+          <span>供应商名称：</span>
+          <a-input
+            placeholder="请输入供应商名称"
+            style="width: 30vw"
+            v-model="FromAdd.supplier_name"
+          />
+        </div>
+        <div class="buildname" style="margin: 20px 12px">
+          <span>供应商简介：</span>
+          <a-input
+            placeholder="请输入供应商简介"
+            style="width: 30vw"
+            type="textarea"
+            v-model="FromAdd.supplier_desc"
+          />
+        </div>
+        <div class="buildname" style="margin: 20px 12px; display: flex">
+          <p>供应商图标：</p>
+          <div>
+           <uploadimgVue 
+           :FileList="supplierimg"
+           :limt="1"
+           @upload="getupload"
+           @remove="remove"
+            />
+          </div>
+        </div>
+        <div class="buildnam" style="margin: 20px 12px">
+          <span>供应商地址：</span>
+          <a-input
+            placeholder="请输入供应商地址"
+            style="width: 30vw"
+            v-model="FromAdd.supplier_address"
+          />
+        </div>
+        <div class="buildname" style="margin: 20px 12px">
+          <span>供应商行业：</span>
+          <a-input
+            placeholder="请输入供应商行业"
+            style="width: 30vw"
+            v-model="FromAdd.supplier_industry"
+          />
+        </div>
+        <div class="buildname" style="margin: 20px 12px; display: flex">
+          <p>供应商资质：</p>
+          <div>
+            <uploadimgVue 
+            :FileList="qualification_img" 
+            :limit="5"
+            @upload="getupload1"
+            @remove="remove1"
+            />
+
+          </div>
+        </div>
+      </div>
+      <div class="buildname" style="margin: 20px 26px; display: flex">
+        <span>上传详情：</span>
+        <keditor v-model="FromAdd.supplier_content"  @change="change"  />
+      </div>
+      <template slot="footer">
+        <div>
+          <a href="javascript:;"
+            ><a-button style="margin-right: 20px" @click="AddListUp"
+              >取消</a-button
+            ></a
+          >
+          <a href="javascript:;" @click="AddListSure">
+            <a-button type="primary">确定</a-button></a
+          >
+        </div>
+      </template>
+    </a-modal>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-// import { filesArray } from "./upLoad"; //上传接口
+import uploadimgVue from "@/components/common/uploadimg.vue";
+import keditor from '@/components/common/wangeditor.vue'
 export default {
   name: "FirmSubblier",
+  components:{
+    uploadimgVue,
+    keditor
+  },
   data() {
     return {
+      supplier_img:'',
+      supplierimg:[],
+      qualification_img:[],
+      title: "新增供应商",
+      type: 1,
       dataSource: [], //表格数据源
       columns: [
         {
           title: "供应商名称",
           dataIndex: "supplier_name",
-          width: "20%",
-          scopedSlots: { customRender: "supplier_name" },
+          width: "20%"
         },
         {
           title: "修改时间",
           align: "center",
           width: "25%",
-          dataIndex: "created_at",
+          dataIndex: "updated_at",
         },
         {
           title: "服务数",
@@ -384,103 +243,26 @@ export default {
     },
   },
   methods: {
-    // todo 图片上传
-    // 图片上传失败
-    handleAvatarError(error, file, files) {},
-    // 图片上传成功
-    handleSuccess1(res, file) {
-      for (let item of res.data) {
-        this.FromAdd.supplier_img = item.path;
-      }
+    change(val) {
+      this.FromAdd.supplier_content = val;
     },
-    handleSuccess2(res, file) {
-      for (let item of res.data) {
-        this.FromAdd.qualification_img.push(item.path);
-      }
-      console.log("this.FromAdd>>>>", this.FromAdd);
+    getupload(file) {
+      this.supplier_img = file;
+      this.supplierimg.push(file);
     },
-    handleSuccess3(res, file) {
-      for (let item of res.data) {
-        this.FromEdit.supplier_img = [item.path];
-      }
+    getupload1(file) {
+      this.qualification_img.push(file);
     },
-    handleSuccess4(res, file) {
-      for (let item of res.data) {
-        this.FromEdit.qualification_img.push(item.path);
-      }
-      console.log("this.FromEdit>>>>>", this.FromEdit);
+    remove(file) {
+      this.Form.supplier_img = '';
+      this.supplierimg = [];
     },
-    // 删除上传图片
-    handleRemove1(file, fileList) {},
-    handleRemove2(file, fileList) {},
-    handleRemove3(file, fileList) {},
-    handleRemove4(file, fileList) {},
-    // 图片上传之前
-    beforeAvatarUpload1(file) {
-      this.fileData["files[]"] = file;
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    beforeAvatarUpload2(file) {
-      this.fileData["files[]"] = file;
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    beforeAvatarUpload3(file) {
-      this.fileData["files[]"] = file;
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    beforeAvatarUpload4(file) {
-      this.fileData["files[]"] = file;
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-    // 图片上传之后
-    handlePictureCardPreview1(file) {
-      this.dialogImageUrl1 = file.url;
-      this.dialogVisible1 = true;
-    },
-    handlePictureCardPreview2(file) {
-      this.dialogImageUrl2 = file.url;
-      this.dialogVisible2 = true;
-    },
-    handlePictureCardPreview3(file) {
-      this.dialogImageUrl3 = file.url;
-
-      this.dialogVisible3 = true;
-    },
-    handlePictureCardPreview4(file) {
-      this.dialogImageUrl4 = file.url;
-      this.dialogVisible4 = true;
+    remove1(file) {
+      this.qualification_img.map((el, index) => {
+        if (el == file.uid) {
+          this.qualification_img.splice(index, 1);
+        }
+      });
     },
     // 获取页面数据列表
     subblierList() {
@@ -490,26 +272,73 @@ export default {
     },
     // todo 新增
     // 新增modal弹框显示
-    AddList() {
+    AddList(form, type, title) {
+      this.FromAdd = { ...form };
+      this.type = type;
+      this.title = title;
       this.visibleAdd = true;
-      this.FromAdd = {
-        supplier_name: "",
-        dialogImageUrl1: [],
-        qualification_img: [],
-      };
+      if(type == 2){
+        this.$nextTick(() =>{
+          if(form.supplier_img){
+            let arr = [];
+            arr.push(form.supplier_img);
+            this.supplierimg = arr;
+            this.supplier_img = form.supplier_img;
+            if(form.qualification_img !== ''){
+              this.qualification_img = form.qualification_img.split(",");
+              this.FromAdd.supplier_content = form.supplier_content;
+            }
+          } 
+        })
+        
+      }
+      // this.FromAdd = {
+      //   supplier_name: "",
+      //   dialogImageUrl1: [],
+      //   qualification_img: [],
+      // };
     },
     // 新增确认
     AddListSure() {
-      axios.post("/api/ics/serviceSupplier", this.FromAdd).then((res) => {
-        if (res.status_code == 201) {
-          this.visibleAdd = false;
-          this.$message.success("新增成功");
-          this.subblierList();
-        }
-      });
+      let data = {
+        supplier_name:this.FromAdd.supplier_name,
+        supplier_desc:this.FromAdd.supplier_desc,
+        supplier_img:this.supplier_img,
+        supplier_address:this.FromAdd.supplier_address,
+        supplier_industry:this.FromAdd.supplier_industry,
+        supplier_content:this.FromAdd.supplier_content,
+        qualification_img:this.qualification_img
+      }
+      if (this.type == 1) {
+        axios.post("/api/ics/serviceSupplier", data).then((res) => {
+          if (res.status_code == 201) {
+            this.AddListUp();
+            this.$message.success("新增成功");
+            this.subblierList();
+          }
+        });
+      } else {
+        axios
+          .patch("/api/ics/serviceSupplier", data, {
+            params: {
+              id: this.FromAdd.id,
+              version: this.FromAdd.version,
+            },
+          })
+          .then((res) => {
+            if (res.message === "success") {
+              this.$message.success("编辑区域成功");
+              this.AddListUp();
+              this.subblierList(this.FromAdd.id ? this.page : 1);
+            }
+          });
+      }
     },
     // 取消新增
     AddListUp() {
+      this.qualification_img = [];
+      this.supplier_img = '';
+      this.supplierimg = [];
       this.visibleAdd = false;
     },
     // todo 删除
@@ -538,20 +367,20 @@ export default {
     EditListSure(id, version) {
       console.log(id);
       console.log(version);
-      // axios
-      //   .patch("/api/ics/serviceSupplier", this.FromEdit, {
-      //     params: {
-      //       id: id,
-      //       version: version,
-      //     },
-      //   })
-      //   .then((res) => {
-      //     if (res.message === "success") {
-      //       this.$message.success("编辑区域成功");
-      //       this.visibleEdit = false;
-      //       this.subblierList(this.FromEdit.id ? this.page : 1);
-      //     }
-      //   });
+      axios
+        .patch("/api/ics/serviceSupplier", this.FromEdit, {
+          params: {
+            id: id,
+            version: version,
+          },
+        })
+        .then((res) => {
+          if (res.message === "success") {
+            this.$message.success("编辑区域成功");
+            this.visibleEdit = false;
+            this.subblierList(this.FromEdit.id ? this.page : 1);
+          }
+        });
     },
     EditListUp() {
       this.visibleEdit = false;
@@ -586,7 +415,6 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  width: 87.3vw;
   border-radius: 10px;
   background-color: #fff;
   .wrapA {

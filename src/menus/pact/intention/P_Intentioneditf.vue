@@ -8,7 +8,9 @@
         <a-result status="success" title="提交成功！">
           <template #extra>
             <a-button key="buy"
-              ><router-link to="/home/Pintention">返回</router-link></a-button
+              ><router-link to="/contract/intention"
+                >返回</router-link
+              ></a-button
             >
           </template>
         </a-result>

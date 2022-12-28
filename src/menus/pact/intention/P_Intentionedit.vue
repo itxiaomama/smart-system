@@ -124,7 +124,7 @@
       </div>
       <div class="steps-action">
         <a-button
-          ><router-link to="/home/Pintention">返回</router-link></a-button
+          ><router-link to="/contract/intention">返回</router-link></a-button
         >
         <a-button type="primary" style="margin-left: 20px">
           <router-link to="/home/Pintentioneditt">下一步</router-link>
